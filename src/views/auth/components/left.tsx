@@ -117,7 +117,7 @@ const AuthLeftContent = ({ isAnimated }: AuthLeftContentProps) => {
 
                         <CustomInputField
                             label={
-                                <div className='flex gap-1 place-items-center relative -mb-2'>
+                                <div className='flex gap-1 place-items-center relative mb-2'>
                                     {intl("Username")}
                                     <p className="text-red-500">*</p>
                                 </div>
@@ -133,7 +133,7 @@ const AuthLeftContent = ({ isAnimated }: AuthLeftContentProps) => {
 
                         <CustomInputField
                             label={
-                                <div className='flex gap-1 place-items-center relative -mb-2'>
+                                <div className='flex gap-1 place-items-center relative mb-2'>
                                     {intl("Password")}
                                     <p className="text-red-500">*</p>
                                 </div>
