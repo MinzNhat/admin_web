@@ -1,7 +1,7 @@
 import { StaffLoginDto } from '@/services/interface';
 import { AuthOperation, StaffOperation } from '@/services/main';
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { setTokenInCookie, getTokenFromCookie, removeTokenFromCookie } from '@/utils/token';
+import { getTokenFromCookie, removeTokenFromCookie } from '@/utils/token';
 
 const initialState: AuthState = {
     isAuthenticated: false,
@@ -17,7 +17,6 @@ export const login = createAsyncThunk<StaffInfo, StaffLoginDto, { rejectValue: R
             const authOp = new AuthOperation();
             const response = await authOp.loggedInByStaff(payload);
             if (response.success) {
-                setTokenInCookie("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA0OWIwNmY3LTY2MzEtNDczMS1iMDk5LTQ4MDMwOTA2Y2M1MCIsInJvbGVzIjpbIkFETUlOIiwiU0hJUFBFUiJdLCJhZ2VuY3lJZCI6bnVsbCwic3RhZmZJZCI6bnVsbCwiaWF0IjoxNzMwNTM0NzI3LCJleHAiOjE3MzQxMzQ3Mjd9.NPk2gBSatuXqrDzwIV0LP2KDrAZxdXzGWtgxlZldz1s");
                 return response.data as StaffInfo;
             } else {
                 return rejectWithValue(response.message);
