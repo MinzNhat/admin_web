@@ -15,7 +15,7 @@ const CustomInputField = ({ version = '1', label, type, ...props }: InputFieldPr
     const SelectInputComponent = SELECT_INPUT_SWITCHER_VERSIONS[(version ?? '1') as SelectInputVersion] || null;
     const TextInputComponent = TEXT_INPUT_SWITCHER_VERSIONS[(version ?? '1') as TextInputVersion] || null;
     return (
-        <>
+        <div>
             {label}
             <RenderCase renderIf={type === 'select'}>
                 <SelectInputComponent {...(props as SelectInputProps)} />
@@ -23,7 +23,7 @@ const CustomInputField = ({ version = '1', label, type, ...props }: InputFieldPr
             <RenderCase renderIf={type !== 'select'}>
                 <TextInputComponent type={type} {...(props as TextInputProps)} />
             </RenderCase>
-        </>
+        </div>
     );
 };
 

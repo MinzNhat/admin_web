@@ -6,7 +6,7 @@ declare type SubmitNotificationUtility = {
     title?: string;
     message?: string;
     children?: React.ReactNode;
-    submitClick?: () => void;
+    submitClick?: (() => void) | (() => Promise<void>);
 };
 
 declare type SubmitNotificationState = {

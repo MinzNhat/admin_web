@@ -1,11 +1,17 @@
-import Link from 'next/link';
+import { store } from '@/store';
+import ProviderWrapper from '@/hooks';
+import NotFoundContent from '@/views/404';
+import { getMessages } from 'next-intl/server';
+import { NextIntlClientProvider } from 'next-intl';
 
-export default function NotFound() {
+export default async function NotFound() {
+    const messages = await getMessages();
+    const locale = store.getState().language.locale;
     return (
-        <div className='h-dvh w-dvh flex justify-center place-items-center text-center flex-col'>
-            <h2 className='text-xl font-bold'>Not Found</h2>
-            <p>Could not find requested resource</p>
-            <Link href="/" className='underline text-blue-500'>Return Home</Link>
-        </div>
+        <NextIntlClientProvider messages={messages} locale={locale}>
+            <ProviderWrapper>
+                <NotFoundContent />
+            </ProviderWrapper>
+        </NextIntlClientProvider>
     );
 };

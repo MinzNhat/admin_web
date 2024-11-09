@@ -10,7 +10,7 @@ import { removeDiacritics } from '@/utils/removeDiacritics';
 import { MdClose, MdRadioButtonChecked, MdRadioButtonUnchecked } from 'react-icons/md';
 
 const SelectInputV1 = ({
-    options = [], value, setValue, messageIfEmptyOptions, state, position, dropdownPosition,
+    options = [], value, setValue, messageIfEmptyOptions, state, position, dropdownPosition, inputClassName,
     placeholder, select_type = 'single', isClearable = true, id, className, disabled = false,
 }: SelectInputProps) => {
     const InputFieldMessage = useTranslations('InputField');
@@ -26,7 +26,7 @@ const SelectInputV1 = ({
         : placeholder;
 
     return (
-        <div className={`relative`} id={id}>
+        <div className={`relative ${className}`} id={id}>
             <Dropdown
                 disabled={disabled}
                 openWrapper={openWrapper}
@@ -36,7 +36,7 @@ const SelectInputV1 = ({
                 dropdownPosition={dropdownPosition}
                 button={
                     <SelectButtonV1
-                        className={className}
+                        className={inputClassName}
                         disabled={disabled}
                         state={state}
                         isClearable={isClearable}
@@ -51,7 +51,7 @@ const SelectInputV1 = ({
                 }
                 className="top-12 w-full"
             >
-                <Container className="flex flex-col w-full bg-white dark:bg-darkContainerPrimary border dark:border-white/10 !rounded-md">
+                <Container className="flex flex-col w-full bg-white dark:bg-darkContainerPrimary !rounded-md border dark:border-white/10">
                     <div className="relative p-2">
                         <input
                             type="text"
@@ -77,7 +77,7 @@ const SelectInputV1 = ({
                     <div className='flex flex-col w-full max-h-32 overflow-y-scroll no-scrollbar'>
                         <RenderCase renderIf={filteredOptions.length > 0}>
                             {filteredOptions.map((option: SelectInputOptionFormat, index: number) => (
-                                <div key={option.value}>
+                                <div key={option.value.toString()}>
                                     <button
                                         onClick={() => {
                                             if (select_type === 'multi') {

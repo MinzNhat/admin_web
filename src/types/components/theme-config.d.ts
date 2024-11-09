@@ -1,4 +1,4 @@
-declare type ThemeVersion = '1';
+declare type ThemeVersion = '1' | '2';
 
 declare type ThemeProps = {
     version?: ThemeVersion;

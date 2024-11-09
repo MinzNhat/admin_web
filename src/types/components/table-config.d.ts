@@ -133,7 +133,7 @@ declare type TableVersion = '1';
 
 declare type TableSelectType = 'none' | 'single' | 'multi';
 
-declare type TableData = Record<[key], string | number | boolean>;
+declare type TableData = Record<[key], string | number | boolean | unknown>;
 
 declare type SetTableSizeProps = {
     sizeOptions: number[];
@@ -180,7 +180,7 @@ type PaginatedTableProps<T extends TableData> = {
     tableData: T[] | undefined;
     columnsData: Column<T>[];
     renderHeader?: (_cellHeader: string) => string;
-    renderCell?: (_cellHeader: string, _cellValue: string | number | boolean, _rowValue: T, _cellIndex: number | string, _isRowSelected: boolean,) => React.ReactNode | void;
+    renderCell?: (_cellHeader: string, _cellValue: string | number | boolean | any, _rowValue: T, _cellIndex: number | string, _isRowSelected: boolean,) => React.ReactNode | void;
 
     maxPage?: number;
     currentSize: number;

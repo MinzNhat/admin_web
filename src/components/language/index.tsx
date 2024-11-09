@@ -1,15 +1,19 @@
 "use client";
 
 import { RootState } from "@/store";
-import { FC, useEffect, useState } from "react";
 import RenderCase from "@/components/render";
 import LanguageSwitcherV1 from "./versions/v1";
+import LanguageSwitcherV2 from "./versions/v2";
+import { FC, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { usePathname, useRouter } from "next/navigation";
 import { setLanguage } from "@/store/action/languageSlice";
+import LanguageSwitcherV3 from "./versions/v3";
 
 const LANGUAGE_SWITCHER_VERSIONS: Record<LanguageVersion, FC<LanguageVersionProps>> = {
     '1': LanguageSwitcherV1,
+    '2': LanguageSwitcherV2,
+    '3': LanguageSwitcherV3,
 };
 
 const LanguageSwitcher = ({ version }: LanguageProps) => {

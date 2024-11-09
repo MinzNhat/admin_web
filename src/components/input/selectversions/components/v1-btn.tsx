@@ -17,7 +17,7 @@ const SelectButtonV1 = ({
                     ? "border-red-500 text-red-500 placeholder:text-red-500 dark:!border-red-400 dark:!text-red-400 dark:placeholder:!text-red-400"
                     : state === 'success'
                         ? "border-green-500 text-green-500 placeholder:text-green-500 dark:!border-green-400 dark:!text-green-400 dark:placeholder:!text-green-400"
-                        : 'dark:border-none'}`}
+                        : ''}`}
         aria-haspopup="true"
         aria-expanded="false"
     >
@@ -37,7 +37,7 @@ const SelectButtonV1 = ({
         </RenderCase>
 
         <RenderCase renderIf={!isClearable || value.length === 0}>
-            <FaChevronDown className={`w-3 h-3 transition-all duration-300 ${openWrapper ? 'rotate-180' : ''}`} />
+            <FaChevronDown className={`ml-2 w-3 h-3 transition-all duration-300 ${openWrapper ? 'rotate-180' : ''}`} />
         </RenderCase>
     </button>
 );

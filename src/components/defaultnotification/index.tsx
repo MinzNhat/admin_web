@@ -25,6 +25,7 @@ const DefaultNotification = () => {
             event.preventDefault();
         }
         setIsVisible(false);
+        if (defaultNotification?.handleClose) { defaultNotification?.handleClose(); };
     };
 
     useHandleClickOutsideAlerter({ ref: notificationRef, action: handleClose });
@@ -59,7 +60,7 @@ const DefaultNotification = () => {
                     </p>
                 </div>
 
-                <div className="flex w-full justify-between gap-2">
+                <div className="flex w-full justify-end gap-2">
                     <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.9 }}

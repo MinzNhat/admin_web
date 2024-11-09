@@ -14,6 +14,7 @@ declare type BaseInputProps<T extends InputTypes, V extends T extends 'select' ?
 
     id?: string;
     className?: string;
+    inputClassName?: string;
     state?: InputState;
 
     label?: React.ReactNode | string;
@@ -23,6 +24,8 @@ declare type BaseInputProps<T extends InputTypes, V extends T extends 'select' ?
 
     value: V;
     setValue: React.Dispatch<React.SetStateAction<V>> | ((_value: V) => void);
+
+    dropdownPosition?: DropdownPosition;
 };
 
 declare type TextInputProps = BaseInputProps<Exclude<InputTypes, 'select'>>;
@@ -32,7 +35,6 @@ declare type SelectInputProps = BaseInputProps<'select'> & {
     messageIfEmptyOptions?: React.ReactNode | string;
     options?: SelectInputOptionFormat[];
     position?: string;
-    dropdownPosition?: DropdownPosition;
 };
 
 declare type SelectButtonProps = Pick<
@@ -45,7 +47,7 @@ declare type SelectButtonProps = Pick<
 
 declare type SelectInputOptionFormat = {
     label: string;
-    value: string;
+    value: string | boolean;
 };
 
 declare type InputFieldProps = TextInputProps | SelectInputProps;

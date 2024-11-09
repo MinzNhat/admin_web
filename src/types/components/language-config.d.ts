@@ -1,4 +1,4 @@
-declare type LanguageVersion = '1';
+declare type LanguageVersion = '1' | '2' | '3';
 
 declare type LanguageProps = {
     version?: LanguageVersion;

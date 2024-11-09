@@ -11,7 +11,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { FiCalendar, FiEye, FiEyeOff } from "react-icons/fi";
 
 const TextInputV1 = ({
-    value, setValue, state, placeholder, isClearable = false, id, className, type, disabled = false,
+    value, setValue, state, placeholder, isClearable = false, id, className, type, disabled = false, inputClassName, dropdownPosition
 }: TextInputProps) => {
 
     const InputFieldMessage = useTranslations('InputField');
@@ -70,16 +70,17 @@ const TextInputV1 = ({
                         type={type === "password" && showPassword ? "text" : type}
                         onBlur={(e) => handleInputChange(e, type, setValue, true)}
                         value={type === "date" ? value.split('/').reverse().join('-') : value}
-                        placeholder={type === "date" ? "" : (placeholder || InputFieldMessage('DefaultTextPlaceHolder'))}
+                        placeholder={type === "date" ? "" : (placeholder ? placeholder : disabled ? "" : InputFieldMessage('DefaultTextPlaceHolder'))}
                         className={`p-2 px-3 text-left border rounded-md w-full dark:bg-darkContainerPrimary
                         focus:outline-none flex justify-between place-items-center hide-calendar-icon no-spin-button
+                        ${inputClassName}
                         ${disabled
                                 ? "!border-none !bg-gray-100 dark:!bg-white/5 dark:placeholder:!text-[rgba(255,255,255,0.15)]"
                                 : state === "error"
                                     ? "border-red-500 text-red-500 placeholder:text-red-500 dark:!border-red-400 dark:!text-red-400 dark:placeholder:!text-red-400"
                                     : state === "success"
                                         ? "border-green-500 text-green-500 placeholder:text-green-500 dark:!border-green-400 dark:!text-green-400 dark:placeholder:!text-green-400"
-                                        : "dark:border-none"
+                                        : ""
                             } `}
                     />
                 </RenderCase>
@@ -91,16 +92,17 @@ const TextInputV1 = ({
                         value={value}
                         disabled={disabled}
                         onChange={(e) => { setValue(e.target.value); }}
-                        placeholder={type === "date" ? "" : (placeholder || InputFieldMessage('DefaultTextPlaceHolder'))}
-                        className={`p-2 px-3 min-h-12 text-left border rounded-md w-full dark:bg-darkContainerPrimary
+                        placeholder={type === "date" ? "" : (placeholder ? placeholder : disabled ? "" : InputFieldMessage('DefaultTextPlaceHolder'))}
+                        className={`p-2 px-3 min-h-12 text-left border rounded-lg w-full dark:bg-darkContainerPrimary
                         focus:outline-none flex justify-between place-items-center hide-calendar-icon
+                        ${inputClassName}
                         ${disabled
                                 ? "!border-none !bg-gray-100 dark:!bg-white/5 dark:placeholder:!text-[rgba(255,255,255,0.15)]"
                                 : state === "error"
                                     ? "border-red-500 text-red-500 placeholder:text-red-500 dark:!border-red-400 dark:!text-red-400 dark:placeholder:!text-red-400"
                                     : state === "success"
                                         ? "border-green-500 text-green-500 placeholder:text-green-500 dark:!border-green-400 dark:!text-green-400 dark:placeholder:!text-green-400"
-                                        : "dark:border-none"
+                                        : ""
                             } `}
                     />
                 </RenderCase>
@@ -108,7 +110,9 @@ const TextInputV1 = ({
                 <RenderCase renderIf={type === "password"}>
                     <button
                         onClick={togglePasswordVisibility}
-                        className="absolute top-1/2 right-2.5 transform -translate-y-1/2 focus:outline-none"
+                        className={`absolute top-1/2 right-2.5 transform -translate-y-1/2 focus:outline-none
+                            ${state === "error" ? "text-red-500 dark:!text-red-400"
+                                : state === "success" ? "text-green-500 dark:!text-green-400" : ""}`}
                     >
                         <RenderCase renderIf={showPassword}>
                             <FiEyeOff />
@@ -149,6 +153,7 @@ const TextInputV1 = ({
 
             <RenderCase renderIf={type === "date"}>
                 <Dropdown
+                    dropdownPosition={dropdownPosition}
                     maxWidth={true}
                     button={triggerButton()}
                     className="top-12 w-full"

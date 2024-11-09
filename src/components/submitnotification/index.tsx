@@ -88,7 +88,7 @@ const SubmitNotification = () => {
                         whileTap={{ scale: 0.9 }}
                         transition={{ duration: 0.3 }}
                         className="mt-4 px-4 py-2 truncate h-10 rounded-md overflow-clip
-                        text-white hover:cursor-pointer flex bg-blue-500"
+                        text-white hover:cursor-pointer flex bg-utilsPrimary"
                         onClick={handleSubmitClick}
                     >
                         <RenderCase renderIf={!loading}>

@@ -1,13 +1,7 @@
+import { createPortal } from 'react-dom';
+import { debounce } from '@/utils/debounce';
 import { useState, useRef, useEffect } from 'react';
 import { useHandleClickOutsideAlerter } from '@/utils/handleClickOutside';
-
-const debounce = <T extends (..._args: unknown[]) => void>(func: T, delay: number) => {
-    let timeoutId: NodeJS.Timeout;
-    return (...args: Parameters<T>): void => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => func(...args), delay);
-    };
-};
 
 const Dropdown = ({
     button, children, className, animation, position, maxWidth, dropdownPosition = 'bottom',
@@ -18,6 +12,7 @@ const Dropdown = ({
     const dropdownRef = useRef<HTMLDivElement>(null);
     const [localOpenWrapper, setLocalOpenWrapper] = useState<boolean>(false);
     const [dropdownPositionState, setDropdownPositionState] = useState<DropdownPositionState>({ top: undefined, left: undefined });
+    const [isClient, setIsClient] = useState(false);
 
     const dropdownPositionClasses = {
         top: `${position ? position : 'origin-bottom'}`,
@@ -35,7 +30,7 @@ const Dropdown = ({
         }
     };
 
-    useHandleClickOutsideAlerter({ ref: wrapperRef, setState: setOpenWrapper });
+    useHandleClickOutsideAlerter({ ref: [wrapperRef, dropdownRef], setState: setOpenWrapper });
 
     const setDropdownPosition = () => {
         if (buttonRef.current) {
@@ -73,6 +68,8 @@ const Dropdown = ({
     const debouncedSetDropdownPosition = debounce(setDropdownPosition, 100);
 
     useEffect(() => {
+        setIsClient(true);
+
         debouncedSetDropdownPosition();
 
         const handleResize = () => {
@@ -89,29 +86,46 @@ const Dropdown = ({
         debouncedSetDropdownPosition();
     }, [buttonRef, debouncedSetDropdownPosition]);
 
+    useEffect(() => {
+        if (!dropdownRef.current || !openWrapper) return;
+
+        const dropdownBounds = dropdownRef.current.getBoundingClientRect();
+        const isOutOfBounds =
+            dropdownBounds.top < 0 ||
+            dropdownBounds.left < 0 ||
+            dropdownBounds.right > window.innerWidth ||
+            dropdownBounds.bottom > window.innerHeight;
+
+        if (isOutOfBounds) {
+            setOpenWrapper(false);
+        }
+    }, [dropdownPositionState, openWrapper]);
+
     return (
         <div ref={wrapperRef} className={`relative flex ${maxWidth ? 'w-full' : ''}`}>
             <div ref={buttonRef} className={`flex ${maxWidth ? 'w-full' : ''}`} onMouseDown={handleOnMouseDown}>
                 {button}
             </div>
 
-            <div
-                ref={dropdownRef}
-                className={`z-[1000] ${className} ${dropdownPositionClasses}
+            {isClient && createPortal(
+                <div
+                    ref={dropdownRef}
+                    className={`z-50 ${className} ${dropdownPositionClasses}
                     ${animation ? animation : 'transition-all duration-300 ease-in-out'}
                     ${openWrapper && dropdownPositionState.top && dropdownPositionState.left ? 'scale-100' : 'scale-0'}`}
-                style={{
-                    width: buttonRef.current?.getBoundingClientRect().width,
-                    position: 'fixed',
-                    top: dropdownPositionState.top,
-                    left: dropdownPositionState.left,
-                    zIndex: 1000,
-                }}
-            >
-                <div className='relative w-full'>
-                    {children}
-                </div>
-            </div>
+                    style={{
+                        width: buttonRef.current?.getBoundingClientRect().width,
+                        position: 'fixed',
+                        top: dropdownPositionState.top,
+                        left: dropdownPositionState.left,
+                    }}
+                >
+                    <div className='relative w-full'>
+                        {children}
+                    </div>
+                </div>,
+                document.body
+            )}
         </div>
     );
 };

@@ -6,6 +6,7 @@ declare type DefaultNotificationUtility = {
     title?: string;
     message?: string;
     children?: React.ReactNode;
+    handleClose?: () => void;
 };
 
 declare type DefaultNotificationState = {

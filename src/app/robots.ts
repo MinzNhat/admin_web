@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
             allow: '/',
             disallow: '/private/',
         },
-        sitemap: 'http://localhost:3003/sitemap.xml',
+        sitemap: 'http://localhost:3002/sitemap.xml',
     };
 };

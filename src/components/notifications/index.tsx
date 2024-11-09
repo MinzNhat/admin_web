@@ -87,7 +87,7 @@ const Notifications = () => {
     }, [notifications, removeNotification]);
 
     return (
-        <div className="fixed bottom-4 right-4 w-52 flex flex-col gap-4 z-[99]">
+        <div className="fixed bottom-4 right-4 w-64 flex flex-col gap-4 z-[99]">
             <AnimatePresence>
                 {notifications.slice().reverse().map((notification) => {
                     const progressWidth = (progresses[notification.id] || 0) / 5000 * 100;
@@ -121,7 +121,7 @@ const Notifications = () => {
                                         </button>
                                     </div>
 
-                                    <NotificationContent message={notification.message} progressWidth={progressWidth} />
+                                    <NotificationContent type={notification.type} message={notification.message} progressWidth={progressWidth} />
                                 </Container>
                             </Button>
                         </motion.div>

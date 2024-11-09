@@ -60,7 +60,7 @@ const DetailPopup = ({ onClose, children, title, className, customWidth, icon, n
                             <button
                                 onClick={handleClose}
                                 className="linear w-6 h-6 rounded-full text-base dark:text-white transition duration-200 flex justify-center
-                                place-items-center hover:bg-blue-500 hover:dark:bg-gray-200 hover:text-white hover:dark:text-black"
+                                place-items-center hover:bg-utilsPrimary hover:dark:bg-gray-200 hover:text-white hover:dark:text-black"
                             >
                                 <MdClose className="h-5 w-5" />
                             </button>
@@ -69,7 +69,7 @@ const DetailPopup = ({ onClose, children, title, className, customWidth, icon, n
 
                     <div className={`overflow-y-auto max-h-[calc(100dvh-56px)] min-h-20 rounded-b-sm no-scrollbar
                         ${noPadding ? '' : 'px-2 pb-2'}`}>
-                        <div className={`w-full ${className} rounded-b-sm`}>
+                        <div className={`w-full h-full ${className} rounded-b-sm`}>
                             {children}
                         </div>
                     </div>
