@@ -12,15 +12,15 @@ const NotificationHeader = ({ type, title }: NotificationHeaderProps) => {
 
     return (
         <div className={`flex gap-2 justify-center place-items-center ${textColor}`}>
-            <RenderCase renderIf={type === 'default'}>
+            <RenderCase condition={type === 'default'}>
                 <BiInfoCircle />
             </RenderCase>
 
-            <RenderCase renderIf={type === 'error'}>
+            <RenderCase condition={type === 'error'}>
                 <BiErrorCircle />
             </RenderCase>
 
-            <RenderCase renderIf={type === 'success'}>
+            <RenderCase condition={type === 'success'}>
                 <IoCheckmarkCircle />
             </RenderCase>
 

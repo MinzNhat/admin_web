@@ -15,6 +15,7 @@ declare type BaseInputProps<T extends InputTypes, V extends T extends 'select' ?
     id?: string;
     className?: string;
     inputClassName?: string;
+    containerClassName?: string;
     state?: InputState;
 
     label?: React.ReactNode | string;
@@ -39,7 +40,7 @@ declare type SelectInputProps = BaseInputProps<'select'> & {
 
 declare type SelectButtonProps = Pick<
     SelectInputProps,
-    'className' | 'disabled' | 'state' | 'isClearable' | 'value' | 'setValue' | 'selectedLabel' | 'placeholder' | 'openWrapper'
+    'containerClassName' | 'className' | 'disabled' | 'state' | 'isClearable' | 'value' | 'setValue' | 'selectedLabel' | 'placeholder' | 'openWrapper'
 > & {
     defaultSelectPlaceHolder: string;
     setOpenWrapper: React.Dispatch<React.SetStateAction<boolean>>;

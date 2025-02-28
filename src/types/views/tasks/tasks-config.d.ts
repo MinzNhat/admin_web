@@ -1,10 +1,10 @@
-import { JourneyData, OrderData } from "../orders/orders-config";
+import { OrderData } from "../orders/orders-config";
 
 declare type TaskData = {
     id: string;
     completed: boolean;
     completedAt?: string;
-    journey: JourneyData;
+    journey: string[][];
     order?: OrderData;
     orderId: string;
     staff: StaffInfo;

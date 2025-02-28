@@ -7,11 +7,11 @@ const ThemeSwitcherV2 = ({ checked, handleToggleTheme }: ThemeVersionProps) => {
             className="cursor-pointer text-gray-600"
             onClick={handleToggleTheme}
         >
-            <RenderCase renderIf={checked}>
+            <RenderCase condition={checked}>
                 <RiSunFill className="h-4 w-4 text-gray-600 dark:text-white" />
             </RenderCase>
 
-            <RenderCase renderIf={!checked}>
+            <RenderCase condition={!checked}>
                 <RiMoonFill className="h-4 w-4 text-gray-600 dark:text-white" />
             </RenderCase>
         </div>

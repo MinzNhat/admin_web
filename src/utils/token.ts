@@ -1,9 +1,9 @@
 export const setTokenInCookie = (token: string) => {
-    document.cookie = `sid=${token}; path=/; secure; samesite=strict; max-age=${60 * 60 * 24 * 7}`;
+    document.cookie = `tdt=${token}; path=/; secure; samesite=strict; max-age=${60 * 60 * 24 * 7}`;
 };
 
 export const getTokenFromCookie = (): string | null => {
-    const name = 'sid=';
+    const name = 'tdt=';
     const decodedCookie = decodeURIComponent(document.cookie);
     const cookieArray = decodedCookie.split(';');
     for (let i = 0; i < cookieArray.length; i++) {
@@ -16,5 +16,5 @@ export const getTokenFromCookie = (): string | null => {
 };
 
 export const removeTokenFromCookie = () => {
-    document.cookie = `sid=; path=/; max-age=0; secure; samesite=strict`;
+    document.cookie = `tdt=; path=/; max-age=0; secure; samesite=strict`;
 };

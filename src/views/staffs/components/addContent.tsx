@@ -14,7 +14,6 @@ import { StaffOperation } from "@/services/main";
 import CustomInputField from "@/components/input";
 import { IoReloadOutline } from "react-icons/io5";
 import { getTokenFromCookie } from "@/utils/token";
-import { useScreenView } from "@/hooks/ScreenViewProvider";
 import { CreateStaffDto, StaffRole } from "@/services/interface";
 import { useSubmitNotification } from "@/hooks/SubmitNotificationProvider";
 import { useDefaultNotification } from "@/hooks/DefaultNotificationProvider";
@@ -41,7 +40,6 @@ type Props = {
 }
 
 const AddContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData }: Props) => {
-    const { isXL } = useScreenView();
     const intl = useTranslations("AddStaff");
     const intl2 = useTranslations("StaffInfo");
     const staffOperation = new StaffOperation();
@@ -66,8 +64,8 @@ const AddContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData }: Pr
         { id: "email", type: "text", important: true },
         { id: "phoneNumber", type: "text", important: true },
         { id: "cccd", type: "number", important: true },
-        { id: "birthDate", type: "date", dropdownPosition: !isXL ? "right" : "top", important: true },
-        { id: "roles", type: "select", options: roleOptions, isClearable: false, select_type: "multi", important: true, dropdownPosition: !isXL ? "left" : "top" },
+        { id: "birthDate", type: "date", dropdownPosition: "bottom", important: true },
+        { id: "roles", type: "select", options: roleOptions, isClearable: false, select_type: "multi", important: true, dropdownPosition: "bottom" },
         { id: "province", type: "text" },
         { id: "district", type: "text" },
         { id: "town", type: "text" },
@@ -181,16 +179,16 @@ const AddContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData }: Pr
     };
 
     return (
-        <RenderCase renderIf={openAdd}>
+        <RenderCase condition={openAdd}>
             <DetailPopup
-                customWidth="w-fit"
+                customWidth="w-full md:w-fit"
                 title={intl("Title")}
                 onClose={() => setOpenAdd(false)}
                 icon={<FaUserCircle className="w-full h-full" />}
                 noPadding
             >
                 <div className="relative">
-                    <div className="flex flex-col gap-2 px-2 pb-1 xl:grid grid-cols-2">
+                    <div className="flex flex-col gap-2 px-2 pb-1 md:grid grid-cols-2 md:w-[700px]">
                         {addFields.map(({ id, type, version, isClearable, options, select_type, state, important, dropdownPosition }: AddFields) => (
                             <CustomInputField
                                 id={id}
@@ -204,7 +202,8 @@ const AddContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData }: Pr
                                 select_type={select_type}
                                 isClearable={isClearable}
                                 dropdownPosition={dropdownPosition}
-                                inputClassName="bg-lightContainer dark:!bg-darkContainerPrimary border border-gray-200 dark:border-white/10 max-w-96"
+                                className="w-full"
+                                inputClassName="bg-lightContainer dark:!bg-darkContainerPrimary border border-gray-200 dark:border-white/10"
                                 label={
                                     <div className='flex gap-1 place-items-center relative mb-2'>
                                         {intl2(id)} {important && <div className="text-red-500">*</div>}

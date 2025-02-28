@@ -14,7 +14,7 @@ const TableSwitcher = <T extends TableData>({
     const VersionComponent = TABLE_SWITCHER_VERSIONS[(version ?? '1') as TableVersion];
 
     return (
-        <RenderCase renderIf={!!VersionComponent}>
+        <RenderCase condition={!!VersionComponent}>
             <VersionComponent {...(props as unknown as TableProps<TableData>)} />
         </RenderCase>
     );

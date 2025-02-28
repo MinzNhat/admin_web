@@ -69,25 +69,21 @@ const CheckTableV1 = <T extends TableData>(props: TableProps<T>) => {
         }
     };
 
-    const toggleRowSelection = useCallback(
-        (row: T, e: React.MouseEvent<HTMLInputElement>) => {
-            e.stopPropagation();
-            const isSelected = isRowSelected(row);
-            let newSelectedRows;
+    const toggleRowSelection = (row: T, e: React.ChangeEvent<HTMLInputElement>) => {
+        e.stopPropagation();
+        const isSelected = isRowSelected(row);
+        let newSelectedRows;
 
-            if (selectType === 'multi') {
-                newSelectedRows = isSelected
-                    ? selectedRows.filter(selectedRow => selectedRow[primaryKey] !== row[primaryKey])
-                    : [...selectedRows, row];
-            } else {
-                newSelectedRows = isSelected ? [] : [row];
-            }
+        if (selectType === 'multi') {
+            newSelectedRows = isSelected
+                ? selectedRows.filter(selectedRow => selectedRow[primaryKey] !== row[primaryKey])
+                : [...selectedRows, row];
+        } else {
+            newSelectedRows = isSelected ? [] : [row];
+        }
 
-            setSelectedRows(newSelectedRows);
-        },
-        [isRowSelected, selectedRows, primaryKey, selectType, setSelectedRows]
-    );
-
+        setSelectedRows(newSelectedRows);
+    };
 
     const handleFetchPageData = useCallback(
         () => fetchPageData(currentPage, currentSize),
@@ -164,23 +160,23 @@ const CheckTableV1 = <T extends TableData>(props: TableProps<T>) => {
             </div>
 
             <div className="h-full w-full flex justify-between place-items-center gap-3 relative overflow-y-auto flex-col">
-                <RenderCase renderIf={!page || page.length === 0}>
+                <RenderCase condition={!page || page.length === 0}>
                     <div className="w-full h-full px-4 flex justify-center place-items-center">
-                        <RenderCase renderIf={tableData === undefined}>
+                        <RenderCase condition={tableData === undefined}>
                             <LoadingUI />
                         </RenderCase>
 
-                        <RenderCase renderIf={tableData?.length === 0 && currentPage !== 0}>
+                        <RenderCase condition={tableData?.length === 0 && currentPage !== 0}>
                             {customNoData || TableMessage('DefaultNoDataMessage')}
                         </RenderCase>
 
-                        <RenderCase renderIf={tableData?.length === 0 && currentPage === 0}>
+                        <RenderCase condition={tableData?.length === 0 && currentPage === 0}>
                             {TableMessage('DefaultPageMessage')}
                         </RenderCase>
                     </div>
                 </RenderCase>
 
-                <RenderCase renderIf={page && page.length > 0}>
+                <RenderCase condition={page && page.length > 0}>
                     <div className="max-h-full max-w-full overflow-scroll no-scrollbar w-full">
                         <table {...getTableProps()} className="max-h-full h-full overflow-y-scroll no-scrollbar w-full">
                             <thead className="sticky top-0 z-10 w-full bg-lightContainer dark:bg-darkContainer">
@@ -190,12 +186,11 @@ const CheckTableV1 = <T extends TableData>(props: TableProps<T>) => {
                                     return (
                                         <React.Fragment key={`header-group-${key}`}>
                                             <tr {...headerProps} key={`header-row-${headerGroupIndex}`} className="w-full">
-                                                <RenderCase renderIf={selectType !== 'none'}>
+                                                <RenderCase condition={selectType !== 'none'}>
                                                     <th className="px-4 flex">
-                                                        <RenderCase renderIf={selectType === 'multi'}>
+                                                        <RenderCase condition={selectType === 'multi'}>
                                                             <Checkbox
-                                                                isSelected={page.every(row => selectedRows.some(selectedRow => selectedRow[primaryKey] === row.original[primaryKey]))}
-                                                                onChange={toggleSelectAll}
+                                                                isSelected={page.every(row => selectedRows.some(selectedRow => selectedRow[primaryKey] === row.original[primaryKey]))} onChange={toggleSelectAll}
                                                             />
                                                         </RenderCase>
                                                     </th>
@@ -233,9 +228,9 @@ const CheckTableV1 = <T extends TableData>(props: TableProps<T>) => {
                                                 ${isSelected ? "bg-gray-200 dark:bg-darkContainerPrimary" : ""}
                                             `}
                                         >
-                                            <RenderCase renderIf={selectType !== 'none'}>
-                                                <td className="pt-[14px] pb-[16px] sm:text-[14px] px-4">
-                                                    <Checkbox className="z-0" isSelected={isSelected} onClick={(e) => toggleRowSelection(row.original, e)} />
+                                            <RenderCase condition={selectType !== 'none'}>
+                                                <td className="pt-[14px] pb-[16px] sm:text-[14px] px-4 !z-50">
+                                                    <Checkbox className="z-0" isSelected={isSelected} onChange={(e) => toggleRowSelection(row.original, e)} />
                                                 </td>
                                             </RenderCase>
 
@@ -289,12 +284,13 @@ const CheckTableV1 = <T extends TableData>(props: TableProps<T>) => {
                         </button>
                     </div>
 
-                    <RenderCase renderIf={!!setPageSize}>
+                    <RenderCase condition={!!setPageSize}>
                         <Dropdown
                             animation="transition-all duration-300 ease-in-out"
                             dropdownPosition="top"
                             button={
-                                <button className={`col-span-1 w-full lg:w-fit flex items-center text-md hover:cursor-pointer bg-lightPrimary p-2 hover:bg-gray-100 dark:bg-[#3A3B3C] dark:hover:bg-white/20 dark:active:bg-white/10
+                                <button className={`col-span-1 whitespace-nowrap w-fit flex items-center text-md hover:cursor-pointer
+                                    bg-lightPrimary p-2 hover:bg-gray-100 dark:bg-[#3A3B3C] dark:hover:bg-white/20 dark:active:bg-white/10
                                     linear justify-center rounded-lg font-medium dark:font-base transition duration-200`}>
                                     {TableMessage('DefaultSizePerPage')} {currentSize}
                                 </button>
@@ -312,11 +308,11 @@ const CheckTableV1 = <T extends TableData>(props: TableProps<T>) => {
                                         >
                                             {option}
 
-                                            <RenderCase renderIf={option === currentSize}>
+                                            <RenderCase condition={option === currentSize}>
                                                 <MdRadioButtonChecked />
                                             </RenderCase>
 
-                                            <RenderCase renderIf={option !== currentSize}>
+                                            <RenderCase condition={option !== currentSize}>
                                                 <MdRadioButtonUnchecked />
                                             </RenderCase>
                                         </button>

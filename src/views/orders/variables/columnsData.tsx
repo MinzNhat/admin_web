@@ -7,8 +7,12 @@ export const columnsData = (): Column<OrderData>[] => {
 
     return [
         {
-            Header: intl("id"),
-            accessor: "id",
+            Header: intl("trackingNumber"),
+            accessor: "trackingNumber",
+        },
+        {
+            Header: intl("serviceType"),
+            accessor: "serviceType",
         },
         {
             Header: intl("detailSource"),

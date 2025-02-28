@@ -108,6 +108,10 @@
         "LEAVE AGENCY": "Left agency",
         "THIRD PARTY DELIVERY": "Third-party delivery",
         "RECEIVED": "Received",
+        "FOOD": "Food",
+        "FRAGILE": "Fragile",
+        "CLOTHES": "Clothes",
+        "OTHER": "Other",
         "agencyId": "Agency ID",
         "cod": "COD",
         "createdAt": "Creation date",
@@ -155,7 +159,10 @@
         "updatedAt": "Update date",
         "wardDest": "Delivery ward/commune",
         "wardSource": "Pickup ward/commune",
-        "width": "Width"
+        "width": "Width",
+        "Title": "Order Information",
+        "yes": "Yes",
+        "no": "No"
     },
     "AddStaff": {
         "Title": "Add Staff",
@@ -238,7 +245,7 @@
         "id": "Task ID",
         "completed": "Completed",
         "completedAt": "Completion Time",
-        "journey": "Task History",
+        "journey": "Task Journey",
         "order": "Order",
         "orderId": "Order ID",
         "staff": "Staff",

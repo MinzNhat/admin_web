@@ -7,20 +7,24 @@ export const columnsData = (): Column<TaskData>[] => {
 
     return [
         {
-            Header: intl("id"),
-            accessor: "id",
+            Header: intl("order"),
+            accessor: "order",
         },
         {
-            Header: intl("orderId"),
-            accessor: "orderId",
-        },
-        {
-            Header: intl("staffId"),
-            accessor: "staffId",
+            Header: intl("staff"),
+            accessor: "staff",
         },
         {
             Header: intl("completed"),
             accessor: "completed",
+        },
+        {
+            Header: intl("completedAt"),
+            accessor: "completedAt",
+        },
+        {
+            Header: intl("journey"),
+            accessor: "journey",
         },
     ];
 };

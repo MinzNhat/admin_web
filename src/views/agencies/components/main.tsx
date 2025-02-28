@@ -20,7 +20,7 @@ const AgenciesMain = () => {
     const [currentSize, setCurrentSize] = useState<number>(10);
     const [selectedRows, setSelectedRows] = useState<AgencyInfo[]>([]);
     const [addInfo, setAddInfo] = useState<CreateAgencyManager>({
-        fullname: "", cccd: "", phoneNumber: "", email: "", province: "", district: "", town: "", detailAddress: "", birthDate: "", bin: "", bank: "", salary: 0, position: ""
+        fullname: "", cccd: "", phoneNumber: "", email: "", province: "", district: "", town: "", detailAddress: "", birthDate: "", bin: "", bank: "", salary: 0,
     });
     const [addInfo3, setAddInfo3] = useState<CreateCompanyDto>({ taxCode: "", name: "" });
     const [addInfo2, setAddInfo2] = useState<CreateAgencyDto>({
@@ -58,7 +58,6 @@ const AgenciesMain = () => {
                 },
                 criteria: []
             }, token)
-            console.log(response)
             if (response.success) {
                 setAgencies(response.data as AgencyInfo[])
             }

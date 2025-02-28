@@ -21,7 +21,7 @@ const CustomButton = ({ fetchData, selectedRows, openAdd, handleDelete }: Custom
                 onClick={fetchData}>
                 <MdRestartAlt />{intl("Reload")}
             </Button>
-            <RenderCase renderIf={!!openAdd}>
+            <RenderCase condition={!!openAdd}>
                 <Button className={`col-span-1 w-full lg:w-fit flex items-center text-md hover:cursor-pointer bg-lightPrimary p-2 hover:bg-gray-100 dark:bg-darkContainerPrimary dark:hover:bg-white/20 dark:active:bg-white/10
                 linear justify-center rounded-lg font-medium dark:font-base transition duration-200`}
                     onClick={openAdd}
@@ -29,7 +29,7 @@ const CustomButton = ({ fetchData, selectedRows, openAdd, handleDelete }: Custom
                     <MdOutlineAddCircleOutline /><p className="flex gap-1">{intl("Add")}</p>
                 </Button>
             </RenderCase>
-            <RenderCase renderIf={!!selectedRows && !!handleDelete}>
+            <RenderCase condition={!!selectedRows && !!handleDelete}>
                 <Button className={`${openAdd && selectedRows && handleDelete ? "col-span-2" : " col-span-1"} w-full lg:w-fit flex items-center text-md hover:cursor-pointer bg-lightPrimary p-2 text-red-500 hover:bg-gray-100 dark:bg-darkContainerPrimary dark:hover:bg-white/20 dark:active:bg-white/10
           linear justify-center rounded-lg font-medium dark:font-base transition duration-200`}
                     onClick={handleDelete}>

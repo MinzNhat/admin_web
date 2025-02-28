@@ -34,17 +34,16 @@ const DetailPopup = ({ onClose, children, title, className, customWidth, icon, n
         >
             <motion.div
                 ref={notificationRef}
-                className={`relative w-full max-h-full flex flex-col justify-center items-center overflow-auto
-                ${customWidth ? customWidth : "sm:w-9/12"}`}
+                className="relative w-full max-h-full flex flex-col justify-center items-center overflow-auto"
                 initial={{ scale: 0 }}
                 animate={{ scale: isVisible ? 1 : 0 }}
                 exit={{ scale: 0 }}
                 transition={{ duration: 0.5 }}
             >
-                <Container className="!rounded-lg overflow-clip flex-grow">
+                <Container className={`!rounded-lg overflow-clip ${customWidth ? customWidth : "sm:w-9/12"}`}>
                     <div className="max-h-10 bg-white dark:bg-[#242526] h-10 grid grid-cols-2 md:grid-cols-3 place-items-center px-2 rounded-t-md">
                         <div className="text-[#000000] dark:text-white flex justify-start gap-2 w-full">
-                            <RenderCase renderIf={!!icon}>
+                            <RenderCase condition={!!icon}>
                                 <div className="min-h-5 min-w-5 flex justify-center place-items-center">{icon}</div>
                             </RenderCase>
                             <div className="md:hidden text-md font-semibold text-black dark:text-white whitespace-nowrap truncate">

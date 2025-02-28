@@ -39,7 +39,7 @@ const Avatar = () => {
 
     return (
         <>
-            <RenderCase renderIf={openInfo}>
+            <RenderCase condition={openInfo}>
                 <DetailPopup onClose={handleCloseInfo} title={intl("InfoTitle")}
                     customWidth="w-fit"
                     icon={<FaUserCircle className="w-full h-full" />}>

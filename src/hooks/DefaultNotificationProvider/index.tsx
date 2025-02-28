@@ -42,7 +42,7 @@ export const DefaultNotificationProvider = ({ children }: { children: ReactNode 
 
     return (
         <DefaultNotificationContext.Provider value={{ state, addDefaultNotification, removeDefaultNotification }}>
-            <RenderCase renderIf={state.openDefaultNotification}>
+            <RenderCase condition={state.openDefaultNotification}>
                 <DefaultNotification />
             </RenderCase>
             {children}

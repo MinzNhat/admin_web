@@ -2,21 +2,14 @@
 
 import Link from "next/link";
 import useRoutes from "../variable/route";
-import { usePathname } from 'next/navigation';
-import { motion, Variants } from "framer-motion";
+import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
 import DashIcon from "@/components/icons/DashIcon";
 import React, { MouseEvent, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { createPortal } from "react-dom";
-import { debounce } from "@/utils/debounce";
 
 type Props = {
   onClickRoute?: (e: MouseEvent<HTMLElement>) => void;
-};
-
-const linkVariants: Variants = {
-  initial: { opacity: 0, y: -10 },
-  animate: { opacity: 1, y: 0 },
 };
 
 const SidebarLinks = ({ onClickRoute }: Props) => {
@@ -24,8 +17,9 @@ const SidebarLinks = ({ onClickRoute }: Props) => {
   const pathname = usePathname();
   const intl = useTranslations("Routes");
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const [indicatorPosition, setIndicatorPosition] = useState<{ top: number; right: number } | null>(null);
+  const [indicatorStyle, setIndicatorStyle] = useState<{ top: number; height: number } | null>(null);
   const routeRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const sidebarRef = useRef<HTMLUListElement | null>(null); // Ref cho container của sidebar
 
   useEffect(() => {
     const findActiveRouteIndex = () => {
@@ -34,20 +28,18 @@ const SidebarLinks = ({ onClickRoute }: Props) => {
     setActiveIndex(findActiveRouteIndex());
   }, [pathname, routes]);
 
-  const handleSetIndicatorPosition = () => {
-    if (activeIndex !== null && routeRefs.current[activeIndex]) {
-      const activeRoute = routeRefs.current[activeIndex]?.getBoundingClientRect();
+  useEffect(() => {
+    if (activeIndex !== null && routeRefs.current[activeIndex] && sidebarRef.current) {
+      const activeRoute = routeRefs.current[activeIndex];
       if (activeRoute) {
-        setIndicatorPosition({ top: activeRoute.top, right: activeRoute.right });
+        const parentTop = sidebarRef.current.offsetTop;
+        setIndicatorStyle({
+          top: activeRoute.offsetTop - parentTop + 12,
+          height: activeRoute.offsetHeight,
+        });
       }
     }
-  };
-
-  const debouncedSetDropdownPosition = debounce(handleSetIndicatorPosition, 20);
-
-  useEffect(() => {
-    debouncedSetDropdownPosition();
-  }, [routeRefs.current[activeIndex ?? 0], debouncedSetDropdownPosition]);
+  }, [activeIndex]);
 
   const handleRouteClick = (index: number, e: React.MouseEvent<HTMLElement>) => {
     setActiveIndex(index);
@@ -65,14 +57,10 @@ const SidebarLinks = ({ onClickRoute }: Props) => {
           const routeIndex = index + startIndex;
           return (
             <Link key={`route-${routeIndex}`} href={route.path} onClick={(e) => handleRouteClick(routeIndex, e)}>
-              <motion.div
+              <div
                 ref={(el) => {
                   routeRefs.current[routeIndex] = el;
                 }}
-                variants={linkVariants}
-                initial="initial"
-                animate="animate"
-                transition={{ duration: 0.3, delay: 0.1 * routeIndex }}
                 className="relative mb-3 flex hover:cursor-pointer"
               >
                 <li className="my-[3px] flex cursor-pointer items-center px-8">
@@ -83,7 +71,7 @@ const SidebarLinks = ({ onClickRoute }: Props) => {
                     {route.name}
                   </p>
                 </li>
-              </motion.div>
+              </div>
             </Link>
           );
         })}
@@ -91,20 +79,17 @@ const SidebarLinks = ({ onClickRoute }: Props) => {
     );
 
     return (
-      <>
+      <ul ref={sidebarRef} className="relative">
         {renderLinks(managementRoutes, 0, intl("management"))}
         {renderLinks(interiorRoutes, managementRoutes.length, intl("interior"))}
-        {indicatorPosition &&
-          <div
-            className="h-8 w-1 rounded-lg bg-red-500 dark:bg-red-500 transition-all duration-500 ease-in-out"
-            style={{
-              top: indicatorPosition.top,
-              left: indicatorPosition.right - 4,
-              position: "fixed",
-            }}
+        {indicatorStyle && (
+          <motion.div
+            className="absolute right-0 w-1 rounded-lg bg-red-500 dark:bg-red-500"
+            animate={{ top: indicatorStyle.top, height: indicatorStyle.height }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
           />
-        }
-      </>
+        )}
+      </ul>
     );
   };
 

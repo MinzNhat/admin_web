@@ -11,16 +11,16 @@ const TEXT_INPUT_SWITCHER_VERSIONS: Record<TextInputVersion, FC<TextInputProps>>
     '1': TextInputV1,
 };
 
-const CustomInputField = ({ version = '1', label, type, ...props }: InputFieldProps) => {
+const CustomInputField = ({ version = '1', label, type, containerClassName, ...props }: InputFieldProps) => {
     const SelectInputComponent = SELECT_INPUT_SWITCHER_VERSIONS[(version ?? '1') as SelectInputVersion] || null;
     const TextInputComponent = TEXT_INPUT_SWITCHER_VERSIONS[(version ?? '1') as TextInputVersion] || null;
     return (
-        <div>
+        <div className={containerClassName}>
             {label}
-            <RenderCase renderIf={type === 'select'}>
+            <RenderCase condition={type === 'select'}>
                 <SelectInputComponent {...(props as SelectInputProps)} />
             </RenderCase>
-            <RenderCase renderIf={type !== 'select'}>
+            <RenderCase condition={type !== 'select'}>
                 <TextInputComponent type={type} {...(props as TextInputProps)} />
             </RenderCase>
         </div>

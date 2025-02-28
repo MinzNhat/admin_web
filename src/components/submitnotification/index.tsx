@@ -91,11 +91,11 @@ const SubmitNotification = () => {
                         text-white hover:cursor-pointer flex bg-utilsPrimary"
                         onClick={handleSubmitClick}
                     >
-                        <RenderCase renderIf={!loading}>
+                        <RenderCase condition={!loading}>
                             {NotificationIntl('DefaultSubmitButton')}
                         </RenderCase>
 
-                        <RenderCase renderIf={loading}>
+                        <RenderCase condition={loading}>
                             <LoadingUI />
                         </RenderCase>
                     </motion.button>

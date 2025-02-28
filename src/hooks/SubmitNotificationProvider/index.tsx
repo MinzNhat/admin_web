@@ -42,7 +42,7 @@ export const SubmitNotificationProvider = ({ children }: { children: ReactNode }
 
     return (
         <SubmitNotificationContext.Provider value={{ state, addSubmitNotification, removeSubmitNotification }}>
-            <RenderCase renderIf={state.openNotification}>
+            <RenderCase condition={state.openNotification}>
                 <SubmitNotification />
             </RenderCase>
             {children}

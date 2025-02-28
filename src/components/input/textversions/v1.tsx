@@ -62,7 +62,7 @@ const TextInputV1 = ({
     const triggerButton = () => {
         return (
             <>
-                <RenderCase renderIf={type !== 'text-area'}>
+                <RenderCase condition={type !== 'text-area'}>
                     <input
                         id={id}
                         disabled={disabled}
@@ -72,7 +72,7 @@ const TextInputV1 = ({
                         value={type === "date" ? value.split('/').reverse().join('-') : value}
                         placeholder={type === "date" ? "" : (placeholder ? placeholder : disabled ? "" : InputFieldMessage('DefaultTextPlaceHolder'))}
                         className={`p-2 px-3 text-left border rounded-md w-full dark:bg-darkContainerPrimary
-                        focus:outline-none flex justify-between place-items-center hide-calendar-icon no-spin-button
+                        focus:outline-none flex hide-calendar-icon no-spin-button
                         ${inputClassName}
                         ${disabled
                                 ? "!border-none !bg-gray-100 dark:!bg-white/5 dark:placeholder:!text-[rgba(255,255,255,0.15)]"
@@ -85,7 +85,7 @@ const TextInputV1 = ({
                     />
                 </RenderCase>
 
-                <RenderCase renderIf={type === 'text-area'}>
+                <RenderCase condition={type === 'text-area'}>
                     <textarea
                         id={id}
                         rows={6}
@@ -107,24 +107,24 @@ const TextInputV1 = ({
                     />
                 </RenderCase>
 
-                <RenderCase renderIf={type === "password"}>
+                <RenderCase condition={type === "password"}>
                     <button
                         onClick={togglePasswordVisibility}
                         className={`absolute top-1/2 right-2.5 transform -translate-y-1/2 focus:outline-none
                             ${state === "error" ? "text-red-500 dark:!text-red-400"
                                 : state === "success" ? "text-green-500 dark:!text-green-400" : ""}`}
                     >
-                        <RenderCase renderIf={showPassword}>
+                        <RenderCase condition={showPassword}>
                             <FiEyeOff />
                         </RenderCase>
 
-                        <RenderCase renderIf={!showPassword}>
+                        <RenderCase condition={!showPassword}>
                             <FiEye />
                         </RenderCase>
                     </button>
                 </RenderCase>
 
-                <RenderCase renderIf={isClearable && !!value && isClient && type !== 'date' && type !== 'password' && type !== 'text-area'}>
+                <RenderCase condition={isClearable && !!value && isClient && type !== 'date' && type !== 'password' && type !== 'text-area'}>
                     <button
                         type="button"
                         className="absolute right-4 top-1/2 transform -translate-y-1/2"
@@ -134,7 +134,7 @@ const TextInputV1 = ({
                     </button>
                 </RenderCase>
 
-                <RenderCase renderIf={type === "date"}>
+                <RenderCase condition={type === "date"}>
                     <FiCalendar className="absolute top-1/2 right-2.5 transform -translate-y-1/2 focus:outline-none text-black dark:text-white" />
                 </RenderCase>
             </>
@@ -147,11 +147,11 @@ const TextInputV1 = ({
 
     return (
         <div className={`relative ${className}`}>
-            <RenderCase renderIf={type !== "date"}>
+            <RenderCase condition={type !== "date"}>
                 {triggerButton()}
             </RenderCase>
 
-            <RenderCase renderIf={type === "date"}>
+            <RenderCase condition={type === "date"}>
                 <Dropdown
                     dropdownPosition={dropdownPosition}
                     maxWidth={true}
@@ -161,7 +161,7 @@ const TextInputV1 = ({
                     setOpenWrapper={setShowCalendar}
                     disabled={disabled || type !== "date"}
                 >
-                    <RenderCase renderIf={type === "date"}>
+                    <RenderCase condition={type === "date"}>
                         <Calendar
                             showMonthAndYearPickers
                             onChange={handleDateChange}

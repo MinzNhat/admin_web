@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 
-import { AddJourneyNodeDto, CalculateFeePayload, CreateAgencyDto, CreateFavoriteOrderLocationDto, CreateGiftOrderTopicDto, CreateOrderDto, CreateStaffDto, CustomerLoginDto, FileID, MultiFileUpload, OrderImageType, OrderStatus, SearchPayload, StaffLoginDto, VerifyOtpDto } from "./interface";
+import { AddJourneyNodeDto, CalculateFeePayload, CreateAgencyDto, CreateFavoriteOrderLocationDto, CreateGiftOrderTopicDto, CreateOrderDto, CreateStaffDto, CustomerLoginDto, FileID, MultiFileUpload, OrderImageType, OrderStatus, SearchPayload, StaffLoginDto, UpdateCargoInsuranceDto, UpdateCustomerDto, UpdateFavoriteOrderLocationDto, UpdateOrderLocationDto, VerifyOtpDto } from "./interface";
 import { UUID } from "crypto";
 
 export class AgencyOperation {
@@ -61,6 +61,72 @@ export class AgencyOperation {
     }
 }
 
+export class CargoInsuranceOperation {
+    private baseUrl: string;
+
+    constructor() {
+        this.baseUrl = 'https://api.tdlogistics.net.vn/v3/cargo_insurance';
+    }
+
+    async getByCustomerId(customerId: UUID, token: string) {
+        try {
+            const response: AxiosResponse = await axios.get(`${this.baseUrl}/order/get/${customerId}`, {
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            });
+
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        }
+        catch (error: any) {
+            console.log("Error searching cargo insurance: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+        }
+    }
+
+    async update(updateDto: UpdateCargoInsuranceDto, id: UUID, token: string, files?: File[]) {
+        try {
+            const formData = new FormData();
+
+            Object.keys(updateDto).forEach((key) => {
+                formData.append(key, (updateDto as any)[key]);
+            });
+
+            if (files && files.length > 0) {
+                files.forEach((file) => formData.append("file", file));
+            }
+
+            const response: AxiosResponse = await axios.put(`${this.baseUrl}/update/${id}`, updateDto, {
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${token}`
+                },
+            });
+
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        }
+        catch (error: any) {
+            console.log("Error updating cargo insurance: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+        }
+    }
+}
 
 export class OrdersOperation {
     private baseUrl: string;
@@ -88,7 +154,7 @@ export class OrdersOperation {
             };
         }
         catch (error: any) {
-            console.log("Error searching accounts: ", error?.response?.data);
+            console.log("Error creating order: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
             return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
         }
@@ -112,9 +178,36 @@ export class OrdersOperation {
             };
         }
         catch (error: any) {
-            console.log("Error searching accounts: ", error?.response?.data);
+            console.log("Error searching orders: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
             return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+        }
+    }
+
+    async getById(id: string, token: string) {
+        try {
+            const response: AxiosResponse = await axios.get(`${this.baseUrl}/${id}`, {
+                withCredentials: true,
+                validateStatus: (status) => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status,
+            };
+        } catch (error: any) {
+            console.log("Error getting order by id: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null,
+            };
         }
     }
 
@@ -136,25 +229,24 @@ export class OrdersOperation {
             };
         }
         catch (error: any) {
-            console.log("Error searching accounts: ", error?.response?.data);
+            console.log("Error calculating fee: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
             return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
         }
     }
 
-    async uploadImage(payload: MultiFileUpload, orderId: UUID, type: OrderImageType, token: string) {
+    async uploadImage(orderId: string, type: OrderImageType, files: File[], token: string) {
         try {
-
             const formData = new FormData();
-            for (let i = 0; i < payload.files.length; i++) {
-                formData.append('file', payload.files[i]);
-            }
+            files.forEach((file) => formData.append("file", file));
 
-            const response: AxiosResponse = await axios.post(`${this.baseUrl}/image/upload?orderId=${orderId}&type=${type}`, formData, {
+            const response: AxiosResponse = await axios.put(`${this.baseUrl}/image/upload`, formData, {
+                params: { orderId, type },
                 withCredentials: true,
-                validateStatus: status => status >= 200 && status <= 500,
+                validateStatus: (status) => status >= 200 && status <= 500,
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data",
                 },
             });
 
@@ -162,12 +254,16 @@ export class OrdersOperation {
                 success: response.data.success,
                 message: response.data.message,
                 data: response.data.data,
-                status: response.status
+                status: response.status,
             };
-
         } catch (error: any) {
+            console.error("Error updating image: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
-            return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null,
+            };
         }
     }
 
@@ -193,9 +289,36 @@ export class OrdersOperation {
             };
         }
         catch (error: any) {
-            console.log("Error searching accounts: ", error?.response?.data);
+            console.log("Error downloading image: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
             return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+        }
+    }
+
+    async deleteImage(id: string, token: string) {
+        try {
+            const response: AxiosResponse = await axios.delete(`${this.baseUrl}/image/delete/${id}`, {
+                withCredentials: true,
+                validateStatus: (status) => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status,
+            };
+        } catch (error: any) {
+            console.error("Error deleting image: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null,
+            };
         }
     }
 
@@ -254,12 +377,65 @@ export class OrdersOperation {
             };
         }
         catch (error: any) {
-            console.log("Error searching accounts: ", error?.response?.data);
+            console.log("Error downloading signature: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
             return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
         }
     }
 
+    async getCurrentShipperJourney(id: string, token: string) {
+        try {
+            const response: AxiosResponse = await axios.get(`${this.baseUrl}/shipper/current_journey/${id}`, {
+                withCredentials: true,
+                validateStatus: (status) => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status,
+            };
+        } catch (error: any) {
+            console.log("Error getting current shipper journey: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null,
+            };
+        }
+    }
+
+    async getShipperWhoTakenOrder(id: string, token: string) {
+        try {
+            const response: AxiosResponse = await axios.get(`${this.baseUrl}/shipper/get/${id}`, {
+                withCredentials: true,
+                validateStatus: (status) => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status,
+            };
+        } catch (error: any) {
+            console.log("Error getting shipper who taken order: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null,
+            };
+        }
+    }
 }
 
 export class FavouriteOrderLocationOperation {
@@ -287,7 +463,7 @@ export class FavouriteOrderLocationOperation {
             };
         }
         catch (error: any) {
-            console.log("Error searching accounts: ", error?.response?.data);
+            console.log("Error creating favorite location: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
             return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
         }
@@ -312,7 +488,57 @@ export class FavouriteOrderLocationOperation {
             };
         }
         catch (error: any) {
-            console.log("Error searching accounts: ", error?.response?.data);
+            console.log("Error searching favorite location: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+        }
+    }
+
+    // CUSTOMER
+    async update(id: UUID, dto: UpdateFavoriteOrderLocationDto, token: string) {
+        try {
+            const response: AxiosResponse = await axios.put(`${this.baseUrl}/update/${id}`, dto, {
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            });
+
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        }
+        catch (error: any) {
+            console.log("Error updating favourite order location: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+        }
+    }
+
+    // CUSTOMER
+    async delete(id: UUID, token: string) {
+        try {
+            const response: AxiosResponse = await axios.delete(`${this.baseUrl}/delete/${id}`, {
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            });
+
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        }
+        catch (error: any) {
+            console.log("Error deleting favourite order location: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
             return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
         }
@@ -378,7 +604,6 @@ export class GiftOrderTopicOperation {
 
 }
 
-
 export class OrderLocationOperation {
     private baseUrl: string;
     constructor() {
@@ -404,7 +629,7 @@ export class OrderLocationOperation {
             };
         }
         catch (error: any) {
-            console.log("Error searching accounts: ", error?.response?.data);
+            console.log("Error creating order location: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
             return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
         }
@@ -429,24 +654,15 @@ export class OrderLocationOperation {
             };
         }
         catch (error: any) {
-            console.log("Error searching accounts: ", error?.response?.data);
+            console.log("Error fetching order locations: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
             return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
         }
     }
 
-}
-
-export class SendingOrderRequestOperation {
-    private baseUrl: string;
-    constructor() {
-        this.baseUrl = 'https://api.tdlogistics.net.vn/v3/sending_order_request';
-    }
-
-    // SHIPPER
-    async cancel(orderId: UUID, reason: OrderStatus.TAKEN_FAIL_DUE_TO_SHIPPER | OrderStatus.TAKEN_FAIL_DUE_TO_CUSTOMER_CANCELLING, token: string) {
+    async update(id: string, payload: UpdateOrderLocationDto, token: string) {
         try {
-            const response: AxiosResponse = await axios.get(`${this.baseUrl}/cancel?orderId=${orderId}&reason=${reason}`, {
+            const response: AxiosResponse = await axios.put(`${this.baseUrl}/update/${id}`, payload, {
                 withCredentials: true,
                 validateStatus: status => status >= 200 && status <= 500,
                 headers: {
@@ -462,13 +678,86 @@ export class SendingOrderRequestOperation {
             };
         }
         catch (error: any) {
-            console.log("Error searching accounts: ", error?.response?.data);
+            console.log("Error updating order location: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
-            return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null
+            };
         }
     }
 
-    // SHIPPER, ADMIN, AGENCY
+    // CUSTOMER
+    async destroy(id: string, token: string) {
+        try {
+            const response: AxiosResponse = await axios.delete(`${this.baseUrl}/delete/${id}`, {
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            });
+
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        }
+        catch (error: any) {
+            console.log("Error deleting order location: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null
+            };
+        }
+    }
+}
+
+export class SendingOrderRequestOperation {
+    private baseUrl: string;
+    constructor() {
+        this.baseUrl = 'https://api.tdlogistics.net.vn/v3/sending_order_request';
+    }
+
+    // SHIPPER: Hủy yêu cầu lấy hàng
+    async cancel(
+        orderId: UUID,
+        reason: OrderStatus.TAKEN_FAIL_DUE_TO_SHIPPER | OrderStatus.TAKEN_FAIL_DUE_TO_CUSTOMER_CANCELLING,
+        token: string
+    ) {
+        try {
+            const response: AxiosResponse = await axios.get(`${this.baseUrl}/cancel`, {
+                params: { orderId, reason },
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            });
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        }
+        catch (error: any) {
+            console.log("Error canceling sending order request: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null
+            };
+        }
+    }
+
+    // SHIPPER, ADMIN, AGENCY: Tra cứu yêu cầu lấy hàng
     async search(payload: SearchPayload, token: string) {
         try {
             const response: AxiosResponse = await axios.post(`${this.baseUrl}/search`, payload, {
@@ -478,7 +767,6 @@ export class SendingOrderRequestOperation {
                     Authorization: `Bearer ${token}`
                 },
             });
-
             return {
                 success: response.data.success,
                 message: response.data.message,
@@ -487,14 +775,44 @@ export class SendingOrderRequestOperation {
             };
         }
         catch (error: any) {
-            console.log("Error searching accounts: ", error?.response?.data);
+            console.log("Error searching sending order requests: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
-            return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null
+            };
         }
     }
 
+    // SHIPPER: Tiếp nhận đơn hàng (accept)
+    async accept(orderId: UUID, token: string) {
+        try {
+            const response: AxiosResponse = await axios.get(`${this.baseUrl}/accept/${orderId}`, {
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            });
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        }
+        catch (error: any) {
+            console.log("Error accepting sending order request: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null
+            };
+        }
+    }
 }
-
 
 export class AuthOperation {
     private baseUrl: string;
@@ -600,6 +918,32 @@ export class CustomerOperation {
             return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
         }
     }
+
+    async update(dto: UpdateCustomerDto, token: string) {
+        try {
+            const response: AxiosResponse = await axios.put(`${this.baseUrl}/update`, dto, {
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            });
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        } catch (error: any) {
+            console.log("Error updating customer: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null
+            };
+        }
+    }
 }
 
 export class StaffOperation {
@@ -688,21 +1032,20 @@ export class StaffOperation {
 export class TaskOperation {
     private baseUrl: string;
 
-
     constructor() {
-        this.baseUrl = 'https://api.tdlogistics.net.vn/v3/task/shipper';
+        this.baseUrl = 'https://api.tdlogistics.net.vn/v3/task';
     }
 
+    // SHIPPER: Tìm kiếm công việc theo payload
     async search(payload: SearchPayload, token: string) {
         try {
-            const response: AxiosResponse = await axios.post(`${this.baseUrl}/search`, payload, {
+            const response: AxiosResponse = await axios.post(`${this.baseUrl}/shipper/search`, payload, {
                 withCredentials: true,
                 validateStatus: status => status >= 200 && status <= 500,
                 headers: {
                     Authorization: `Bearer ${token}`
                 },
             });
-
             return {
                 success: response.data.success,
                 message: response.data.message,
@@ -711,28 +1054,27 @@ export class TaskOperation {
             };
         }
         catch (error: any) {
-            console.log("Error searching accounts: ", error?.response?.data);
+            console.log("Error searching tasks: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
-            return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null
+            };
         }
     }
 
-
-    // SHIPPER
+    // SHIPPER: Xác nhận không tiếp nhận đơn hàng (do TIMEOUT, SHIPPER hoặc CUSTOMER_CANCELLING)
     async confirmTakenFail(id: UUID, dueTo: 'TIMEOUT' | 'SHIPPER' | 'CUSTOMER_CANCELLING', token: string) {
         try {
             const response: AxiosResponse = await axios.get(`${this.baseUrl}/confirm_taken_fail`, {
-                params: {
-                    id,
-                    dueTo
-                },
+                params: { id, dueTo },
                 withCredentials: true,
                 validateStatus: status => status >= 200 && status <= 500,
                 headers: {
                     Authorization: `Bearer ${token}`
                 },
             });
-
             return {
                 success: response.data.success,
                 message: response.data.message,
@@ -741,26 +1083,27 @@ export class TaskOperation {
             };
         }
         catch (error: any) {
-            console.log("Error searching accounts: ", error?.response?.data);
+            console.log("Error confirming taken fail: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
-            return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null
+            };
         }
     }
 
-    // SHIPPER
+    // SHIPPER: Xác nhận đã tiếp nhận đơn hàng thành công
     async confirmTakenSuccess(id: UUID, token: string) {
         try {
             const response: AxiosResponse = await axios.get(`${this.baseUrl}/confirm_taken_success`, {
-                params: {
-                    id
-                },
+                params: { id },
                 withCredentials: true,
                 validateStatus: status => status >= 200 && status <= 500,
                 headers: {
                     Authorization: `Bearer ${token}`
                 },
             });
-
             return {
                 success: response.data.success,
                 message: response.data.message,
@@ -769,26 +1112,27 @@ export class TaskOperation {
             };
         }
         catch (error: any) {
-            console.log("Error searching accounts: ", error?.response?.data);
+            console.log("Error confirming taken success: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
-            return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null
+            };
         }
     }
 
-    // SHIPPER
+    // SHIPPER: Xác nhận đang giao hàng
     async confirmDelivering(id: UUID, token: string) {
         try {
             const response: AxiosResponse = await axios.get(`${this.baseUrl}/confirm_delivering`, {
-                params: {
-                    id
-                },
+                params: { id },
                 withCredentials: true,
                 validateStatus: status => status >= 200 && status <= 500,
                 headers: {
                     Authorization: `Bearer ${token}`
                 },
             });
-
             return {
                 success: response.data.success,
                 message: response.data.message,
@@ -797,26 +1141,27 @@ export class TaskOperation {
             };
         }
         catch (error: any) {
-            console.log("Error searching accounts: ", error?.response?.data);
+            console.log("Error confirming delivering: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
-            return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null
+            };
         }
     }
 
-    // SHIPPER
+    // SHIPPER: Xác nhận đã nhận hàng thành công
     async confirmReceived(id: UUID, token: string) {
         try {
             const response: AxiosResponse = await axios.get(`${this.baseUrl}/confirm_received`, {
-                params: {
-                    id
-                },
+                params: { id },
                 withCredentials: true,
                 validateStatus: status => status >= 200 && status <= 500,
                 headers: {
                     Authorization: `Bearer ${token}`
                 },
             });
-
             return {
                 success: response.data.success,
                 message: response.data.message,
@@ -825,26 +1170,27 @@ export class TaskOperation {
             };
         }
         catch (error: any) {
-            console.log("Error searching accounts: ", error?.response?.data);
+            console.log("Error confirming received: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
-            return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null
+            };
         }
     }
 
-    // SHIPPER
+    // SHIPPER: Thêm node vào hành trình (journey) của đơn hàng
     async addJourneyNode(journeyNodeId: number, payload: AddJourneyNodeDto, token: string) {
         try {
             const response: AxiosResponse = await axios.post(`${this.baseUrl}/journey/add`, payload, {
-                params: {
-                    id: journeyNodeId
-                },
+                params: { id: journeyNodeId },
                 withCredentials: true,
                 validateStatus: status => status >= 200 && status <= 500,
                 headers: {
                     Authorization: `Bearer ${token}`
                 },
             });
-
             return {
                 success: response.data.success,
                 message: response.data.message,
@@ -853,26 +1199,27 @@ export class TaskOperation {
             };
         }
         catch (error: any) {
-            console.log("Error searching accounts: ", error?.response?.data);
+            console.log("Error adding journey node: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
-            return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null
+            };
         }
     }
 
-    // SHIPPER
+    // SHIPPER: Lấy thông tin hành trình của đơn hàng
     async getJourneyNode(journeyNodeId: UUID, token: string) {
         try {
             const response: AxiosResponse = await axios.get(`${this.baseUrl}/journey/get`, {
-                params: {
-                    id: journeyNodeId
-                },
+                params: { id: journeyNodeId },
                 withCredentials: true,
                 validateStatus: status => status >= 200 && status <= 500,
                 headers: {
                     Authorization: `Bearer ${token}`
                 },
             });
-
             return {
                 success: response.data.success,
                 message: response.data.message,
@@ -881,10 +1228,13 @@ export class TaskOperation {
             };
         }
         catch (error: any) {
-            console.log("Error searching accounts: ", error?.response?.data);
+            console.log("Error getting journey node: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
-            return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null
+            };
         }
     }
-
 }

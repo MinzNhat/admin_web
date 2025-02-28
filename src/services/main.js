@@ -912,7 +912,7 @@ var StaffOperation = /** @class */ (function () {
 exports.StaffOperation = StaffOperation;
 var TaskOperation = /** @class */ (function () {
     function TaskOperation() {
-        this.baseUrl = 'https://api.tdlogistics.net.vn/v3/task/shipper';
+        this.baseUrl = 'https://api.tdlogistics.net.vn/v3/task';
     }
     TaskOperation.prototype.search = function (payload, token) {
         var _a, _b;
@@ -922,7 +922,7 @@ var TaskOperation = /** @class */ (function () {
                 switch (_c.label) {
                     case 0:
                         _c.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, axios_1.default.post("".concat(this.baseUrl, "/search"), payload, {
+                        return [4 /*yield*/, axios_1.default.post("".concat(this.baseUrl, "/shipper/search"), payload, {
                             withCredentials: true,
                             validateStatus: function (status) { return status >= 200 && status <= 500; },
                             headers: {

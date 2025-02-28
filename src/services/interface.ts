@@ -113,7 +113,37 @@ export const agencyRoles = [UserRole.AGENCY_MANAGER, UserRole.AGENCY_HUMAN_RESOU
 export const staffShouldBeGotAttributes = ['id', 'staffId', 'username', 'agencyId', 'fullname', 'phoneNumber', 'email', 'cccd',
     'province', 'district', 'town', 'detailAddress', 'birthDate', 'bin', 'bank', 'deposit', 'salary', 'paidSalary', 'avatar'];
 
+export class CreateCargoInsuranceDto {
+    note: string;
+    hasDeliveryCare: boolean;
+    shippingBillId: UUID;
+}
 
+export class ImageChangeStatusDto {
+    id: UUID;
+    isChanged: boolean;
+}
+
+export class UpdateCargoInsuranceDto {
+    note: string;
+    hasDeliveryCare: boolean;
+    shippingBillId: UUID;
+    areImagesChanged: ImageChangeStatusDto[];
+}
+
+export class UpdateFavoriteOrderLocationDto {
+    description: string;
+    name: string;
+    phoneNumber: string;
+    lat: number;
+    lng: number;
+}
+
+export class UpdateOrderLocationDto {
+    name: string;
+    lat: number;
+    lng: number;
+}
 
 export interface CalculateFeePayload {
     serviceType: string;
@@ -207,7 +237,6 @@ export interface CreateAgencyManager {
     cccd: string;
     phoneNumber: string;
     email: string;
-    position?: string;
     province?: string;
     district?: string;
     town?: string;
@@ -239,7 +268,7 @@ export interface CreateAgencyDto {
     bin: string;
     bank: string;
     isIndividual: boolean | boolean[];
-    company: CreateCompanyDto | undefined;
+    company?: CreateCompanyDto;
     revenue: number;
     agencyId: string;
 }
@@ -300,6 +329,12 @@ export interface CustomerLoginDto {
     email: string;
 }
 
+export class UpdateCustomerDto {
+    firstName: string;
+    lastName: string;
+    email: string;
+}
+
 export interface StaffLoginDto {
     username: string;
     password: string;
@@ -315,5 +350,3 @@ export interface VerifyOtpDto {
     id: UUID;
     otp: string;
 }
-
-

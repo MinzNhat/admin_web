@@ -106,7 +106,6 @@ const AddAgencyContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData
         { id: "phoneNumber", type: "number", important: true },
         { id: "email", type: "text", important: true },
         { id: "birthDate", type: "date" },
-        { id: "position", type: "text" },
         { id: "bank", type: "text" },
         { id: "bin", type: "text" },
         { id: "salary", type: "number" },
@@ -193,19 +192,19 @@ const AddAgencyContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData
                     <div>
                         <p>{intl("MissingField")}</p>
                         <ul className="list-disc pl-5 flex flex-col w-full">
-                            <RenderCase renderIf={missingFields.length > 0}>
+                            <RenderCase condition={missingFields.length > 0}>
                                 <div className="py-1 font-bold">{(intl("Agency"))}</div>
                                 {missingFieldsLabels.map((label, index) => (
                                     <li key={index} className="text-left">{label}</li>
                                 ))}
                             </RenderCase>
-                            <RenderCase renderIf={missingFields2.length > 0}>
+                            <RenderCase condition={missingFields2.length > 0}>
                                 <div className="py-1 font-bold pr-5">{(intl("Manager"))}</div>
                                 {missingFieldsLabels2.map((label, index) => (
                                     <li key={index} className="text-left">{label}</li>
                                 ))}
                             </RenderCase>
-                            <RenderCase renderIf={(Array.isArray(addInfo2.isIndividual) && addInfo2.isIndividual[0] === false && missingFields3.length > 0)}>
+                            <RenderCase condition={(Array.isArray(addInfo2.isIndividual) && addInfo2.isIndividual[0] === false && missingFields3.length > 0)}>
                                 <div className="py-1 font-bold">{(intl("Company"))}</div>
                                 {missingFieldsLabels3.map((label, index) => (
                                     <li key={index} className="text-left">{label}</li>
@@ -238,7 +237,6 @@ const AddAgencyContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData
             bank: addInfo.bank || undefined,
             bin: addInfo.bin || undefined,
             salary: typeof addInfo.salary === "string" ? parseFloat(addInfo.salary) : addInfo.salary || undefined,
-            position: addInfo.position || undefined
         }
 
         const createAgencyData: CreateAgencyDto = {
@@ -250,8 +248,6 @@ const AddAgencyContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData
             manager: createManagerData,
             commissionRate: typeof addInfo2.commissionRate === "string" ? parseFloat(addInfo2.commissionRate) : addInfo2.commissionRate,
         };
-
-        console.log(createAgencyData)
 
         const response = await agencyOp.create(createAgencyData, token);
 
@@ -266,7 +262,7 @@ const AddAgencyContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData
     };
 
     return (
-        <RenderCase renderIf={openAdd}>
+        <RenderCase condition={openAdd}>
             <DetailPopup
                 customWidth="w-fit"
                 title={intl("Title")}
@@ -275,7 +271,7 @@ const AddAgencyContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData
                 noPadding
             >
                 <div className="relative">
-                    <div className={`flex flex-col gap-8 px-2 pb-1 xl:grid ${Array.isArray(addInfo2.isIndividual) && addInfo2.isIndividual[0] === false ? "grid-cols-3 xl:w-[1050px]" : "grid-cols-2  xl:w-[700px]"}`}>
+                    <div className={`flex flex-col gap-8 px-2 pb-1 xl:grid ${Array.isArray(addInfo2.isIndividual) && addInfo2.isIndividual[0] === false ? "grid-cols-3 xl:w-[1050px]" : "grid-cols-2 xl:w-[700px]"}`}>
                         <div className="flex flex-col gap-2">
                             <div className="py-1 font-bold text-center">{(intl("Manager"))}</div>
                             {managerFields.map(({ id, type, version, isClearable, options, select_type, state, important, dropdownPosition }: AddFields) => (
@@ -291,7 +287,7 @@ const AddAgencyContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData
                                     select_type={select_type}
                                     isClearable={isClearable}
                                     dropdownPosition={dropdownPosition}
-                                    clssName="w-full"
+                                    className="w-full"
                                     inputClassName="bg-lightContainer dark:!bg-darkContainerPrimary border border-gray-200 dark:border-white/10"
                                     label={
                                         <div className='flex gap-1 place-items-center relative mb-2'>
@@ -316,7 +312,7 @@ const AddAgencyContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData
                                     select_type={select_type}
                                     isClearable={isClearable}
                                     dropdownPosition={dropdownPosition}
-                                    clssName="w-full"
+                                    className="w-full"
                                     inputClassName="bg-lightContainer dark:!bg-darkContainerPrimary border border-gray-200 dark:border-white/10"
                                     label={
                                         <div className='flex gap-1 place-items-center relative mb-2'>
@@ -326,7 +322,7 @@ const AddAgencyContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData
                             ))}
                         </div>
 
-                        <RenderCase renderIf={Array.isArray(addInfo2.isIndividual) && addInfo2.isIndividual[0] === false}>
+                        <RenderCase condition={Array.isArray(addInfo2.isIndividual) && addInfo2.isIndividual[0] === false}>
                             <div className="flex flex-col gap-2">
                                 <div className="py-1 font-bold text-center">{(intl("Company"))}</div>
                                 {companyFields.map(({ id, type, version, isClearable, options, select_type, state, important, dropdownPosition }: AddFields) => (
@@ -342,7 +338,7 @@ const AddAgencyContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData
                                         select_type={select_type}
                                         isClearable={isClearable}
                                         dropdownPosition={dropdownPosition}
-                                        clssName="w-full"
+                                        className="w-full"
                                         inputClassName="bg-lightContainer dark:!bg-darkContainerPrimary border border-gray-200 dark:border-white/10"
                                         label={
                                             <div className='flex gap-1 place-items-center relative mb-2'>

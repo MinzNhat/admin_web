@@ -1,5 +1,5 @@
 declare type RenderCaseProps = {
     children: React.ReactNode;
-    renderIf: boolean;
+    condition: boolean;
     suspense?: boolean;
 };

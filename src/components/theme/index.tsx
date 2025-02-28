@@ -27,7 +27,7 @@ const ThemeSwitcher = ({ version }: ThemeProps) => {
     }, [dispatch]);
 
     return (
-        <RenderCase renderIf={!!VersionComponent} suspense={true}>
+        <RenderCase condition={!!VersionComponent} suspense={true}>
             <VersionComponent checked={theme === 'dark'} handleToggleTheme={handleToggleTheme} />
         </RenderCase>
     );

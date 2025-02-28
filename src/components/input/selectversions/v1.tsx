@@ -61,7 +61,7 @@ const SelectInputV1 = ({
                             className="p-2 w-full text-left border rounded-md dark:bg-darkContainerPrimary dark:border-none focus:outline-none pr-10"
                             disabled={options.length === 0}
                         />
-                        <RenderCase renderIf={!!searchTerm}>
+                        <RenderCase condition={!!searchTerm}>
                             <button
                                 type="button"
                                 className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500"
@@ -75,7 +75,7 @@ const SelectInputV1 = ({
                     <div className="h-px w-full bg-gray-200 dark:bg-white/10" />
 
                     <div className='flex flex-col w-full max-h-32 overflow-y-scroll no-scrollbar'>
-                        <RenderCase renderIf={filteredOptions.length > 0}>
+                        <RenderCase condition={filteredOptions.length > 0}>
                             {filteredOptions.map((option: SelectInputOptionFormat, index: number) => (
                                 <div key={option.value.toString()}>
                                     <button
@@ -97,16 +97,16 @@ const SelectInputV1 = ({
                                     >
                                         {option.label}
 
-                                        <RenderCase renderIf={value.includes(option.value)}>
+                                        <RenderCase condition={value.includes(option.value)}>
                                             <MdRadioButtonChecked />
                                         </RenderCase>
 
-                                        <RenderCase renderIf={!value.includes(option.value)}>
+                                        <RenderCase condition={!value.includes(option.value)}>
                                             <MdRadioButtonUnchecked />
                                         </RenderCase>
                                     </button>
 
-                                    <RenderCase renderIf={index < filteredOptions.length - 1}>
+                                    <RenderCase condition={index < filteredOptions.length - 1}>
                                         <div className="h-[0.5px] w-full bg-gray-200 dark:bg-white/10" />
                                     </RenderCase>
                                 </div>
@@ -114,7 +114,7 @@ const SelectInputV1 = ({
                         </RenderCase>
                     </div>
 
-                    <RenderCase renderIf={filteredOptions.length === 0}>
+                    <RenderCase condition={filteredOptions.length === 0}>
                         <div className="p-2 text-gray-500 text-center flex justify-center place-items-center">{messageIfEmptyOptions || InputFieldMessage('DefaultSelectNoOptions')}</div>
                     </RenderCase>
                 </Container>

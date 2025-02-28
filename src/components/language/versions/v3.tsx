@@ -41,11 +41,11 @@ const LanguageSwitcherV3 = ({ handleSwitchLanguage }: LanguageVersionProps) => {
                         >
                             {label}
 
-                            <RenderCase renderIf={locale === localeLabel}>
+                            <RenderCase condition={locale === localeLabel}>
                                 <MdRadioButtonChecked />
                             </RenderCase>
 
-                            <RenderCase renderIf={locale !== localeLabel}>
+                            <RenderCase condition={locale !== localeLabel}>
                                 <MdRadioButtonUnchecked />
                             </RenderCase>
                         </button>

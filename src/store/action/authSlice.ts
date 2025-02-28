@@ -1,7 +1,7 @@
 import { StaffLoginDto } from '@/services/interface';
 import { AuthOperation, StaffOperation } from '@/services/main';
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { getTokenFromCookie, removeTokenFromCookie } from '@/utils/token';
+import { getTokenFromCookie, removeTokenFromCookie, setTokenInCookie } from '@/utils/token';
 
 const initialState: AuthState = {
     isAuthenticated: false,
@@ -17,6 +17,7 @@ export const login = createAsyncThunk<StaffInfo, StaffLoginDto, { rejectValue: R
             const authOp = new AuthOperation();
             const response = await authOp.loggedInByStaff(payload);
             if (response.success) {
+                setTokenInCookie(response.data?.accessToken);
                 return response.data as StaffInfo;
             } else {
                 return rejectWithValue(response.message);

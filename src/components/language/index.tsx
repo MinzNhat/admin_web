@@ -38,7 +38,7 @@ const LanguageSwitcher = ({ version }: LanguageProps) => {
     }, [locale, pathname, router]);
 
     return (
-        <RenderCase renderIf={isClient && !!VersionComponent}>
+        <RenderCase condition={isClient && !!VersionComponent}>
             <VersionComponent handleSwitchLanguage={handleSwitchLanguage} />
         </RenderCase>
     );
