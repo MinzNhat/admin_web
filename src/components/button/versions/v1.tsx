@@ -1,10 +1,11 @@
 import { Button } from "@nextui-org/react";
 
-const CustomButtonV1 = ({ id, className, color, onClick, children }: ButtonVersionProps) => {
+const CustomButtonV1 = ({ id, className, color, onClick, children, disabled = false }: ButtonVersionProps) => {
     return (
         <Button
             id={id}
-            onClick={onClick}
+            onPress={onClick}
+            isDisabled={disabled}
             className={`rounded-md text-white z-0 overflow-clip
                 ${color === "error" ? "bg-red-500 dark:bg-red-600"
                     : color === "blue" ? "bg-blue-500 dark:bg-blue-600"
@@ -18,7 +19,7 @@ const CustomButtonV1 = ({ id, className, color, onClick, children }: ButtonVersi
                                                     : color === "purple" ? "bg-purple-500 dark:bg-purple-600"
                                                         : color === "amber" ? "bg-amber-500 dark:bg-amber-600"
                                                             : color === "indigo" ? "bg-indigo-500 dark:bg-indigo-600"
-                                                                : color === "gray" ? "bg-gray-500 dark:bg-gray-600"
+                                                                : color === "gray" ? "bg-gray-500"
                                                                     : color === "brand" ? "bg-brand-500 dark:bg-brand-600"
                                                                         : "bg-utilsPrimary dark:bg-utilsPrimaryDark"
                 } ${className}`}

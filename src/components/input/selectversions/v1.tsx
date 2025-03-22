@@ -21,9 +21,10 @@ const SelectInputV1 = ({
         removeDiacritics({ str: option.label.toLowerCase() }).includes(removeDiacritics({ str: searchTerm.toLowerCase() }))
     );
 
-    const selectedLabel = value.length
-        ? options.filter((option: SelectInputOptionFormat) => value.includes(option.value)).map((option: SelectInputOptionFormat) => option.label).join(', ')
-        : placeholder;
+    const selectedLabel = !value ? null : (
+        value.length
+            ? options.filter((option: SelectInputOptionFormat) => value.includes(option.value)).map((option: SelectInputOptionFormat) => option.label).join(', ')
+            : placeholder);
 
     return (
         <div className={`relative ${className}`} id={id}>
@@ -97,12 +98,12 @@ const SelectInputV1 = ({
                                     >
                                         {option.label}
 
-                                        <RenderCase condition={value.includes(option.value)}>
-                                            <MdRadioButtonChecked />
+                                        <RenderCase condition={value && value.includes(option.value)}>
+                                            <MdRadioButtonChecked className='w-4 h-4 min-w-4 min-h-4' />
                                         </RenderCase>
 
-                                        <RenderCase condition={!value.includes(option.value)}>
-                                            <MdRadioButtonUnchecked />
+                                        <RenderCase condition={!value || !value.includes(option.value)}>
+                                            <MdRadioButtonUnchecked className='w-4 h-4 min-w-4 min-h-4' />
                                         </RenderCase>
                                     </button>
 

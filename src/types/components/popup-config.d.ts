@@ -6,4 +6,6 @@ declare type PopupProps = {
     customWidth?: string;
     icon?: React.ReactNode;
     children: React.ReactNode;
+    triggerClose?: boolean;
+    setTriggerClose?: React.Dispatch<React.SetStateAction<boolean>>;
 }

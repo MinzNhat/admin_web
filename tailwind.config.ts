@@ -11,6 +11,8 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        scrollbarTrack: "var(--scrollbar-track)",
+        scrollbarThumb: "var(--scrollbar-thumb)",
       },
     },
   },

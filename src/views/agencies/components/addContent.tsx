@@ -117,7 +117,7 @@ const AddAgencyContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData
 
     const companyFields: Array<AddFields> = [
         { id: "name", type: "text", important: true },
-        { id: "taxCode", type: "text", important: true },
+        { id: "taxcode", type: "text", important: true },
     ];
 
     const updateValue = (id: keyof CreateAgencyManager, value: string | string[]) => {
@@ -134,7 +134,7 @@ const AddAgencyContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData
 
     const handleReload = () => {
         if (loading) { return; };
-        setAddInfo3({ taxCode: "", name: "" })
+        setAddInfo3({ taxcode: "", name: "" })
         setAddInfo({
             fullname: "", cccd: "", phoneNumber: "", email: "", province: "", district: "", town: "", detailAddress: "", birthDate: "", bin: "", bank: "", salary: 0,
         });

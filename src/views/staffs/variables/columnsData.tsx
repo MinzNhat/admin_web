@@ -10,8 +10,16 @@ export const columnsData = (): Column<StaffInfo>[] => {
             accessor: "staffId",
         },
         {
+            Header: intl("agencyId"),
+            accessor: "agencyId",
+        },
+        {
             Header: intl("fullname"),
             accessor: "fullname",
+        },
+        {
+            Header: intl("cccd"),
+            accessor: "cccd",
         },
         {
             Header: intl("phoneNumber"),

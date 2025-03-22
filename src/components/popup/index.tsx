@@ -1,23 +1,30 @@
 "use client";
+
 import ReactDOM from "react-dom";
+import RenderCase from "../render";
 import Container from "../container";
 import { motion } from "framer-motion";
-import React, { useRef, useState } from "react";
-import RenderCase from "../render";
 import { MdClose } from "react-icons/md";
+import React, { useEffect, useRef, useState } from "react";
 
-const DetailPopup = ({ onClose, children, title, className, customWidth, icon, noPadding }: PopupProps) => {
+const DetailPopup = ({ onClose, children, title, className, customWidth, icon, noPadding, triggerClose = false, setTriggerClose }: PopupProps) => {
     const notificationRef = useRef<HTMLDivElement>(null);
     const [isVisible, setIsVisible] = useState(true);
 
     const handleClose = () => {
+        if (setTriggerClose) setTriggerClose(false);
         setIsVisible(false);
     };
+
     const handleAnimationComplete = () => {
         if (!isVisible) {
             onClose();
         }
     };
+
+    useEffect(() => {
+        if (triggerClose) handleClose();
+    }, [triggerClose])
 
     return ReactDOM.createPortal(
         <motion.div

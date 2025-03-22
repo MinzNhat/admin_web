@@ -14,7 +14,7 @@ import { DefaultNotificationProvider } from "./DefaultNotificationProvider";
 
 export const CustomLoadingElement = () => {
     return (
-        <div className="w-screen h-screen flex flex-col gap-4 justify-center place-items-center bg-lightContainer bg-clip-border
+        <div className="w-dvw h-dvh flex flex-col gap-4 justify-center place-items-center bg-lightContainer bg-clip-border
             shadow-shadow-500 dark:!bg-darkContainer">
             <Image src="/Logo.png" alt="Your image" width={150} height={150} />
         </div>

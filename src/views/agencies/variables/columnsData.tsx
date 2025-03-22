@@ -6,6 +6,10 @@ export const columnsData = (): Column<AgencyInfo>[] => {
 
     return [
         {
+            Header: intl("id"),
+            accessor: "id",
+        },
+        {
             Header: intl("name"),
             accessor: "name",
         },

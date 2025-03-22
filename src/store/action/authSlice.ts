@@ -16,8 +16,9 @@ export const login = createAsyncThunk<StaffInfo, StaffLoginDto, { rejectValue: R
         try {
             const authOp = new AuthOperation();
             const response = await authOp.loggedInByStaff(payload);
+            console.log(response);
             if (response.success) {
-                setTokenInCookie(response.data?.accessToken);
+                setTokenInCookie(response.data?.token);
                 return response.data as StaffInfo;
             } else {
                 return rejectWithValue(response.message);

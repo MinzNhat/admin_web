@@ -11,23 +11,24 @@ import { FiSearch } from "react-icons/fi";
 import { useTranslations } from "next-intl";
 import LoadingUI from "@/components/loading";
 import RenderCase from "@/components/render";
-import { Checkbox } from "@nextui-org/react";
 import Dropdown from "@/components/dropdown";
 import Container from "@/components/container";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Button, Checkbox } from "@nextui-org/react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SetTableSizeProps, TableData, TableProps } from "@/types/components/table-config";
 import { MdNavigateBefore, MdNavigateNext, MdRadioButtonChecked, MdRadioButtonUnchecked } from "react-icons/md";
 
 const CheckTableV1 = <T extends TableData>(props: TableProps<T>) => {
     const {
-        columnsData, tableData, selectedRows, setSelectedRows, primaryKey, currentPage, currentSize, isPaginated = false, fetchPageData,
-        customButton, containerClassname, customNoData, maxPage, onRowClick, renderCell, renderHeader, selectType = 'multi', setCurrentPage, setPageSize,
+        columnsData, tableData, selectedRows, setSelectedRows, primaryKey, currentPage, currentSize, isPaginated = false, fetchPageData, fetchSearchSortData, sortBy,
+        customButton, containerClassname, customNoData, maxPage, onRowClick, renderCell, renderHeader, selectType = 'multi', setCurrentPage, setPageSize, setSortBy, customSearch
     } = props;
 
     const { sizeOptions, setCurrentSize }: SetTableSizeProps | { sizeOptions: undefined, setCurrentSize: undefined }
         = setPageSize ? setPageSize : { sizeOptions: undefined, setCurrentSize: undefined };
-    const [searchValue, setSearchValue] = useState("");
+    const [searchValue, setSearchValue] = useState<string>("");
     const TableMessage = useTranslations('Table');
+    const prevSortByRef = useRef(sortBy);
 
     const columns = useMemo(() => columnsData, [columnsData]);
     const data = useMemo(() => tableData || [], [tableData]);
@@ -40,12 +41,13 @@ const CheckTableV1 = <T extends TableData>(props: TableProps<T>) => {
                 pageSize: currentSize,
             },
             manualPagination: isPaginated,
+            manualSortBy: !!fetchSearchSortData,
         },
         useGlobalFilter, useSortBy, usePagination
     );
 
     const {
-        getTableProps, getTableBodyProps, headerGroups, page, prepareRow, canPreviousPage, canNextPage, gotoPage, setGlobalFilter, pageCount,
+        getTableProps, getTableBodyProps, headerGroups, page, prepareRow, canPreviousPage, canNextPage, gotoPage, setGlobalFilter, pageCount, state
     } = tableInstance;
 
     const isRowSelected = useCallback(
@@ -126,35 +128,40 @@ const CheckTableV1 = <T extends TableData>(props: TableProps<T>) => {
     };
 
     useEffect(() => {
+        if (prevSortByRef.current !== sortBy && !fetchSearchSortData) {
+            return;
+        }
         handleFetchPageData();
-    }, [currentPage, currentSize, handleFetchPageData]);
+    }, [currentPage, currentSize, handleFetchPageData, sortBy]);
 
     return (
         <Container className={`h-full w-full flex flex-col gap-3 ${containerClassname}`}>
             <div className="flex justify-between items-center flex-col lg:flex-row">
-                <div className={`relative flex items-center bg-lightPrimary rounded-full text-navy-700 
+                <RenderCase condition={!customSearch}>
+                    <div className={`relative flex items-center bg-lightPrimary rounded-full text-navy-700 
                     dark:bg-darkContainerPrimary dark:text-white w-full ${!!customButton ? 'lg:mr-4 mb-3 lg:mb-0' : ''}`}>
-                    <motion.button
-                        className="text lg h-10 w-8 px-2 ml-2 flex justify-center rounded-full place-items-center"
-                        initial={{ left: 2 }}
-                    >
-                        <FiSearch
-                            className="h-4 w-4 text-navy-800 dark:text-white"
-                        />
-                    </motion.button>
+                        <motion.button
+                            className="text lg h-10 w-8 px-2 ml-2 flex justify-center rounded-full place-items-center"
+                            initial={{ left: 2 }}
+                        >
+                            <FiSearch
+                                className="h-4 w-4 text-navy-800 dark:text-white"
+                            />
+                        </motion.button>
 
-                    <input
-                        value={searchValue}
-                        onChange={(e) => {
-                            setSearchValue(e.target.value);
-                            setGlobalFilter(e.target.value);
-                        }}
-                        type="text"
-                        placeholder={TableMessage('DefaultSearchPlaceHolder')}
-                        className="block h-full w-full rounded-full bg-lightPrimary text-sm font-medium text-navy-800 dark:text-white
+                        <input
+                            value={searchValue}
+                            onChange={(e) => {
+                                setSearchValue(e.target.value);
+                                setGlobalFilter(e.target.value);
+                            }}
+                            type="text"
+                            placeholder={TableMessage('DefaultSearchPlaceHolder')}
+                            className="block h-full w-full rounded-full bg-lightPrimary text-sm font-medium text-navy-800 dark:text-white
                         placeholder:text-navy-800 placeholder:dark:text-gray-300 outline-none dark:bg-darkContainerPrimary pl-1 pr-3"
-                    />
-                </div>
+                        />
+                    </div>
+                </RenderCase>
 
                 {customButton}
             </div>
@@ -162,7 +169,7 @@ const CheckTableV1 = <T extends TableData>(props: TableProps<T>) => {
             <div className="h-full w-full flex justify-between place-items-center gap-3 relative overflow-y-auto flex-col">
                 <RenderCase condition={!page || page.length === 0}>
                     <div className="w-full h-full px-4 flex justify-center place-items-center">
-                        <RenderCase condition={tableData === undefined}>
+                        <RenderCase condition={tableData === undefined && currentPage >= 1}>
                             <LoadingUI />
                         </RenderCase>
 
@@ -170,14 +177,14 @@ const CheckTableV1 = <T extends TableData>(props: TableProps<T>) => {
                             {customNoData || TableMessage('DefaultNoDataMessage')}
                         </RenderCase>
 
-                        <RenderCase condition={tableData?.length === 0 && currentPage === 0}>
+                        <RenderCase condition={currentPage <= 0}>
                             {TableMessage('DefaultPageMessage')}
                         </RenderCase>
                     </div>
                 </RenderCase>
 
                 <RenderCase condition={page && page.length > 0}>
-                    <div className="max-h-full max-w-full overflow-scroll no-scrollbar w-full">
+                    <div className="max-h-full max-w-full overflow-auto no-scrollbar-y w-full">
                         <table {...getTableProps()} className="max-h-full h-full overflow-y-scroll no-scrollbar w-full">
                             <thead className="sticky top-0 z-10 w-full bg-lightContainer dark:bg-darkContainer">
                                 {headerGroups.map((headerGroup, headerGroupIndex) => {
@@ -200,7 +207,17 @@ const CheckTableV1 = <T extends TableData>(props: TableProps<T>) => {
                                                     const { key, ...columnProps } = column.getHeaderProps(column.getSortByToggleProps());
 
                                                     return (
-                                                        <th {...columnProps} key={`column-${key}`}>
+                                                        <th {...columnProps} key={`column-${key}`}
+                                                            onClick={() => {
+                                                                const isDesc = sortBy?.some(s => s.id === column.id && s.desc) ?? false;
+                                                                const newSortBy = [{ id: column.id, desc: !isDesc }];
+
+                                                                if (setSortBy) {
+                                                                    setSortBy(newSortBy);
+                                                                } else {
+                                                                    column.toggleSortBy(!isDesc);
+                                                                }
+                                                            }}>
                                                             <div className={`text-xs font-bold tracking-wide text-gray-600 lg:text-xs whitespace-nowrap pb-2 pr-6 text-start mt-[0.5px] 
                                                                 ${column.Header && renderHeader ? renderHeader(column.Header.toString() ?? "") : ""}`}>
                                                                 {column.Header?.toString()}
@@ -246,7 +263,7 @@ const CheckTableV1 = <T extends TableData>(props: TableProps<T>) => {
                                                         <p className="h-full w-full">
                                                             {(renderCell && cell.column.Header
                                                                 ? renderCell(cell.column.Header?.toString(), cell.value, row.original, index, isSelected)
-                                                                : null) || cell.value || TableMessage("DefaultNoDataValue")}
+                                                                : null) || cell.value || <p className="whitespace-nowrap">{TableMessage("DefaultNoDataValue")}</p>}
                                                         </p>
                                                     </td>
                                                 );
@@ -264,7 +281,7 @@ const CheckTableV1 = <T extends TableData>(props: TableProps<T>) => {
                         <button className={`flex items-center text-md hover:cursor-pointer bg-lightContainer p-1 text-navy-800 dark:text-white border h-8 w-8
                         border-gray-200 dark:!border-none hover:bg-gray-100 dark:bg-darkContainer dark:hover:bg-white/20 dark:active:bg-white/10
                         linear justify-center rounded-full font-bold transition duration-200`}
-                            onClick={previousClick} disabled={(!isPaginated || selectType === 'none') && !canPreviousPage}>
+                            onClick={previousClick} disabled={currentPage === 1 ? true : (isPaginated ? false : !canPreviousPage)}>
                             <MdNavigateBefore className="w-8 h-8" />
                         </button>
 
@@ -278,7 +295,7 @@ const CheckTableV1 = <T extends TableData>(props: TableProps<T>) => {
                         <button className={`flex items-center text-md hover:cursor-pointer bg-lightContainer p-1 text-navy-800 dark:text-white border h-8 w-8
                         border-gray-200 dark:!border-none hover:bg-gray-100 dark:bg-darkContainer dark:hover:bg-white/20 dark:active:bg-white/10
                         linear justify-center rounded-full font-bold transition duration-200`}
-                            onClick={nextClick} disabled={(!isPaginated || selectType === 'none') && !canNextPage}
+                            onClick={nextClick} disabled={isPaginated ? (tableData?.length === 0 ? true : false) : !canNextPage}
                         >
                             <MdNavigateNext className="w-8 h-8" />
                         </button>

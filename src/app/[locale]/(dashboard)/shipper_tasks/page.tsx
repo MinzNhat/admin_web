@@ -1,4 +1,4 @@
-import TasksContent from "@/views/tasks";
+import TasksContent from "@/views/shipper_tasks";
 
 const TasksPage = () => {
     return (

@@ -1,5 +1,6 @@
 "use client";
 
+import { UUID } from "crypto";
 import AddAgencyContent from "./addContent";
 import { useTranslations } from "next-intl";
 import TableSwitcher from "@/components/table";
@@ -8,14 +9,18 @@ import { getTokenFromCookie } from "@/utils/token";
 import CustomButton from "@/views/customTableButton";
 import { columnsData } from "../variables/columnsData";
 import { useCallback, useEffect, useState } from "react";
-import { AgencyType, CreateAgencyDto, CreateAgencyManager, CreateCompanyDto } from "@/services/interface";
+import { useNotifications } from "@/hooks/NotificationsProvider";
+import SearchPopUp, { DetailFields } from "@/views/customTableSearchPopUp";
+import { AgencyType, CreateAgencyDto, CreateAgencyManager, CreateCompanyDto, SearchCriteria } from "@/services/interface";
+import { useSubmitNotification } from "@/hooks/SubmitNotificationProvider";
 
 const AgenciesMain = () => {
     const agencyOp = new AgencyOperation();
     const intl = useTranslations("AgenciesRoute");
-    const TableMessage = useTranslations('Table');
+    const { addNotification } = useNotifications();
     const [openAdd, setOpenAdd] = useState<boolean>(false);
     const [agencies, setAgencies] = useState<AgencyInfo[]>();
+    const { addSubmitNotification } = useSubmitNotification();
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [currentSize, setCurrentSize] = useState<number>(10);
     const [selectedRows, setSelectedRows] = useState<AgencyInfo[]>([]);
@@ -28,6 +33,22 @@ const AgenciesMain = () => {
         company: addInfo3, isIndividual: [false], level: 1, managedWards: [], postalCode: "", revenue: 0, type: [AgencyType["DL"]],
         manager: addInfo,
     });
+    const [sortBy, setSortBy] = useState<{ id: string; desc: boolean }[]>([]);
+    const [searchCriteriaValue, setSearchCriteriaValue] = useState<SearchCriteria>({
+        field: [],
+        operator: [],
+        value: null
+    });
+
+    const searchFields: Array<DetailFields> = [
+        { label: intl("id"), label_value: "id", type: "text" },
+        { label: intl("name"), label_value: "name", type: "text" },
+        { label: intl("manager"), label_value: "manager", type: "text" },
+        { label: intl("postalCode"), label_value: "postalCode", type: "text" },
+        { label: intl("email"), label_value: "email", type: "text" },
+        { label: intl("phoneNumber"), label_value: "phoneNumber", type: "text" },
+    ];
+
 
     const renderCell = (cellHeader: string, _cellValue: string | boolean | number, rowValue: AgencyInfo) => {
         if (cellHeader === intl("detailAddress")) {
@@ -38,7 +59,7 @@ const AgenciesMain = () => {
             );
         } else if (cellHeader === intl("manager")) {
             return (
-                <div className="w-full h-full">
+                <div className="w-full h-full whitespace-nowrap">
                     {rowValue.manager.fullname}
                 </div>
             );
@@ -48,25 +69,54 @@ const AgenciesMain = () => {
     const reloadData = useCallback(async () => {
         const token = getTokenFromCookie();
         setAgencies(undefined);
-        if (token) {
-            const response = await agencyOp.search({
-                addition: {
-                    sort: [],
-                    page: currentPage,
-                    size: currentSize,
-                    group: []
-                },
-                criteria: []
-            }, token)
-            if (response.success) {
-                setAgencies(response.data as AgencyInfo[])
-            }
+        setSelectedRows([]);
+
+        if (!token) return;
+
+        const rawValue = Array.isArray(searchCriteriaValue.value) ? searchCriteriaValue.value[0] : searchCriteriaValue.value;
+        const criteriaField = searchCriteriaValue.field[0];
+        const criteriaValue = rawValue === "true" ? true : rawValue === "false" ? false : rawValue;
+
+        const criteria: SearchCriteria | null = rawValue ? {
+            field: criteriaField,
+            operator: searchCriteriaValue.operator[0] as SearchOperator,
+            value: criteriaValue
+        } : null;
+
+        const response = await agencyOp.search({
+            addition: {
+                sort: sortBy.map(({ id, desc }) => [id, desc ? "DESC" : "ASC"]),
+                page: currentPage,
+                size: currentSize,
+                group: []
+            },
+            criteria: criteria ? [criteria] : []
+        }, token);
+
+        if (response.success) {
+            setAgencies(response.data as AgencyInfo[])
         }
-    }, [currentPage, currentSize]);
+    }, [currentPage, currentSize, sortBy, searchCriteriaValue]);
 
     useEffect(() => {
         reloadData();
     }, []);
+
+    const handleDelete = async () => {
+        const token = getTokenFromCookie();
+        if (!token) return;
+
+        for (const row of selectedRows) {
+            const response = await agencyOp.delete(row.id as UUID, token);
+            if (response.success) {
+                addNotification({ message: `${intl("DeleteSuccess")} ${row.id} ${intl("DeleteSuccess2")}`, type: "success" });
+            } else {
+                addNotification({ message: `${intl("DeleteSuccess")} ${row.id} ${intl("DeleteFailed2")}`, type: "error" });
+            }
+        }
+
+        setSearchCriteriaValue(prev => prev);
+    }
 
     return (
         <>
@@ -75,6 +125,8 @@ const AgenciesMain = () => {
                 primaryKey="id"
                 tableData={agencies}
                 isPaginated={true}
+                customSearch={true}
+                setSortBy={setSortBy}
                 renderCell={renderCell}
                 currentPage={currentPage}
                 currentSize={currentSize}
@@ -83,7 +135,10 @@ const AgenciesMain = () => {
                 selectedRows={selectedRows}
                 setCurrentPage={setCurrentPage}
                 setSelectedRows={setSelectedRows}
-                customButton={<CustomButton fetchData={reloadData} handleDelete={() => { }} selectedRows={selectedRows} openAdd={() => { setOpenAdd(true) }} />}
+                customButton={<CustomButton fetchData={reloadData} handleDelete={() => addSubmitNotification({ message: intl("Confirm2"), submitClick: handleDelete })} selectedRows={selectedRows} openAdd={() => { setOpenAdd(true) }}
+                    extraButton={
+                        <SearchPopUp fields={searchFields} searchCriteriaValue={searchCriteriaValue} setSearchCriteriaValue={setSearchCriteriaValue} />
+                    } />}
                 containerClassname="!rounded-xl p-4"
                 selectType="multi"
                 setPageSize={{

@@ -65,7 +65,7 @@ const AuthLeftContent = ({ isAnimated }: AuthLeftContentProps) => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Enter") {
                 e.preventDefault();
-                handleLogin();
+                handleSubmit();
             }
         };
 

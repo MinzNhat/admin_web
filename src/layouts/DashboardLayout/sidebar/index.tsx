@@ -17,7 +17,7 @@ const Sidebar: FC<Props> = () => {
     <>
       <div
         className={`bg-[#000] bg-opacity-70 fixed inset-0 z-50 
-        ${openSidebar && isMD ? 'block w-screen h-screen' : 'hidden'}`}
+        ${openSidebar && isMD ? 'block w-dvw h-dvh' : 'hidden'}`}
         onClick={() => setOpenSidebar(false)}
       />
 

@@ -39,8 +39,7 @@ declare type SelectInputProps = BaseInputProps<'select'> & {
 };
 
 declare type SelectButtonProps = Pick<
-    SelectInputProps,
-    'containerClassName' | 'className' | 'disabled' | 'state' | 'isClearable' | 'value' | 'setValue' | 'selectedLabel' | 'placeholder' | 'openWrapper'
+    SelectInputProps, 'className' | 'disabled' | 'state' | 'isClearable' | 'value' | 'setValue' | 'selectedLabel' | 'placeholder' | 'openWrapper'
 > & {
     defaultSelectPlaceHolder: string;
     setOpenWrapper: React.Dispatch<React.SetStateAction<boolean>>;

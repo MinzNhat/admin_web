@@ -36,6 +36,11 @@ export enum AgencyType {
     BC = 'BC'
 }
 
+export enum ShipperType {
+    NT = 'NT',
+    LT = 'LT'
+}
+
 export enum OrderStatus {
     DELIVERED_SUCCESS = 'DELIVERED SUCCESS',     // "Giao hàng thành công"
     PROCESSING = 'PROCESSING',            // "Đang được xử lí"
@@ -107,6 +112,11 @@ export enum ServiceType {
     SN = 'SN'
 }
 
+export enum MissionType {
+    TAKING = 'TAKING',
+    DELIVERING = 'DELIVERING'
+}
+
 export const adminRoles = [UserRole.ADMIN, UserRole.MANAGER, UserRole.HUMAN_RESOURCE_MANAGER, UserRole.TELLER, UserRole.OPERATION_STAFF];
 export const agencyRoles = [UserRole.AGENCY_MANAGER, UserRole.AGENCY_HUMAN_RESOURCE_MANAGER, UserRole.AGENCY_TELLER, UserRole.AGENCY_OPERATION_STAFF];
 
@@ -119,6 +129,30 @@ export class CreateCargoInsuranceDto {
     shippingBillId: UUID;
 }
 
+export class UpdateAgencyDto {
+    manager: CreateAgencyManager;
+    type: AgencyType;
+    level: number;
+    postalCode: string;
+    name: string;
+    province: string;
+    district: string;
+    town: string;
+    detailAddress: string;
+    latitude: number;
+    longitude: number;
+    managedWards: string[];
+    phoneNumber: string;
+    email: string;
+    commissionRate: number;
+    bin: string;
+    bank: string;
+    isIndividual: boolean;
+    company: CreateCompanyDto;
+    revenue: number;
+    agencyId: string;
+}
+
 export class ImageChangeStatusDto {
     id: UUID;
     isChanged: boolean;
@@ -129,6 +163,27 @@ export class UpdateCargoInsuranceDto {
     hasDeliveryCare: boolean;
     shippingBillId: UUID;
     areImagesChanged: ImageChangeStatusDto[];
+}
+
+export class ConfigDepositDto {
+    deposit: number;
+    province: string;
+    district: string;
+    ward: string;
+}
+
+export class ConfigServicesDto {
+    wardId: number;
+    serviceNames: ServiceType[];
+}
+
+export class UpdateOrderDto {
+    mass?: number;
+    height?: number;
+    width?: number;
+    length?: number;
+    cod?: number;
+    statusCode?: OrderStatus;
 }
 
 export class UpdateFavoriteOrderLocationDto {
@@ -209,6 +264,16 @@ export interface SingleFileUpload {
     file: File;
 }
 
+export class CreateShipmentDto {
+    destinationAgencyId: UUID;
+    vehicleId: UUID;
+}
+
+export class AddOrderToShipmentDto {
+    orderIds: UUID[];
+    shipmentId: UUID;
+}
+
 export interface MultiFileUpload {
     files: File[];
 }
@@ -247,7 +312,26 @@ export interface CreateAgencyManager {
     salary?: number;
 }
 
+export class CreateShippingBillDto {
+    companyName: string;
+    companyAddress: string;
+    taxCode: string;
+    email: string;
+}
 
+export class AssignTaskToShipperDto {
+    orderId: UUID;
+    staffId: UUID;
+    mission: MissionType;
+}
+
+export class UpdateTaskDto {
+    orderId: UUID;
+    staffId: UUID;
+    completedAt: Date;
+    completed: boolean;
+    mission: MissionType;
+}
 
 export interface CreateAgencyDto {
     manager: CreateAgencyManager;
@@ -274,7 +358,7 @@ export interface CreateAgencyDto {
 }
 
 export interface CreateCompanyDto {
-    taxCode: string;
+    taxcode: string;
     name: string
 }
 
@@ -291,11 +375,12 @@ export interface SearchAddition {
 }
 
 export interface SearchCriteria {
-    field: string;
-    operator: '~' | '!~' | '=' | '!=' | 'isSet' | 'isNotSet' | '<' | '<=' | '>' | '>=';
+    field: string | string[];
+    operator: SearchOperator | SearchOperator[];
     value?: any;
 }
 
+export type SearchOperator = '~' | '!~' | '=' | '!=' | 'isSet' | 'isNotSet' | '<' | '<=' | '>' | '>=';
 
 export interface CreateStaffDto {
     agencyId: string;
@@ -314,6 +399,30 @@ export interface CreateStaffDto {
     salary?: number;
     roles: StaffRole[];
     managedWards: string[];
+}
+
+export class UpdateShipperStatusDto {
+    currentLat: number;
+    currentLong: number;
+}
+
+export class UpdateStaffDto {
+    agencyId: string;
+    fullname: string;
+    phoneNumber: string;
+    email: string;
+    cccd: string;
+    province: string;
+    district: string;
+    detailAddress: string;
+    birthDate: Date;
+    bin: string;
+    bank: string;
+    deposit: number;
+    salary: number;
+    roles: StaffRole[];
+    managedWards: string[];
+    shipperType: ShipperType;
 }
 
 export interface CreateCustomerDto {
@@ -349,4 +458,16 @@ export interface UpdateCustomerDto {
 export interface VerifyOtpDto {
     id: UUID;
     otp: string;
+}
+
+export class CreateVoucherDto {
+    numOfOrders: number;
+    discount: number;
+    startDate: Date;
+    endDate: Date;
+    area: {
+        ward: string;
+        district: string;
+        source: string;
+    }
 }

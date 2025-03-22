@@ -23,7 +23,7 @@ const SelectButtonV1 = ({
     >
         <p className="truncate">{selectedLabel || placeholder || defaultSelectPlaceHolder}</p>
 
-        <RenderCase condition={isClearable && value.length > 0}>
+        <RenderCase condition={isClearable && value?.length > 0}>
             <button
                 type="button"
                 className='-mr-0.5'
@@ -36,7 +36,7 @@ const SelectButtonV1 = ({
             </button>
         </RenderCase>
 
-        <RenderCase condition={!isClearable || value.length === 0}>
+        <RenderCase condition={!isClearable || !value || value.length === 0}>
             <FaChevronDown className={`ml-2 w-3 h-3 transition-all duration-300 ${openWrapper ? 'rotate-180' : ''}`} />
         </RenderCase>
     </button>

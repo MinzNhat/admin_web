@@ -8,7 +8,7 @@ export default function SidebarProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         window.addEventListener("resize", () =>
-            setOpenSidebar(true)
+            setOpenSidebar(false)
         );
 
         return () => {

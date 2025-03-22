@@ -47,8 +47,8 @@ const SidebarLinks = ({ onClickRoute }: Props) => {
   };
 
   const createLinks = (routes: any) => {
-    const managementRoutes = routes.filter((route: { path: string }) => route.path === "orders" || route.path === "shipments");
-    const interiorRoutes = routes.filter((route: { path: string }) => route.path !== "orders" && route.path !== "shipments" && route.path !== "create");
+    const managementRoutes = routes.filter((route: { path: string }) => ["orders", "shipments", "customers", "vouchers"].includes(route.path));
+    const interiorRoutes = routes.filter((route: { path: string }) => !["orders", "shipments", "customers", "vouchers"].includes(route.path));
 
     const renderLinks = (routes: any, startIndex: number, headerText: string) => (
       <div>

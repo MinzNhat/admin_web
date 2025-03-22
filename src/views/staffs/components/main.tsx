@@ -8,7 +8,8 @@ import { getTokenFromCookie } from "@/utils/token";
 import CustomButton from "@/views/customTableButton";
 import { columnsData } from "../variables/columnsData";
 import { useCallback, useEffect, useState } from "react";
-import { CreateStaffDto, StaffRole } from "@/services/interface";
+import SearchPopUp, { DetailFields } from "@/views/customTableSearchPopUp";
+import { CreateStaffDto, SearchCriteria, StaffRole } from "@/services/interface";
 
 const StaffsMain = () => {
     const staffOp = new StaffOperation();
@@ -19,6 +20,28 @@ const StaffsMain = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [currentSize, setCurrentSize] = useState<number>(10);
     const [selectedRows, setSelectedRows] = useState<StaffInfo[]>([]);
+    const [sortBy, setSortBy] = useState<{ id: string; desc: boolean }[]>([]);
+    const [searchCriteriaValue, setSearchCriteriaValue] = useState<SearchCriteria>({
+        field: [],
+        operator: [],
+        value: null
+    });
+
+    const roleOptions: SelectInputOptionFormat[] = Object.values(StaffRole).map(type => ({
+        label: intl(type),
+        value: type
+    }));
+
+    const searchFields: Array<DetailFields> = [
+        { label: intl("staffId"), label_value: "staffId", type: "text" },
+        { label: intl("agencyId"), label_value: "agencyId", type: "text" },
+        { label: intl("fullname"), label_value: "fullname", type: "text" },
+        { label: intl("phoneNumber"), label_value: "phoneNumber", type: "text" },
+        { label: intl("email"), label_value: "email", type: "text" },
+        { label: intl("cccd"), label_value: "cccd", type: "text", hideOperator: true },
+        { label: intl("roles"), label_value: "roles", type: "select", options: roleOptions, select_type: "single", dropdownPosition: "top", hideOperator: true },
+    ];
+
     const [addInfo, setAddInfo] = useState<CreateStaffDto>({
         agencyId: "",
         fullname: "",
@@ -41,58 +64,90 @@ const StaffsMain = () => {
     const renderCell = (cellHeader: string, cellValue: string | number | boolean | unknown) => {
         if (cellHeader === intl("roles")) {
             return (
-                <div className="w-full h-full ">
+                <div className="w-full h-full whitespace-nowrap">
                     {Array.isArray(cellValue) && cellValue.length !== 0 ? cellValue.map((role) => (role as Role).value).join(", ") : TableMessage("DefaultNoDataValue")}
+                </div>
+            );
+        } else if (cellHeader === intl("fullname")) {
+            return (
+                <div className="w-full h-full whitespace-nowrap">
+                    {cellValue as string}
                 </div>
             );
         }
     };
 
-    const reloadData = useCallback(async () => {
+    const fetchData = useCallback(async () => {
         const token = getTokenFromCookie();
         setStaffs(undefined);
-        if (token) {
-            const response = await staffOp.search({
+        setSelectedRows([]);
+
+        if (!token) return;
+
+        const rawValue = Array.isArray(searchCriteriaValue.value) ? searchCriteriaValue.value[0] : searchCriteriaValue.value;
+        const criteriaField = searchCriteriaValue.field[0];
+        const criteriaValue = rawValue === "true" ? true : rawValue === "false" ? false : rawValue;
+
+        let response;
+
+        if (criteriaField === "cccd") {
+            response = await staffOp.searchByCccd(criteriaValue as string, token);
+        } else if (criteriaField === "roles") {
+            response = await staffOp.searchByRole(criteriaValue as string, token);
+        } else {
+            const criteria: SearchCriteria | null = rawValue ? {
+                field: criteriaField,
+                operator: searchCriteriaValue.operator[0] as SearchOperator,
+                value: criteriaValue
+            } : null;
+
+            response = await staffOp.search({
                 addition: {
-                    sort: [],
+                    sort: sortBy.map(({ id, desc }) => [id, desc ? "DESC" : "ASC"]),
                     page: currentPage,
                     size: currentSize,
                     group: []
                 },
-                criteria: []
-            }, token)
-            if (response.success) {
-                setStaffs(response.data as StaffInfo[])
-            }
+                criteria: criteria ? [criteria] : []
+            }, token);
         }
-    }, [currentPage, currentSize]);
+
+        if (response.success) {
+            setStaffs(response.data as StaffInfo[]);
+        }
+    }, [currentPage, currentSize, sortBy, searchCriteriaValue]);
 
     useEffect(() => {
-        reloadData();
-    }, []);
+        fetchData();
+    }, [fetchData]);
 
     return (
         <>
-            <AddContent addInfo={addInfo} openAdd={openAdd} setAddInfo={setAddInfo} setOpenAdd={setOpenAdd} reloadData={reloadData} />
+            <AddContent addInfo={addInfo} openAdd={openAdd} setAddInfo={setAddInfo} setOpenAdd={setOpenAdd} reloadData={fetchData} />
             <TableSwitcher
                 primaryKey="id"
                 tableData={staffs}
                 isPaginated={true}
+                setSortBy={setSortBy}
                 renderCell={renderCell}
                 currentPage={currentPage}
                 currentSize={currentSize}
-                fetchPageData={reloadData}
+                fetchPageData={fetchData}
                 columnsData={columnsData()}
                 selectedRows={selectedRows}
                 setCurrentPage={setCurrentPage}
                 setSelectedRows={setSelectedRows}
-                customButton={<CustomButton fetchData={reloadData} handleDelete={() => { }} selectedRows={selectedRows} openAdd={() => { setOpenAdd(true) }} />}
+                customButton={<CustomButton fetchData={fetchData} selectedRows={selectedRows} openAdd={() => { setOpenAdd(true) }}
+                    extraButton={
+                        <SearchPopUp fields={searchFields} searchCriteriaValue={searchCriteriaValue} setSearchCriteriaValue={setSearchCriteriaValue} />
+                    } />}
                 containerClassname="!rounded-xl p-4"
-                selectType="multi"
+                selectType="none"
                 setPageSize={{
                     setCurrentSize,
                     sizeOptions: [10, 20, 30]
                 }}
+                customSearch={true}
             />
         </>
     );

@@ -167,6 +167,11 @@ type NonPaginatedTableProps<T extends TableData> = {
     customNoData?: React.ReactNode;
 
     onRowClick?: (_value: T) => void;
+    fetchSearchSortData?: boolean;
+    sortBy?: { id: string; desc: boolean }[];
+    setSortBy?: React.Dispatch<React.SetStateAction<{ id: string; desc: boolean }[]>>;
+
+    customSearch?: boolean;
 };
 
 type PaginatedTableProps<T extends TableData> = {
@@ -196,6 +201,11 @@ type PaginatedTableProps<T extends TableData> = {
     customNoData?: React.ReactNode;
 
     onRowClick?: (_value: T) => void;
+    fetchSearchSortData?: boolean;
+    sortBy?: { id: string; desc: boolean }[];
+    setSortBy?: React.Dispatch<React.SetStateAction<{ id: string; desc: boolean }[]>>;
+
+    customSearch?: boolean;
 };
 
 declare type TableProps<T extends TableData> = NonPaginatedTableProps<T> | PaginatedTableProps<T>;

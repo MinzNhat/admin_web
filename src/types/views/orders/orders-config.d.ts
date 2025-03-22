@@ -7,6 +7,16 @@ declare type JourneyData = {
     time: string;
 };
 
+declare type Insurance = {
+    createdAt: string;
+    hasDeliveryCare: boolean;
+    id: string;
+    note: string;
+    orderId: string;
+    shippingBillId: string;
+    updatedAt: string;
+}
+
 declare type OrderData = {
     agencyId: string;
     cod: number;
@@ -21,7 +31,7 @@ declare type OrderData = {
     fromMass: number;
     goodType: string;
     height: number;
-    id: string;
+    id: UUID;
     images: string[];
     isBulkyGood: boolean;
     journies: JourneyData[];
@@ -48,7 +58,7 @@ declare type OrderData = {
     shipper?: string;
     signature?: string;
     signatures: string[];
-    statusCode: OrderStatus;
+    statusCode: OrderStatus | OrderStatus[];
     takingDescription?: string;
     toMass: number;
     trackingNumber: string;
@@ -57,3 +67,5 @@ declare type OrderData = {
     wardSource: string;
     width: number;
 };
+
+declare type OrderState = "ALL" | "PROCESSING" | "NTHIRD_PARTY_DELIVERY";
