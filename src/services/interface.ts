@@ -123,13 +123,13 @@ export const agencyRoles = [UserRole.AGENCY_MANAGER, UserRole.AGENCY_HUMAN_RESOU
 export const staffShouldBeGotAttributes = ['id', 'staffId', 'username', 'agencyId', 'fullname', 'phoneNumber', 'email', 'cccd',
     'province', 'district', 'town', 'detailAddress', 'birthDate', 'bin', 'bank', 'deposit', 'salary', 'paidSalary', 'avatar'];
 
-export class CreateCargoInsuranceDto {
+export interface CreateCargoInsuranceDto {
     note: string;
     hasDeliveryCare: boolean;
     shippingBillId: UUID;
 }
 
-export class UpdateAgencyDto {
+export interface UpdateAgencyDto {
     manager: CreateAgencyManager;
     type: AgencyType;
     level: number;
@@ -153,31 +153,31 @@ export class UpdateAgencyDto {
     agencyId: string;
 }
 
-export class ImageChangeStatusDto {
+export interface ImageChangeStatusDto {
     id: UUID;
     isChanged: boolean;
 }
 
-export class UpdateCargoInsuranceDto {
+export interface UpdateCargoInsuranceDto {
     note: string;
     hasDeliveryCare: boolean;
     shippingBillId: UUID;
     areImagesChanged: ImageChangeStatusDto[];
 }
 
-export class ConfigDepositDto {
+export interface ConfigDepositDto {
     deposit: number;
     province: string;
     district: string;
     ward: string;
 }
 
-export class ConfigServicesDto {
+export interface ConfigServicesDto {
     wardId: number;
     serviceNames: ServiceType[];
 }
 
-export class UpdateOrderDto {
+export interface UpdateOrderDto {
     mass?: number;
     height?: number;
     width?: number;
@@ -186,7 +186,7 @@ export class UpdateOrderDto {
     statusCode?: OrderStatus;
 }
 
-export class UpdateFavoriteOrderLocationDto {
+export interface UpdateFavoriteOrderLocationDto {
     description: string;
     name: string;
     phoneNumber: string;
@@ -194,7 +194,7 @@ export class UpdateFavoriteOrderLocationDto {
     lng: number;
 }
 
-export class UpdateOrderLocationDto {
+export interface UpdateOrderLocationDto {
     name: string;
     lat: number;
     lng: number;
@@ -264,12 +264,12 @@ export interface SingleFileUpload {
     file: File;
 }
 
-export class CreateShipmentDto {
+export interface CreateShipmentDto {
     destinationAgencyId: UUID;
     vehicleId: UUID;
 }
 
-export class AddOrderToShipmentDto {
+export interface AddOrderToShipmentDto {
     orderIds: UUID[];
     shipmentId: UUID;
 }
@@ -312,20 +312,20 @@ export interface CreateAgencyManager {
     salary?: number;
 }
 
-export class CreateShippingBillDto {
+export interface CreateShippingBillDto {
     companyName: string;
     companyAddress: string;
     taxCode: string;
     email: string;
 }
 
-export class AssignTaskToShipperDto {
+export interface AssignTaskToShipperDto {
     orderId: UUID;
     staffId: UUID;
     mission: MissionType;
 }
 
-export class UpdateTaskDto {
+export interface UpdateTaskDto {
     orderId: UUID;
     staffId: UUID;
     completedAt: Date;
@@ -401,12 +401,12 @@ export interface CreateStaffDto {
     managedWards: string[];
 }
 
-export class UpdateShipperStatusDto {
+export interface UpdateShipperStatusDto {
     currentLat: number;
     currentLong: number;
 }
 
-export class UpdateStaffDto {
+export interface UpdateStaffDto {
     agencyId: string;
     fullname: string;
     phoneNumber: string;
@@ -438,7 +438,7 @@ export interface CustomerLoginDto {
     email: string;
 }
 
-export class UpdateCustomerDto {
+export interface UpdateCustomerDto {
     firstName: string;
     lastName: string;
     email: string;
@@ -460,7 +460,7 @@ export interface VerifyOtpDto {
     otp: string;
 }
 
-export class CreateVoucherDto {
+export interface CreateVoucherDto {
     numOfOrders: number;
     discount: number;
     startDate: Date;
