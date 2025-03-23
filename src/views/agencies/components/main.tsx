@@ -27,7 +27,7 @@ const AgenciesMain = () => {
     const [addInfo, setAddInfo] = useState<CreateAgencyManager>({
         fullname: "", cccd: "", phoneNumber: "", email: "", province: "", district: "", town: "", detailAddress: "", birthDate: "", bin: "", bank: "", salary: 0,
     });
-    const [addInfo3, setAddInfo3] = useState<CreateCompanyDto>({  taxcode: "", name: "" });
+    const [addInfo3, setAddInfo3] = useState<CreateCompanyDto>({ taxcode: "", name: "" });
     const [addInfo2, setAddInfo2] = useState<CreateAgencyDto>({
         agencyId: "", name: "", phoneNumber: "", email: "", bin: "", province: "", district: "", town: "", detailAddress: "", latitude: 0, longitude: 0, commissionRate: 0, bank: "",
         company: addInfo3, isIndividual: [false], level: 1, managedWards: [], postalCode: "", revenue: 0, type: [AgencyType["DL"]],
@@ -92,7 +92,7 @@ const AgenciesMain = () => {
             },
             criteria: criteria ? [criteria] : []
         }, token);
-
+        console.log(response)
         if (response.success) {
             setAgencies(response.data as AgencyInfo[])
         }

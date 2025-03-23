@@ -14,6 +14,7 @@ import CustomInputField from "@/components/input";
 import { IoReloadOutline } from "react-icons/io5";
 import { AgencyOperation } from "@/services/main";
 import { getTokenFromCookie } from "@/utils/token";
+import { RoleValue } from "@/types/store/auth-config";
 import { useScreenView } from "@/hooks/ScreenViewProvider";
 import { useNotifications } from "@/hooks/NotificationsProvider";
 import { useSubmitNotification } from "@/hooks/SubmitNotificationProvider";
@@ -66,7 +67,7 @@ const AddAgencyContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData
         value: boolean
     }));
 
-    const hasAdminRole = userInfo?.roles.some(role =>
+    const hasAdminRole = userInfo?.roles.some((role: RoleValue) =>
         ["ADMIN", "MANAGER", "HUMAN_RESOURCE_MANAGER"].includes(role.value)
     );
 
@@ -366,7 +367,7 @@ const AddAgencyContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData
                             className="linear w-full rounded-md bg-red-500 dark:!bg-red-500 h-10 text-base font-medium text-white transition duration-200 hover:bg-red-600 
                             active:bg-red-700 dark:text-white dark:hover:bg-red-400 dark:active:bg-red-300 flex justify-center place-items-center"
                         >
-                            {loading ? <LoadingUI /> : "Xác nhận"}
+                            {loading ? <LoadingUI /> : intl("Submit")}
                         </CustomButton>
                     </Container>
                 </div>

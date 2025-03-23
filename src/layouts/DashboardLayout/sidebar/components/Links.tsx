@@ -19,7 +19,7 @@ const SidebarLinks = ({ onClickRoute }: Props) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [indicatorStyle, setIndicatorStyle] = useState<{ top: number; height: number } | null>(null);
   const routeRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const sidebarRef = useRef<HTMLUListElement | null>(null); // Ref cho container của sidebar
+  const sidebarRef = useRef<HTMLUListElement | null>(null);
 
   useEffect(() => {
     const findActiveRouteIndex = () => {
@@ -64,10 +64,10 @@ const SidebarLinks = ({ onClickRoute }: Props) => {
                 className="relative mb-3 flex hover:cursor-pointer"
               >
                 <li className="my-[3px] flex cursor-pointer items-center px-8">
-                  <span className={`${activeIndex === routeIndex ? "font-bold text-red-500 dark:text-white" : "font-medium text-gray-400"}`}>
+                  <span className={`${activeIndex === routeIndex ? "font-bold text-red-500 dark:text-white" : "font-medium text-black dark:text-gray-400"}`}>
                     {route.icon ? route.icon : <DashIcon />}{" "}
                   </span>
-                  <p className={`leading-1 ml-4 flex ${activeIndex === routeIndex ? "font-medium text-red-500 dark:text-white" : "font-medium text-gray-400"}`}>
+                  <p className={`leading-1 ml-4 flex ${activeIndex === routeIndex ? "font-medium text-red-500 dark:text-white" : "font-medium text-black dark:text-gray-400"}`}>
                     {route.name}
                   </p>
                 </li>

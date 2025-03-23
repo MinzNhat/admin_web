@@ -2,6 +2,7 @@
 
 import AddContent from "./addContent";
 import { useTranslations } from "next-intl";
+import UpdateContent from "./updateContent";
 import TableSwitcher from "@/components/table";
 import { StaffOperation } from "@/services/main";
 import { getTokenFromCookie } from "@/utils/token";
@@ -9,7 +10,8 @@ import CustomButton from "@/views/customTableButton";
 import { columnsData } from "../variables/columnsData";
 import { useCallback, useEffect, useState } from "react";
 import SearchPopUp, { DetailFields } from "@/views/customTableSearchPopUp";
-import { CreateStaffDto, SearchCriteria, StaffRole } from "@/services/interface";
+import { RoleValue, StaffInfo, StaffInfoUpdate } from "@/types/store/auth-config";
+import { CreateStaffDto, SearchCriteria, ShipperType, StaffRole } from "@/services/interface";
 
 const StaffsMain = () => {
     const staffOp = new StaffOperation();
@@ -19,6 +21,8 @@ const StaffsMain = () => {
     const [openAdd, setOpenAdd] = useState<boolean>(false);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [currentSize, setCurrentSize] = useState<number>(10);
+    const [openUpdate, setOpenUpdate] = useState<boolean>(false);
+    const [staffInfo, setStaffInfo] = useState<StaffInfoUpdate>();
     const [selectedRows, setSelectedRows] = useState<StaffInfo[]>([]);
     const [sortBy, setSortBy] = useState<{ id: string; desc: boolean }[]>([]);
     const [searchCriteriaValue, setSearchCriteriaValue] = useState<SearchCriteria>({
@@ -58,17 +62,24 @@ const StaffsMain = () => {
         deposit: 0,
         salary: 0,
         roles: [StaffRole["SHIPPER"]],
-        managedWards: []
+        managedWards: [],
+        shipperType: [ShipperType["LT"]]
     });
 
     const renderCell = (cellHeader: string, cellValue: string | number | boolean | unknown) => {
         if (cellHeader === intl("roles")) {
             return (
                 <div className="w-full h-full whitespace-nowrap">
-                    {Array.isArray(cellValue) && cellValue.length !== 0 ? cellValue.map((role) => (role as Role).value).join(", ") : TableMessage("DefaultNoDataValue")}
+                    {Array.isArray(cellValue) && cellValue.length !== 0
+                        ? cellValue
+                            .map((role) => `${intl((role as RoleValue).value)}`)
+                            .join(", ")
+                        : TableMessage("DefaultNoDataValue")}
                 </div>
             );
-        } else if (cellHeader === intl("fullname")) {
+        }
+
+        if (cellHeader === intl("fullname")) {
             return (
                 <div className="w-full h-full whitespace-nowrap">
                     {cellValue as string}
@@ -76,6 +87,7 @@ const StaffsMain = () => {
             );
         }
     };
+
 
     const fetchData = useCallback(async () => {
         const token = getTokenFromCookie();
@@ -112,6 +124,8 @@ const StaffsMain = () => {
             }, token);
         }
 
+        console.log(response);
+
         if (response.success) {
             setStaffs(response.data as StaffInfo[]);
         }
@@ -123,6 +137,7 @@ const StaffsMain = () => {
 
     return (
         <>
+            {staffInfo && <UpdateContent openUpdate={openUpdate} reloadData={fetchData} setOpenUpdate={setOpenUpdate} setStaffInfo={setStaffInfo} staffInfo={staffInfo} />}
             <AddContent addInfo={addInfo} openAdd={openAdd} setAddInfo={setAddInfo} setOpenAdd={setOpenAdd} reloadData={fetchData} />
             <TableSwitcher
                 primaryKey="id"
@@ -148,6 +163,14 @@ const StaffsMain = () => {
                     sizeOptions: [10, 20, 30]
                 }}
                 customSearch={true}
+                onRowClick={(value: StaffInfo) => {
+                    const updatedStaffInfo: StaffInfoUpdate = {
+                        ...value,
+                        roles: value.roles.map(role => role.value)
+                    };
+                    setStaffInfo(updatedStaffInfo);
+                    setOpenUpdate(true);
+                }}
             />
         </>
     );

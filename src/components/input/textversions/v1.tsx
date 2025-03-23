@@ -44,7 +44,10 @@ const TextInputV1 = ({
     };
 
     const validateDate = () => {
-        if (value === '') { return; };
+        if (!value || value === '') {
+            return;
+        }
+
         try {
             const parsedDate = parseDate(value.split('/').reverse().join('-'));
             if (!parsedDate) {
@@ -69,7 +72,7 @@ const TextInputV1 = ({
                         onChange={(e) => handleInputChange(e, type, setValue)}
                         type={type === "password" && showPassword ? "text" : type}
                         onBlur={(e) => handleInputChange(e, type, setValue, true)}
-                        value={type === "date" ? value.split('/').reverse().join('-') : value}
+                        value={type === "date" && value && value !== '' ? value.split('/').reverse().join('-') : value}
                         placeholder={type === "date" ? "" : (placeholder ? placeholder : disabled ? "" : InputFieldMessage('DefaultTextPlaceHolder'))}
                         className={`p-2 px-3 text-left border rounded-md w-full dark:bg-darkContainerPrimary
                         focus:outline-none flex hide-calendar-icon no-spin-button
@@ -143,6 +146,9 @@ const TextInputV1 = ({
 
     useEffect(() => {
         setIsClient(true);
+        if ((value === null || value === undefined) && type === 'date') {
+            setValue('');
+        }
     }, []);
 
     return (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RootState } from "@/store";
 import { useSelector } from "react-redux";
 import { useTranslations } from "next-intl";
@@ -15,13 +15,14 @@ import CustomInputField from "@/components/input";
 import { IoReloadOutline } from "react-icons/io5";
 import { getTokenFromCookie } from "@/utils/token";
 import { useNotifications } from "@/hooks/NotificationsProvider";
+import { RoleValue, StaffInfoUpdate } from "@/types/store/auth-config"
 import { useSubmitNotification } from "@/hooks/SubmitNotificationProvider";
-import { CreateStaffDto, ShipperType, StaffRole } from "@/services/interface";
 import { useDefaultNotification } from "@/hooks/DefaultNotificationProvider";
-import { RoleValue } from "@/types/store/auth-config";
+import { UpdateStaffDto, ShipperType, StaffRole } from "@/services/interface";
+import { UUID } from "crypto";
 
-type AddFields = {
-    id: keyof CreateStaffDto,
+type UpdateFields = {
+    id: keyof StaffInfoUpdate,
     type: InputTypes,
     important?: boolean,
     version?: TextInputVersion | SelectInputVersion,
@@ -33,14 +34,14 @@ type AddFields = {
 }
 
 type Props = {
-    openAdd: boolean;
-    setOpenAdd: React.Dispatch<React.SetStateAction<boolean>>;
-    addInfo: CreateStaffDto;
-    setAddInfo: React.Dispatch<React.SetStateAction<CreateStaffDto>>;
+    openUpdate: boolean;
+    setOpenUpdate: React.Dispatch<React.SetStateAction<boolean>>;
+    staffInfo: StaffInfoUpdate;
+    setStaffInfo: React.Dispatch<React.SetStateAction<StaffInfoUpdate | undefined>>;
     reloadData: () => void;
 }
 
-const AddContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData }: Props) => {
+const UpdateContent = ({ openUpdate, setOpenUpdate, staffInfo, setStaffInfo, reloadData }: Props) => {
     const intl = useTranslations("AddStaff");
     const intl2 = useTranslations("StaffInfo");
     const staffOperation = new StaffOperation();
@@ -49,6 +50,7 @@ const AddContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData }: Pr
     const [loading, setLoading] = useState<boolean>(false);
     const { addSubmitNotification } = useSubmitNotification();
     const { addDefaultNotification } = useDefaultNotification();
+    const [initValue, setInitValue] = useState<StaffInfoUpdate>();
     const userInfo = useSelector((state: RootState) => state.auth.userInfo);
 
     const hasAdminRole = userInfo?.roles.some((role: RoleValue) =>
@@ -65,15 +67,15 @@ const AddContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData }: Pr
         value: type
     }));
 
-    const addFields: Array<AddFields> = [
+    const UpdateFields: Array<UpdateFields> = [
         { id: "fullname", type: "text", important: true },
         { id: "email", type: "text", important: true },
         { id: "phoneNumber", type: "text", important: true },
         { id: "cccd", type: "number", important: true },
         { id: "birthDate", type: "date", dropdownPosition: "bottom", important: true },
         { id: "roles", type: "select", options: roleOptions, isClearable: false, select_type: "multi", important: true, dropdownPosition: "bottom" },
-        ...(addInfo.roles.includes(StaffRole["SHIPPER"]) ? [
-            { id: "shipperType" as keyof CreateStaffDto, type: "select" as InputTypes, select_type: "single" as SelectInputType, options: shipperTypeOptions, isClearable: false, important: true, dropdownPosition: "bottom" as DropdownPosition }
+        ...(staffInfo.roles.includes(StaffRole["SHIPPER"]) ? [
+            { id: "shipperType" as keyof StaffInfoUpdate, type: "select" as InputTypes, select_type: "single" as SelectInputType, options: shipperTypeOptions, isClearable: false, important: true, dropdownPosition: "bottom" as DropdownPosition }
         ] : []),
         { id: "province", type: "text" },
         { id: "district", type: "text" },
@@ -81,26 +83,29 @@ const AddContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData }: Pr
         { id: "detailAddress", type: "text" },
         { id: "bank", type: "text" },
         { id: "bin", type: "text" },
-        ...(addInfo.roles.includes(StaffRole["SHIPPER"]) ? [{ id: "deposit" as keyof CreateStaffDto, type: "number" as InputTypes }] : []),
+        ...(staffInfo.roles.includes(StaffRole["SHIPPER"]) ? [{ id: "deposit" as keyof UpdateStaffDto, type: "number" as InputTypes }] : []),
         { id: "salary", type: "number" },
         { id: "managedWards", type: "select", options: [], select_type: "multi", dropdownPosition: "top" }
     ];
 
     if (hasAdminRole) {
-        addFields.unshift({ id: "agencyId", type: "text", important: true });
+        UpdateFields.unshift({ id: "agencyId", type: "text", important: true });
     }
 
-    const updateValue = (id: keyof CreateStaffDto, value: string | string[]) => {
-        setAddInfo(prevData => ({
-            ...prevData,
-            [id]: value,
-        }));
+    const updateValue = (id: keyof StaffInfoUpdate, value: string | string[]) => {
+        setStaffInfo(prevData => {
+            if (!prevData) return prevData;
+            return {
+                ...prevData,
+                [id]: value,
+            };
+        });
     };
 
-    const checkImportantFields = (addInfo: CreateStaffDto, addFields: Array<AddFields>) => {
+    const checkImportantFields = (staffInfo: StaffInfoUpdate, UpdateFields: Array<UpdateFields>) => {
         const missingFields: string[] = [];
-        addFields.forEach(({ id, important }) => {
-            if (important && !addInfo[id]) {
+        UpdateFields.forEach(({ id, important }) => {
+            if (important && !staffInfo[id]) {
                 missingFields.push(id);
             }
         });
@@ -109,30 +114,13 @@ const AddContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData }: Pr
 
     const handleReload = () => {
         if (loading) { return; };
-        setAddInfo({
-            agencyId: "",
-            fullname: "",
-            phoneNumber: "",
-            email: "",
-            cccd: "",
-            province: "",
-            district: "",
-            town: "",
-            detailAddress: "",
-            birthDate: "",
-            bin: "",
-            bank: "",
-            deposit: 0,
-            salary: 0,
-            roles: [StaffRole["SHIPPER"]],
-            managedWards: []
-        });
+        setStaffInfo(initValue);
     }
 
     const handleSubmit = () => {
         if (loading) { return; };
 
-        const missingFields = checkImportantFields(addInfo, addFields);
+        const missingFields = checkImportantFields(staffInfo, UpdateFields);
         if (missingFields.length > 0) {
             setError(true);
             const missingFieldsLabels = missingFields.map(field => intl2(field));
@@ -150,7 +138,7 @@ const AddContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData }: Pr
             });
         } else {
             setError(false)
-            addSubmitNotification({ message: intl("Confirm"), submitClick: handleCreate });
+            addSubmitNotification({ message: intl("Confirm2"), submitClick: handleCreate });
         }
     }
 
@@ -161,53 +149,57 @@ const AddContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData }: Pr
             return;
         }
 
-        const createStaffData: CreateStaffDto = {
-            ...addInfo,
-            agencyId: hasAdminRole ? addInfo.agencyId : userInfo?.agencyId ?? "",
-            birthDate: addInfo.birthDate ? new Date(addInfo.birthDate).toISOString().slice(0, 10) : undefined,
-            province: addInfo.province || undefined,
-            district: addInfo.district || undefined,
-            town: addInfo.town || undefined,
-            detailAddress: addInfo.detailAddress || undefined,
-            bank: addInfo.bank || undefined,
-            bin: addInfo.bin || undefined,
-            deposit: addInfo.roles.includes(StaffRole["SHIPPER"]) ? (typeof addInfo.deposit === 'string' ? parseFloat(addInfo.deposit) : addInfo.deposit) : undefined,
-            salary: typeof addInfo.salary === 'string' ? parseFloat(addInfo.salary) : addInfo.salary || undefined,
-            shipperType: addInfo.roles.includes(StaffRole["SHIPPER"]) ? (Array.isArray(addInfo.shipperType) ? addInfo.shipperType[0] : addInfo.shipperType) : undefined
+        const updateStaffData: UpdateStaffDto = {
+            ...staffInfo,
+            cccd: staffInfo.cccd ? staffInfo.cccd : "",
+            agencyId: hasAdminRole ? staffInfo.agencyId : userInfo?.agencyId ?? "",
+            birthDate: staffInfo.birthDate ? new Date(staffInfo.birthDate).toISOString().slice(0, 10) : undefined,
+            province: staffInfo.province || undefined,
+            district: staffInfo.district || undefined,
+            town: staffInfo.town || undefined,
+            detailAddress: staffInfo.detailAddress || undefined,
+            bank: staffInfo.bank || undefined,
+            bin: staffInfo.bin || undefined,
+            deposit: staffInfo.roles.includes(StaffRole["SHIPPER"]) ? (typeof staffInfo.deposit === 'string' ? parseFloat(staffInfo.deposit) : staffInfo.deposit) : undefined,
+            salary: typeof staffInfo.salary === 'string' ? parseFloat(staffInfo.salary) : staffInfo.salary || undefined,
+            shipperType: staffInfo.roles.includes(StaffRole["SHIPPER"]) ? (Array.isArray(staffInfo.shipperType) ? staffInfo.shipperType[0] : staffInfo.shipperType) : undefined
         };
-
-        const response = await staffOperation.create(createStaffData, token);
-        console.log(createStaffData)
+        console.log(updateStaffData)
+        const response = await staffOperation.update(staffInfo.id as UUID, updateStaffData, token);
         console.log(response)
         if (response.success) {
-            addNotification({ message: intl("Success"), type: "success" });
+            addNotification({ message: intl("Success2"), type: "success" });
             reloadData();
         } else {
-            addDefaultNotification({ message: response.message || intl("Fail") });
+            addDefaultNotification({ message: response.message || intl("Fail2") });
         }
 
         setLoading(false);
     };
 
+    useEffect(() => {
+        if (staffInfo) setInitValue(staffInfo);
+    }, [staffInfo])
+
     return (
-        <RenderCase condition={openAdd}>
+        <RenderCase condition={openUpdate}>
             <DetailPopup
                 customWidth="w-full md:w-fit"
-                title={intl("Title")}
-                onClose={() => setOpenAdd(false)}
+                title={intl("Title2")}
+                onClose={() => setOpenUpdate(false)}
                 icon={<FaUserCircle className="w-full h-full" />}
                 noPadding
             >
                 <div className="relative">
                     <div className="flex flex-col gap-2 px-2 pb-1 md:grid grid-cols-2 md:w-[700px]">
-                        {addFields.map(({ id, type, version, isClearable, options, select_type, state, important, dropdownPosition }: AddFields) => (
+                        {UpdateFields.map(({ id, type, version, isClearable, options, select_type, state, important, dropdownPosition }: UpdateFields) => (
                             <CustomInputField
                                 id={id}
                                 key={id}
                                 type={type}
-                                value={addInfo[id]}
+                                value={staffInfo[id]}
                                 setValue={(value: string | string[]) => updateValue(id, value)}
-                                state={error && important && !addInfo[id] ? "error" : state}
+                                state={error && important && !staffInfo[id] ? "error" : state}
                                 version={version}
                                 options={options}
                                 select_type={select_type}
@@ -248,4 +240,4 @@ const AddContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData }: Pr
     );
 };
 
-export default AddContent;
+export default UpdateContent;

@@ -1,5 +1,6 @@
 import { Column } from "react-table";
 import { useTranslations } from "next-intl";
+import { StaffInfo } from "@/types/store/auth-config";
 
 export const columnsData = (): Column<StaffInfo>[] => {
     const intl = useTranslations("StaffInfo");
@@ -28,6 +29,14 @@ export const columnsData = (): Column<StaffInfo>[] => {
         {
             Header: intl("email"),
             accessor: "email",
+        },
+        {
+            Header: intl("salary"),
+            accessor: "salary",
+        },
+        {
+            Header: intl("deposit"),
+            accessor: "deposit",
         },
         {
             Header: intl("roles"),

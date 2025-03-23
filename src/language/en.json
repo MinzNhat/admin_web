@@ -100,7 +100,11 @@
     "AGENCY HUMAN RESOURCE MANAGER": "Agency Human Resource Manager (AGENCY HUMAN RESOURCE MANAGER)",
     "AGENCY OPERATION STAFF": "Agency Operation Staff (AGENCY OPERATION STAFF)",
     "AGENCY TELLER": "Agency Teller (AGENCY TELLER)",
-    "SHIPPER": "Shipper (SHIPPER)"
+    "SHIPPER": "Shipper (SHIPPER)",
+    "LT": "Inter-provincial (LT)",
+    "NT": "Intra-provincial (NT)",
+    "shipperType": "Shipper Type",
+    "Submit": "Submit"
   },
   "TableCustomButton": {
     "Add": "Add",
@@ -201,6 +205,7 @@
   },
   "AddStaff": {
     "Title": "Add Staff",
+    "Title2": "Staff information",
     "ADMIN": "Administrator (ADMIN)",
     "MANAGER": "Manager (MANAGER)",
     "HUMAN RESOURCE MANAGER": "Human Resource Manager (HUMAN RESOURCE MANAGER)",
@@ -213,8 +218,11 @@
     "SHIPPER": "Shipper (SHIPPER)",
     "MissingField": "Please fill in all required fields:",
     "Confirm": "Confirm creating the staff?",
+    "Confirm2": "Confirm updating the staff?",
     "Success": "Successfully created a new staff member.",
-    "Fail": "Failed to create a new staff member, please try again later."
+    "Success2": "Successfully updated staff member.",
+    "Fail": "Failed to create a new staff member, please try again later.",
+    "Fail2": "Failed to update staff member, please try again later."
   },
   "AgenciesRoute": {
     "Title": "Add Post Office - Agency",
@@ -278,7 +286,8 @@
     "Confirm2": "Confirm deleting the selected agencies?",
     "DeleteSuccess": "Deleted agency with id",
     "DeleteSuccess2": "successfully",
-    "DeleteFailed2": "failed"
+    "DeleteFailed2": "failed",
+    "Submit": "Submit"
   },
   "TasksRoute": {
     "id": "Task ID",

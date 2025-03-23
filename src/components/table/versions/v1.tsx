@@ -218,7 +218,7 @@ const CheckTableV1 = <T extends TableData>(props: TableProps<T>) => {
                                                                     column.toggleSortBy(!isDesc);
                                                                 }
                                                             }}>
-                                                            <div className={`text-xs font-bold tracking-wide text-gray-600 lg:text-xs whitespace-nowrap pb-2 pr-6 text-start mt-[0.5px] 
+                                                            <div className={`text-xs font-bold tracking-wide text-black dark:text-gray-600 lg:text-xs whitespace-nowrap pb-2 pr-6 text-start mt-[0.5px] 
                                                                 ${column.Header && renderHeader ? renderHeader(column.Header.toString() ?? "") : ""}`}>
                                                                 {column.Header?.toString()}
                                                             </div>

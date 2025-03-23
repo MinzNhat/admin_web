@@ -399,6 +399,7 @@ export interface CreateStaffDto {
     salary?: number;
     roles: StaffRole[];
     managedWards: string[];
+    shipperType?: ShipperType | ShipperType[];
 }
 
 export interface UpdateShipperStatusDto {
@@ -406,24 +407,7 @@ export interface UpdateShipperStatusDto {
     currentLong: number;
 }
 
-export interface UpdateStaffDto {
-    agencyId: string;
-    fullname: string;
-    phoneNumber: string;
-    email: string;
-    cccd: string;
-    province: string;
-    district: string;
-    detailAddress: string;
-    birthDate: Date;
-    bin: string;
-    bank: string;
-    deposit: number;
-    salary: number;
-    roles: StaffRole[];
-    managedWards: string[];
-    shipperType: ShipperType;
-}
+export interface UpdateStaffDto extends CreateStaffDto { }
 
 export interface CreateCustomerDto {
     id: UUID;

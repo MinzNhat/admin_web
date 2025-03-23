@@ -1,3 +1,5 @@
+import { ShipperType, StaffRole } from "@/services/interface";
+
 declare type AuthState = {
     isAuthenticated: boolean;
     userInfo: StaffInfo | null;
@@ -5,9 +7,8 @@ declare type AuthState = {
     loading: boolean;
 }
 
-declare type Role = {
-    id: string;
-    value: string;
+declare type RoleValue = {
+    value: StaffRole;
 }
 
 declare type ManagedWard = {
@@ -40,13 +41,18 @@ declare type StaffInfo = {
     paidSalary?: number;
     phoneNumber: string;
     province?: string;
-    roles: Role[];
+    roles: RoleValue[];
     salary?: number;
     staffId?: string;
     town?: string;
     updatedAt: string;
     username: string;
     managedWards?: ManagedWard[];
+    shipperType?: ShipperType | ShipperType[];
+};
+
+declare type StaffInfoUpdate = Omit<StaffInfo, 'roles'> & {
+    roles: StaffRole[];
 };
 
 declare type RejectedValue = string | SerializedError;

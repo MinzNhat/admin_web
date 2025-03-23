@@ -75,7 +75,7 @@
     "birthDate": "Ngày sinh",
     "cccd": "Căn cước công dân",
     "createdAt": "Ngày tạo",
-    "deposit": "Tiền ký quỹ",
+    "deposit": "Tiền đặt cọc thế chân",
     "detailAddress": "Địa chỉ chi tiết",
     "district": "Quận/Huyện",
     "email": "Email",
@@ -100,7 +100,11 @@
     "AGENCY HUMAN RESOURCE MANAGER": "Quản lý nhân sự đại lý (AGENCY HUMAN RESOURCE MANAGER)",
     "AGENCY OPERATION STAFF": "Nhân viên vận hành đại lý (AGENCY OPERATION STAFF)",
     "AGENCY TELLER": "Giao dịch viên đại lý (AGENCY TELLER)",
-    "SHIPPER": "Nhân viên giao hàng (SHIPPER)"
+    "SHIPPER": "Nhân viên giao hàng (SHIPPER)",
+    "LT": "Liên thành (LT)",
+    "NT": "Nội tỉnh (NT)",
+    "shipperType": "Loại shipper",
+    "Submit": "Xác nhận"
   },
   "TableCustomButton": {
     "Add": "Thêm",
@@ -202,6 +206,7 @@
   },
   "AddStaff": {
     "Title": "Thêm nhân viên",
+    "Title2": "Thông tin nhân viên",
     "ADMIN": "Quản trị viên (ADMIN)",
     "MANAGER": "Quản lý (MANAGER)",
     "HUMAN RESOURCE MANAGER": "Quản lý nhân sự (HUMAN RESOURCE MANAGER)",
@@ -214,8 +219,11 @@
     "SHIPPER": "Nhân viên giao hàng (SHIPPER)",
     "MissingField": "Vui lòng điền đủ các trường quan trọng sau:",
     "Confirm": "Xác nhận tạo nhân viên?",
+    "Confirm2": "Xác nhận cập nhật nhân viên?",
     "Success": "Tạo nhân viên mới thành công",
-    "Fail": "Tạo nhân viên mới thất bại, vui lòng thử lại sau"
+    "Success2": "Cập nhật nhân viên thành công",
+    "Fail": "Tạo nhân viên mới thất bại, vui lòng thử lại sau",
+    "Fail2": "Cập nhật nhân viên thất bại, vui lòng thử lại sau"
   },
   "AgenciesRoute": {
     "Title": "Thêm bưu cục - đại lý",
@@ -279,7 +287,8 @@
     "Confirm2": "Xác nhận xoá các bưu cục - đại lý đã chọn?",
     "DeleteSuccess": "Xoá bưu cục - đại lý có id",
     "DeleteSuccess2": "thành công",
-    "DeleteFailed2": "thất bại"
+    "DeleteFailed2": "thất bại",
+    "Submit": "Xác nhận"
   },
   "TasksRoute": {
     "id": "ID công việc",
