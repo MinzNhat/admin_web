@@ -77,9 +77,7 @@ const StaffsMain = () => {
                         : TableMessage("DefaultNoDataValue")}
                 </div>
             );
-        }
-
-        if (cellHeader === intl("fullname")) {
+        } else if (cellHeader === intl("fullname")) {
             return (
                 <div className="w-full h-full whitespace-nowrap">
                     {cellValue as string}

@@ -1,14 +1,14 @@
 import { Column } from "react-table";
 import { useTranslations } from "next-intl";
-import { TaskData } from "@/types/views/tasks/tasks-config";
+import { DriverTaskData } from "@/types/views/driver_tasks/driver-config";
 
-export const columnsData = (): Column<TaskData>[] => {
+export const columnsData = (): Column<DriverTaskData>[] => {
     const intl = useTranslations("TasksRoute");
 
     return [
         {
-            Header: intl("order"),
-            accessor: "order",
+            Header: intl("shipment"),
+            accessor: "shipment",
         },
         {
             Header: intl("staff"),
@@ -21,10 +21,6 @@ export const columnsData = (): Column<TaskData>[] => {
         {
             Header: intl("completedAt"),
             accessor: "completedAt",
-        },
-        {
-            Header: intl("journey"),
-            accessor: "journey",
         },
     ];
 };

@@ -104,7 +104,9 @@
     "LT": "Inter-provincial (LT)",
     "NT": "Intra-provincial (NT)",
     "shipperType": "Shipper Type",
-    "Submit": "Submit"
+    "Submit": "Submit",
+    "firstName": "First Name",
+    "lastName": "Last Name"
   },
   "TableCustomButton": {
     "Add": "Add",
@@ -201,11 +203,17 @@
     "orderId": "Order ID",
     "shippingBillId": "Shipping Bill ID",
     "true": "Yes",
-    "false": "No"
+    "false": "No",
+    "delete": "Delete",
+    "Submit": "Confirm deletion of the selected orders?",
+    "Success2": "Successfully deleted the selected orders",
+    "Fail2": "Failed to delete the selected orders",
+    "permission2": "Insufficient permissions"
   },
   "AddStaff": {
     "Title": "Add Staff",
     "Title2": "Staff information",
+    "Title3": "Customer information",
     "ADMIN": "Administrator (ADMIN)",
     "MANAGER": "Manager (MANAGER)",
     "HUMAN RESOURCE MANAGER": "Human Resource Manager (HUMAN RESOURCE MANAGER)",
@@ -306,7 +314,8 @@
     "Confirm": "Confirm deleting the selected tasks?",
     "DeleteSuccess": "Deleted task with id",
     "DeleteSuccess2": "successfully",
-    "DeleteFailed2": "failed"
+    "DeleteFailed2": "failed",
+    "shipment": "Shipment"
   },
   "SearchPopUp": {
     "~": "Contains",
@@ -347,5 +356,19 @@
     "discount": "Discount",
     "expiration": "Expiration Date",
     "id": "Voucher ID"
+  },
+  "ShipmentsRoute": {
+    "id": "Shipment ID",
+    "createdAt": "Created At",
+    "updatedAt": "Updated At",
+    "destinationAgency": "Destination Agency",
+    "destinationAgencyId": "Destination Agency ID",
+    "sourceAgency": "Source Agency",
+    "sourceAgencyId": "Source Agency ID",
+    "mass": "Mass (kg)",
+    "status": "Status",
+    "vehicleId": "Vehicle ID",
+    "Title": "Shipment Information",
+    "OrdersList": "Order List in Shipment"
   }
 }

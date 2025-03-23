@@ -1,23 +1,27 @@
 "use client";
 
-import { useTranslations } from "next-intl";
-import { getTokenFromCookie } from "@/utils/token";
-import { CustomerOperation } from "@/services/main";
-import { SearchCriteria } from "@/services/interface";
 import { useCallback, useEffect, useState } from "react";
+import { SearchCriteria } from "@/services/interface";
+import { ShipmentOperation } from "@/services/main";
+import { getTokenFromCookie } from "@/utils/token";
+import { useTranslations } from "next-intl";
+import TableSwitcher from "@/components/table";
 import { columnsData } from "../variables/columnsData";
 import CustomButton from "@/views/customTableButton";
-import TableSwitcher from "@/components/table";
 import SearchPopUp, { DetailFields } from "@/views/customTableSearchPopUp";
+import UpdateContent from "./updateContent";
 
-const CustomerMain = () => {
-    const customerOp = new CustomerOperation();
-    const intl = useTranslations("StaffInfo");
-    const [customers, setCustomers] = useState<Customer[]>();
+const ShipmentsMain = () => {
+    const intl = useTranslations("ShipmentsRoute");
+    const shipmentsOp = new ShipmentOperation();
+    const TableMessage = useTranslations('Table');
+    const [shipments, setShipments] = useState<Shipment[]>();
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [currentSize, setCurrentSize] = useState<number>(10);
-    const [selectedRows, setSelectedRows] = useState<Customer[]>([]);
+    const [shipmentInfo, setShipmentInfo] = useState<Shipment>();
+    const [openUpdate, setOpenUpdate] = useState<boolean>(false);
     const [sortBy, setSortBy] = useState<{ id: string; desc: boolean }[]>([]);
+    const [selectedRows, setSelectedRows] = useState<Shipment[]>([]);
     const [searchCriteriaValue, setSearchCriteriaValue] = useState<SearchCriteria>({
         field: [],
         operator: [],
@@ -26,16 +30,21 @@ const CustomerMain = () => {
 
     const searchFields: Array<DetailFields> = [
         { label: intl("id"), label_value: "id", type: "text" },
-        { label: intl("firstName"), label_value: "firstName", type: "text" },
-        { label: intl("lastName"), label_value: "lastName", type: "text" },
-        { label: intl("phoneNumber"), label_value: "phoneNumber", type: "text" },
-        { label: intl("email"), label_value: "email", type: "text" },
+        { label: intl("status"), label_value: "status", type: "text" },
     ];
+
+    const renderCell = (cellHeader: string, cellValue: string | number | boolean | any) => {
+        if (cellHeader === intl("sourceAgency") || cellHeader === intl("destinationAgency")) {
+            return (
+                <div className="w-full h-full whitespace-nowrap">
+                    {cellValue && cellValue.name ? cellValue.name : TableMessage("DefaultNoDataValue")}
+                </div>
+            );
+        }
+    };
 
     const fetchData = useCallback(async () => {
         const token = getTokenFromCookie();
-        setCustomers(undefined);
-        setSelectedRows([]);
 
         if (!token) return;
 
@@ -48,7 +57,7 @@ const CustomerMain = () => {
             value: criteriaValue
         } : null;
 
-        const response = await customerOp.searchCustomer({
+        const response = await shipmentsOp.search({
             addition: {
                 sort: sortBy.map(({ id, desc }) => [id, desc ? "DESC" : "ASC"]),
                 page: currentPage,
@@ -59,7 +68,7 @@ const CustomerMain = () => {
         }, token);
 
         if (response.success) {
-            setCustomers(response.data as Customer[]);
+            setShipments(response.data as Shipment[]);
         }
     }, [currentPage, currentSize, sortBy, searchCriteriaValue]);
 
@@ -69,11 +78,13 @@ const CustomerMain = () => {
 
     return (
         <>
+            {shipmentInfo && <UpdateContent openUpdate={openUpdate} reloadData={fetchData} setOpenUpdate={setOpenUpdate} setShipmentInfo={setShipmentInfo} shipmentInfo={shipmentInfo} />}
             <TableSwitcher
                 primaryKey="id"
-                tableData={customers}
+                tableData={shipments}
                 isPaginated={true}
                 setSortBy={setSortBy}
+                renderCell={renderCell}
                 currentPage={currentPage}
                 currentSize={currentSize}
                 fetchPageData={fetchData}
@@ -91,9 +102,13 @@ const CustomerMain = () => {
                     sizeOptions: [10, 20, 30]
                 }}
                 customSearch={true}
+                onRowClick={(value: Shipment) => {
+                    setShipmentInfo(value);
+                    setOpenUpdate(true);
+                }}
             />
         </>
     );
 }
 
-export default CustomerMain;
+export default ShipmentsMain;

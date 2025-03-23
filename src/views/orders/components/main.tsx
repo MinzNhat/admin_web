@@ -16,12 +16,20 @@ import SearchPopUp, { DetailFields } from "@/views/customTableSearchPopUp";
 import { OrderData, OrderState } from "@/types/views/orders/orders-config";
 import { MdRadioButtonChecked, MdRadioButtonUnchecked } from "react-icons/md";
 import { OrderStatus, SearchCriteria, SearchOperator, ServiceType } from "@/services/interface";
+import { Button } from "@nextui-org/react";
+import { BiTrash } from "react-icons/bi";
+import { UUID } from "crypto";
+import { useNotifications } from "@/hooks/NotificationsProvider";
+import { useSubmitNotification } from "@/hooks/SubmitNotificationProvider";
 
 
 const OrdersMain = () => {
     const orderOp = new OrdersOperation();
     const intl = useTranslations("OrdersRoute");
+    const [orderId, setOrderId] = useState<UUID>();
+    const { addNotification } = useNotifications();
     const [orders, setOrders] = useState<OrderData[]>();
+    const { addSubmitNotification } = useSubmitNotification();
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [currentSize, setCurrentSize] = useState<number>(10);
     const [openDetail, setOpenDetail] = useState<boolean>(false);
@@ -30,6 +38,7 @@ const OrdersMain = () => {
     const userInfo = useSelector((state: RootState) => state.auth.userInfo);
     const [sortBy, setSortBy] = useState<{ id: string; desc: boolean }[]>([]);
     const [currentOrderState, setCurrentOrderState] = useState<OrderState[]>(['ALL']);
+
     const orderStateOptions: OrderState[] = ['ALL', 'PROCESSING', 'NTHIRD_PARTY_DELIVERY'];
     const [searchCriteriaValue, setSearchCriteriaValue] = useState<SearchCriteria>({
         field: [],
@@ -70,7 +79,7 @@ const OrdersMain = () => {
     ];
 
     const renderHeader = (cellHeader: string): string => {
-        if (cellHeader === intl("agencyId2")) {
+        if (cellHeader === intl("delete")) {
             return "!text-end !pr-2"
         } else if (cellHeader === intl("trackingNumber")) {
             return "!pl-2"
@@ -100,6 +109,19 @@ const OrdersMain = () => {
                     </RenderCase>
                 </div>
             )
+        } else if (cellHeader === intl("delete")) {
+            return (
+                <div className="flex justify-center whitespace-nowrap">
+                    <RenderCase condition={userInfo && userInfo.agencyId ? userInfo.agencyId === rowValue.agencyId : false}>
+                        <Button className="min-h-5 min-w-5 w-5 h-5 p-0 rounded-full bg-lightContainer dark:!bg-darkContainer" onPress={() => { setOrderId(cellValue as UUID); addSubmitNotification({ message: intl("Submit"), submitClick: handleDelete }) }}>
+                            <BiTrash className="min-h-5 min-w-5" />
+                        </Button>
+                    </RenderCase>
+                    <RenderCase condition={!(userInfo && userInfo.agencyId ? userInfo.agencyId === rowValue.agencyId : false)}>
+                        {intl("permission2")}
+                    </RenderCase>
+                </div>
+            )
         }
     };
 
@@ -115,8 +137,6 @@ const OrdersMain = () => {
         setSelectedRows([]);
 
         if (!token) return;
-        const testData = await orderOp.downloadImage({fileId:"23e71e57-dade-4998-b171-318090042c1e"} , token);
-        console.log(testData)
 
         const rawValue = Array.isArray(searchCriteriaValue.value) ? searchCriteriaValue.value[0] : searchCriteriaValue.value;
         const criteria: SearchCriteria | null = rawValue ? {
@@ -146,12 +166,25 @@ const OrdersMain = () => {
             ]
         }, token);
 
-        console.log(response)
-
         if (response.success) {
             setOrders(response.data as OrderData[]);
         }
     }, [currentPage, currentSize, sortBy, currentOrderState[0], searchCriteriaValue]);
+
+    const handleDelete = async () => {
+        const token = getTokenFromCookie();
+        if (!token) return;
+        if (!orderId) return;
+
+        const response = await orderOp.deleteOrder(orderId, token);
+        if (response.success) {
+            addNotification({ message: response.message ?? intl("Success2"), type: "success" });
+        } else {
+            addNotification({ message: response.message ?? intl("Fail2"), type: "error" });
+        }
+
+        setSearchCriteriaValue(prev => prev);
+    }
 
     useEffect(() => {
         fetchData();

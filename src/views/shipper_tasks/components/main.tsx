@@ -24,6 +24,8 @@ import DetailContent from "@/views/orders/components/detailContent";
 import { useSubmitNotification } from "@/hooks/SubmitNotificationProvider";
 import SearchPopUp, { DetailFields } from "@/views/customTableSearchPopUp";
 import { MdRadioButtonChecked, MdRadioButtonUnchecked } from "react-icons/md";
+import { StaffInfo, StaffInfoUpdate } from "@/types/store/auth-config";
+import UpdateContent from "@/views/staffs/components/updateContent";
 
 const TasksMain = () => {
     const taskOp = new TaskOperation();
@@ -35,9 +37,11 @@ const TasksMain = () => {
     const { addSubmitNotification } = useSubmitNotification();
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [currentSize, setCurrentSize] = useState<number>(10);
+    const [staffInfo, setStaffInfo] = useState<StaffInfoUpdate>();
     const [journeyData, setJourneyData] = useState<string[][]>([]);
     const [selectedOrder, setSelectedOrder] = useState<OrderData>();
     const [selectedRows, setSelectedRows] = useState<TaskData[]>([]);
+    const [openUpdateStaff, setOpenUpdateStaff] = useState<boolean>(false);
     const [openOrderDetail, setOpenOrderDetail] = useState<boolean>(false);
     const locale = useSelector((state: RootState) => state.language.locale);
     const userInfo = useSelector((state: RootState) => state.auth.userInfo);
@@ -62,6 +66,15 @@ const TasksMain = () => {
         const newValue = { ...value, statuscode: [value.statusCode] };
         setSelectedOrder(newValue);
         setOpenOrderDetail(true);
+    };
+
+    const openStaff = (value: StaffInfo) => {
+        const updatedStaffInfo: StaffInfoUpdate = {
+            ...value,
+            roles: value.roles?.map(role => role.value)
+        };
+        setStaffInfo(updatedStaffInfo);
+        setOpenUpdateStaff(true);
     };
 
     const openMapHandler = (value: string[][]) => {
@@ -90,7 +103,7 @@ const TasksMain = () => {
         } else if (cellHeader === intl("staff")) {
             return (
                 <div className="flex justify-start place-items-center gap-2 whitespace-nowrap">
-                    <Button className="min-h-5 min-w-5 w-5 h-5 p-0 rounded-full bg-lightContainer dark:!bg-darkContainer" onChange={() => { }}>
+                    <Button className="min-h-5 min-w-5 w-5 h-5 p-0 rounded-full bg-lightContainer dark:!bg-darkContainer" onPress={() => openStaff(cellValue)}>
                         <IoPersonCircleOutline className="min-h-5 min-w-5" />
                     </Button>
                     {cellValue.fullname}
@@ -159,7 +172,7 @@ const TasksMain = () => {
                 criteria: []
             }, token);
         }
-
+        console.log(response)
         if (response.success) {
             setTasks(response.data as TaskData[])
         }
@@ -187,6 +200,7 @@ const TasksMain = () => {
 
     return (
         <>
+            {staffInfo && <UpdateContent openUpdate={openUpdateStaff} reloadData={fetchData} setOpenUpdate={setOpenUpdateStaff} setStaffInfo={setStaffInfo} staffInfo={staffInfo} />}
             <MapPopup openMap={openMap} setOpenMap={setOpenMap} journey={journeyData} />
             <DetailContent openDetail={openOrderDetail} setOpenDetail={setOpenOrderDetail} selectedOrder={selectedOrder} setSelectedOrder={setSelectedOrder} updatePermission={userInfo && userInfo.agencyId ? userInfo.agencyId === selectedOrder?.agencyId : false} reloadData={fetchData} />
             <TableSwitcher

@@ -1,8 +1,8 @@
+import ShipmentsContent from "@/views/shipments";
+
 const ShipmentsPage = () => {
     return (
-        <div>
-            Enter
-        </div>
+        <ShipmentsContent />
     );
 }
 

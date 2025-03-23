@@ -104,7 +104,9 @@
     "LT": "Liên thành (LT)",
     "NT": "Nội tỉnh (NT)",
     "shipperType": "Loại shipper",
-    "Submit": "Xác nhận"
+    "Submit": "Xác nhận",
+    "firstName": "Tên",
+    "lastName": "Họ"
   },
   "TableCustomButton": {
     "Add": "Thêm",
@@ -202,11 +204,17 @@
     "orderId": "Mã đơn hàng",
     "shippingBillId": "Mã vận đơn",
     "true": "Có",
-    "false": "Không"
+    "false": "Không",
+    "delete": "Xoá",
+    "Submit": "Xác nhận xoá đơn hàng đã chọn?",
+    "Success2": "Xoá đơn hàng đã chọn thành công",
+    "Fail2": "Xoá đơn hàng đã chọn thất bại",
+    "permission2": "Không đủ quyền hạn"
   },
   "AddStaff": {
     "Title": "Thêm nhân viên",
     "Title2": "Thông tin nhân viên",
+    "Title3": "Thông tin khách hàng",
     "ADMIN": "Quản trị viên (ADMIN)",
     "MANAGER": "Quản lý (MANAGER)",
     "HUMAN RESOURCE MANAGER": "Quản lý nhân sự (HUMAN RESOURCE MANAGER)",
@@ -220,10 +228,13 @@
     "MissingField": "Vui lòng điền đủ các trường quan trọng sau:",
     "Confirm": "Xác nhận tạo nhân viên?",
     "Confirm2": "Xác nhận cập nhật nhân viên?",
+    "Confirm3": "Xác nhận cập nhật khách hàng?",
     "Success": "Tạo nhân viên mới thành công",
     "Success2": "Cập nhật nhân viên thành công",
+    "Success3": "Cập nhật khách hàng thành công",
     "Fail": "Tạo nhân viên mới thất bại, vui lòng thử lại sau",
-    "Fail2": "Cập nhật nhân viên thất bại, vui lòng thử lại sau"
+    "Fail2": "Cập nhật nhân viên thất bại, vui lòng thử lại sau",
+    "Fail3": "Cập nhật khách hàng thất bại, vui lòng thử lại sau"
   },
   "AgenciesRoute": {
     "Title": "Thêm bưu cục - đại lý",
@@ -307,13 +318,14 @@
     "Confirm": "Xác nhận xoá các công việc đã chọn?",
     "DeleteSuccess": "Xoá đơn hàng có id",
     "DeleteSuccess2": "thành công",
-    "DeleteFailed2": "thất bại"
+    "DeleteFailed2": "thất bại",
+    "shipment": "Lô hàng"
   },
   "SearchPopUp": {
-    "~": "Chứa",
-    "!~": "Không chứa",
-    "=": "Bằng",
-    "!=": "Không bằng",
+    "~": "Có (Bao gồm) (~)",
+    "!~": "Không có (Không bao gồm) (!~)",
+    "=": "Giống nhau (Bằng) (=)",
+    "!=": "Không bằng (!=)",
     "isSet": "Được thiết lập",
     "isNotSet": "Chưa được thiết lập",
     "<": "Nhỏ hơn",
@@ -348,5 +360,19 @@
     "discount": "Giảm giá",
     "expiration": "Ngày hết hạn",
     "id": "Mã voucher"
+  },
+  "ShipmentsRoute": {
+    "id": "Mã lô hàng",
+    "createdAt": "Ngày tạo",
+    "updatedAt": "Ngày cập nhật",
+    "destinationAgency": "Bưu cục đích",
+    "destinationAgencyId": "Mã bưu cục đích",
+    "sourceAgency": "Bưu cục nguồn",
+    "sourceAgencyId": "Mã bưu cục nguồn",
+    "mass": "Khối lượng (kg)",
+    "status": "Trạng thái",
+    "vehicleId": "Mã phương tiện",
+    "Title": "Thông tin lô hàng",
+    "OrdersList": "Danh sách đơn hàng trong lô hàng"
   }
 }

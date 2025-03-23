@@ -74,7 +74,7 @@ const UpdateContent = ({ openUpdate, setOpenUpdate, staffInfo, setStaffInfo, rel
         { id: "cccd", type: "number", important: true },
         { id: "birthDate", type: "date", dropdownPosition: "bottom", important: true },
         { id: "roles", type: "select", options: roleOptions, isClearable: false, select_type: "multi", important: true, dropdownPosition: "bottom" },
-        ...(staffInfo.roles.includes(StaffRole["SHIPPER"]) ? [
+        ...(staffInfo.roles?.includes(StaffRole["SHIPPER"]) ? [
             { id: "shipperType" as keyof StaffInfoUpdate, type: "select" as InputTypes, select_type: "single" as SelectInputType, options: shipperTypeOptions, isClearable: false, important: true, dropdownPosition: "bottom" as DropdownPosition }
         ] : []),
         { id: "province", type: "text" },
@@ -83,7 +83,7 @@ const UpdateContent = ({ openUpdate, setOpenUpdate, staffInfo, setStaffInfo, rel
         { id: "detailAddress", type: "text" },
         { id: "bank", type: "text" },
         { id: "bin", type: "text" },
-        ...(staffInfo.roles.includes(StaffRole["SHIPPER"]) ? [{ id: "deposit" as keyof UpdateStaffDto, type: "number" as InputTypes }] : []),
+        ...(staffInfo.roles?.includes(StaffRole["SHIPPER"]) ? [{ id: "deposit" as keyof UpdateStaffDto, type: "number" as InputTypes }] : []),
         { id: "salary", type: "number" },
         { id: "managedWards", type: "select", options: [], select_type: "multi", dropdownPosition: "top" }
     ];
@@ -168,6 +168,7 @@ const UpdateContent = ({ openUpdate, setOpenUpdate, staffInfo, setStaffInfo, rel
         const response = await staffOperation.update(staffInfo.id as UUID, updateStaffData, token);
         console.log(response)
         if (response.success) {
+            setInitValue(staffInfo);
             addNotification({ message: intl("Success2"), type: "success" });
             reloadData();
         } else {

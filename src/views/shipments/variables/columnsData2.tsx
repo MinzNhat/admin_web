@@ -26,13 +26,5 @@ export const columnsData = (): Column<OrderData>[] => {
             Header: intl("statusCode"),
             accessor: "statusCode",
         },
-        {
-            Header: intl("agencyId2"),
-            accessor: "agencyId",
-        },
-        {
-            Header: intl("delete"),
-            accessor: "id",
-        },
     ];
 };
