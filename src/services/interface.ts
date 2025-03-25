@@ -265,13 +265,13 @@ export interface SingleFileUpload {
 }
 
 export interface CreateShipmentDto {
-    destinationAgencyId: UUID;
-    vehicleId: UUID;
+    destinationAgencyId: string;
+    vehicleId: string;
 }
 
 export interface AddOrderToShipmentDto {
-    orderIds: UUID[];
-    shipmentId: UUID;
+    orderIds: string[];
+    shipmentId: string;
 }
 
 export interface MultiFileUpload {
@@ -279,7 +279,7 @@ export interface MultiFileUpload {
 }
 
 export interface FileID {
-    fileId: UUID
+    fileId: string
 }
 
 export interface AddJourneyNodeDto {
@@ -454,4 +454,10 @@ export interface CreateVoucherDto {
         district: string;
         source: string;
     }
+}
+
+export interface AdministrativePayload {
+    province?: string,
+    district?: string,
+    ward?: string
 }

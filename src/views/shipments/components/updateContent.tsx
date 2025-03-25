@@ -13,6 +13,7 @@ import { FaShippingFast } from "react-icons/fa";
 import CustomButton2 from "@/views/customTableButton";
 import TableSwitcher from "@/components/table";
 import { columnsData } from "../variables/columnsData2";
+import OrdersToShipment from "./addOrderToShipmemt";
 
 type UpdateFields = {
     id: keyof Shipment,
@@ -29,12 +30,13 @@ type UpdateFields = {
 type Props = {
     openUpdate: boolean;
     setOpenUpdate: React.Dispatch<React.SetStateAction<boolean>>;
+    setOpenAddOrders: React.Dispatch<React.SetStateAction<boolean>>;
     shipmentInfo: Shipment;
     setShipmentInfo: React.Dispatch<React.SetStateAction<Shipment | undefined>>;
     reloadData: () => void;
 }
 
-const UpdateContent = ({ openUpdate, setOpenUpdate, shipmentInfo, setShipmentInfo, reloadData }: Props) => {
+const UpdateContent = ({ openUpdate, setOpenUpdate, shipmentInfo, setShipmentInfo, reloadData, setOpenAddOrders }: Props) => {
     const intl = useTranslations("ShipmentsRoute");
     const shipmentsOp = new ShipmentOperation();
     const [openOrders, setOpenOrders] = useState<boolean>(false);
@@ -116,7 +118,7 @@ const UpdateContent = ({ openUpdate, setOpenUpdate, shipmentInfo, setShipmentInf
                                 setCurrentPage={setCurrentPage}
                                 setSelectedRows={setSelectedRows}
                                 customButton={
-                                    <CustomButton2 fetchData={fetchData} selectedRows={selectedRows} />
+                                    <CustomButton2 fetchData={fetchData} selectedRows={selectedRows} openAdd={() => { setOpenAddOrders(true); console.log("Them order di") }} />
                                 }
                                 containerClassname="!rounded-xl p-4"
                                 selectType="none"

@@ -17,6 +17,14 @@ declare type Insurance = {
     updatedAt: string;
 }
 
+declare type OrderImage = {
+    id: string;
+    name: string;
+    type: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
 declare type OrderData = {
     agencyId: string;
     cod: number;
@@ -32,7 +40,7 @@ declare type OrderData = {
     goodType: string;
     height: number;
     id: UUID;
-    images: string[];
+    images: OrderImage[];
     isBulkyGood: boolean;
     journies: JourneyData[];
     latDestination: number;
@@ -67,5 +75,13 @@ declare type OrderData = {
     wardSource: string;
     width: number;
 };
+
+declare type OrderImage = {
+    id: string;
+    name: string;
+    type: string;
+    createdAt: string;
+    updatedAt: string;
+}
 
 declare type OrderState = "ALL" | "PROCESSING" | "NTHIRD_PARTY_DELIVERY";

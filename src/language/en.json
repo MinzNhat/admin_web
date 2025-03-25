@@ -152,6 +152,7 @@
     "goodType": "Goods type",
     "height": "Height",
     "id": "Order ID",
+    "noImage": "No images",
     "images": "Order's images",
     "isBulkyGood": "Bulky goods",
     "journies": "Order's journey",
@@ -369,6 +370,9 @@
     "status": "Status",
     "vehicleId": "Vehicle ID",
     "Title": "Shipment Information",
-    "OrdersList": "Order List in Shipment"
+    "OrdersList": "Order List in Shipment",
+    "Submit": "Submit",
+    "AddOrderSuccess": "Successfully added order to shipment!",
+    "AddOrderFailed": "Failed to add order to shipment!"
   }
 }

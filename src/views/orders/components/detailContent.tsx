@@ -24,6 +24,7 @@ import { OrdersOperation, TaskOperation } from "@/services/main";
 import { useNotifications } from "@/hooks/NotificationsProvider";
 import { useSubmitNotification } from "@/hooks/SubmitNotificationProvider";
 import { useDefaultNotification } from "@/hooks/DefaultNotificationProvider";
+import ImageList from "./imageList";
 
 type ButtonList = {
     key: string,
@@ -63,6 +64,8 @@ const DetailContent = ({ openDetail, setOpenDetail, selectedOrder, updatePermiss
     const { addDefaultNotification } = useDefaultNotification();
     const [initialValue, setInitialValue] = useState<OrderData>();
     const [openJournies, setOpenJournies] = useState<boolean>(false);
+    const [openImages, setOpenImages] = useState(false);
+    const [openSignatures, setOpenSignatures] = useState(false);
     const locale = useSelector((state: RootState) => state.language.locale);
 
     const updateValue = (id: keyof OrderData, value: string | string[]) => {
@@ -77,8 +80,8 @@ const DetailContent = ({ openDetail, setOpenDetail, selectedOrder, updatePermiss
 
     const buttonList: ButtonList[] = [
         { key: "journies", action: () => setOpenJournies(true) },
-        { key: "images" },
-        { key: "signatures" },
+        { key: "images" , action: () => setOpenImages(true)},
+        { key: "signatures", action: () => setOpenSignatures(true) },
         { key: "task", action: () => setOpenTask(true) }
     ];
 
@@ -233,6 +236,30 @@ const DetailContent = ({ openDetail, setOpenDetail, selectedOrder, updatePermiss
                             customWidth="w-full md:w-fit"
                             title={intl("journies")}
                             onClose={() => setOpenJournies(false)}
+                            icon={<FaBox className="h-4 w-4" />}
+                            noPadding
+                            className="px-4 pt-2 min-h-20 flex place-items-center"
+                        >
+                            <JourneyTimeline journey={selectedOrder?.journies} order={true} />
+                        </DetailPopup>
+                    </RenderCase>
+                    <RenderCase condition={openImages}>
+                        <DetailPopup
+                            customWidth="w-full md:w-fit"
+                            title={intl("images")}
+                            onClose={() => setOpenImages(false)}
+                            icon={<FaBox className="h-4 w-4" />}
+                            noPadding
+                            className="px-4 pt-2 min-h-20 flex place-items-center"
+                        >
+                            <ImageList images={selectedOrder?.images??[]} noImage={intl("noImage")}/>
+                        </DetailPopup>
+                    </RenderCase>
+                    <RenderCase condition={openSignatures}>
+                        <DetailPopup
+                            customWidth="w-full md:w-fit"
+                            title={intl("signatures")}
+                            onClose={() => setOpenSignatures(false)}
                             icon={<FaBox className="h-4 w-4" />}
                             noPadding
                             className="px-4 pt-2 min-h-20 flex place-items-center"

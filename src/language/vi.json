@@ -153,6 +153,7 @@
     "height": "Chiều cao",
     "id": "Mã đơn hàng",
     "images": "Ảnh đơn hàng",
+    "noImage": "Chưa có ảnh",
     "isBulkyGood": "Hàng cồng kềnh",
     "journies": "Nhật ký đơn hàng",
     "latDestination": "Vĩ độ giao",
@@ -373,6 +374,14 @@
     "status": "Trạng thái",
     "vehicleId": "Mã phương tiện",
     "Title": "Thông tin lô hàng",
-    "OrdersList": "Danh sách đơn hàng trong lô hàng"
+    "OrdersList": "Danh sách đơn hàng trong lô hàng",
+    "Submit": "Xác nhận",
+    "AddOrderSuccess": "Thêm hàng vào lô hàng thành công!",
+    "AddOrderFailed" :"Thêm hàng vào lô hàng thất bại!"
+  },
+  "Config": {
+    "province" : "Tỉnh/Thành phố",
+    "district" : "Quận/Huyện",
+    "ward": "Phường/Xã"
   }
 }

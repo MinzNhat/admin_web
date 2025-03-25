@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 
-import { AddJourneyNodeDto, AddOrderToShipmentDto, AssignTaskToShipperDto, CalculateFeePayload, ConfigDepositDto, ConfigServicesDto, CreateAgencyDto, CreateCargoInsuranceDto, CreateFavoriteOrderLocationDto, CreateGiftOrderTopicDto, CreateOrderDto, CreateShipmentDto, CreateShippingBillDto, CreateStaffDto, CreateVoucherDto, CustomerLoginDto, FileID, MultiFileUpload, OrderImageType, OrderStatus, SearchCriteria, SearchPayload, StaffLoginDto, UpdateAgencyDto, UpdateCargoInsuranceDto, UpdateCustomerDto, UpdateFavoriteOrderLocationDto, UpdateOrderDto, UpdateOrderLocationDto, UpdateShipperStatusDto, UpdateStaffDto, UpdateTaskDto, VerifyOtpDto } from "./interface";
+import { AddJourneyNodeDto, AddOrderToShipmentDto, AdministrativePayload, AssignTaskToShipperDto, CalculateFeePayload, ConfigDepositDto, ConfigServicesDto, CreateAgencyDto, CreateCargoInsuranceDto, CreateFavoriteOrderLocationDto, CreateGiftOrderTopicDto, CreateOrderDto, CreateShipmentDto, CreateShippingBillDto, CreateStaffDto, CreateVoucherDto, CustomerLoginDto, FileID, MultiFileUpload, OrderImageType, OrderStatus, SearchCriteria, SearchPayload, StaffLoginDto, UpdateAgencyDto, UpdateCargoInsuranceDto, UpdateCustomerDto, UpdateFavoriteOrderLocationDto, UpdateOrderDto, UpdateOrderLocationDto, UpdateShipperStatusDto, UpdateStaffDto, UpdateTaskDto, VerifyOtpDto } from "./interface";
 import { UUID } from "crypto";
 
 export class AgencyOperation {
@@ -8,6 +8,33 @@ export class AgencyOperation {
 
     constructor() {
         this.baseUrl = 'https://api.tdlogistics.net.vn/v3/agency';
+    }
+    
+    async getManageWardsById(id: string, token: string) {
+        try {
+            const response: AxiosResponse = await axios.get(`${this.baseUrl}/managed_wards/${id}`, {
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status,
+            };
+        } catch (error: any) {
+            console.log("Error get manage wards: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null,
+            };
+        }
     }
 
     async create(payload: CreateAgencyDto, token: string) {
@@ -520,24 +547,22 @@ export class OrdersOperation {
         }
     }
 
-    async downloadImage(payload: FileID, token: string) {
+    async downloadImage(fileId: string, token: string) {
         try {
-            const response: AxiosResponse = await axios.get(`${this.baseUrl}/image/download`, {
-                params: {
-                    fileId: payload.fileId
-                },
+            const response: AxiosResponse = await axios.get(`${this.baseUrl}/image/download?fileId=${fileId}`, {
                 withCredentials: true,
                 validateStatus: status => status >= 200 && status <= 500,
                 headers: {
                     Authorization: `Bearer ${token}`
                 },
-                responseType: 'stream'
+                responseType: 'blob'
             });
+            console.log(response);
 
             return {
                 success: response.data.success,
                 message: response.data.message,
-                data: response.data.data,
+                data: response.data,
                 status: response.status
             };
         }
@@ -2469,6 +2494,28 @@ export class VoucherOperation {
             console.log("Error searching vouchers: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
             return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+        }
+    }
+}
+
+export class AdministrativeOperation {
+    private baseUrl: string;
+
+    constructor() {
+        this.baseUrl = 'https://api.tdlogistics.net.vn/v3/administrative';
+    }
+
+    async get(conditions: AdministrativePayload) {
+        try {
+            const response: AxiosResponse = await axios.post(`${this.baseUrl}/search`, conditions, {
+                withCredentials: true
+            });
+
+            return { error: response.data.error, data: response.data.data, message: response.data.message }
+        } catch (error: any) {
+            console.error("Error getting administrative: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
         }
     }
 }
