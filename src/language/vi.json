@@ -377,7 +377,9 @@
     "OrdersList": "Danh sách đơn hàng trong lô hàng",
     "Submit": "Xác nhận",
     "AddOrderSuccess": "Thêm hàng vào lô hàng thành công!",
-    "AddOrderFailed" :"Thêm hàng vào lô hàng thất bại!"
+    "AddOrderFailed" :"Thêm hàng vào lô hàng thất bại!",
+    "Decompose": "Rã lô",
+    "UpdateStatus": "Cập nhật trạng thái lô hàng"
   },
   "Config": {
     "province" : "Tỉnh/Thành phố",

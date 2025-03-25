@@ -162,7 +162,8 @@ const UpdateContent = ({ openUpdate, setOpenUpdate, staffInfo, setStaffInfo, rel
             bin: staffInfo.bin || undefined,
             deposit: staffInfo.roles.includes(StaffRole["SHIPPER"]) ? (typeof staffInfo.deposit === 'string' ? parseFloat(staffInfo.deposit) : staffInfo.deposit) : undefined,
             salary: typeof staffInfo.salary === 'string' ? parseFloat(staffInfo.salary) : staffInfo.salary || undefined,
-            shipperType: staffInfo.roles.includes(StaffRole["SHIPPER"]) ? (Array.isArray(staffInfo.shipperType) ? staffInfo.shipperType[0] : staffInfo.shipperType) : undefined
+            shipperType: staffInfo.roles.includes(StaffRole["SHIPPER"]) ? (Array.isArray(staffInfo.shipperType) ? staffInfo.shipperType[0] : staffInfo.shipperType) : undefined,
+            managedWards: staffInfo.managedWards ? staffInfo.managedWards.map(ward => ward.toString()) : []
         };
         console.log(updateStaffData)
         const response = await staffOperation.update(staffInfo.id as UUID, updateStaffData, token);

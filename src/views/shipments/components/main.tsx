@@ -18,6 +18,7 @@ import OrdersToShipment from "./addOrderToShipmemt";
 import RenderCase from "@/components/render";
 import DetailPopup from "@/components/popup";
 import { FaUserCircle } from "react-icons/fa";
+import UpdateStatus from "./updateStatus";
 
 const ShipmentsMain = () => {
     const intl = useTranslations("ShipmentsRoute");
@@ -30,10 +31,12 @@ const ShipmentsMain = () => {
     const [currentSize, setCurrentSize] = useState<number>(10);
     const [openAdd, setOpenAdd] = useState<boolean>(false);
     const [shipmentInfo, setShipmentInfo] = useState<Shipment>();
+    const [shipmentStatus, setShipmentStatus] = useState<{status: string} | null>(null);
     const [openUpdate, setOpenUpdate] = useState<boolean>(false);
     const [sortBy, setSortBy] = useState<{ id: string; desc: boolean }[]>([]);
     const [selectedRows, setSelectedRows] = useState<Shipment[]>([]);
     const [openAddOrders, setOpenAddOrders] = useState(false);
+    const [openUpdateStatus, setOpenUpdateStatus] = useState(false);
     const [searchCriteriaValue, setSearchCriteriaValue] = useState<SearchCriteria>({
         field: [],
         operator: [],
@@ -134,9 +137,10 @@ const ShipmentsMain = () => {
                     </div>
                 </DetailPopup>
             </RenderCase>
-            {shipmentInfo && <UpdateContent openUpdate={openUpdate} reloadData={fetchData} setOpenUpdate={setOpenUpdate} setShipmentInfo={setShipmentInfo} shipmentInfo={shipmentInfo} setOpenAddOrders={setOpenAddOrders}/>}
+            {shipmentInfo && <UpdateContent setOpenUpdateStatus={setOpenUpdateStatus} openUpdate={openUpdate} reloadData={fetchData} setOpenUpdate={setOpenUpdate} setShipmentInfo={setShipmentInfo} shipmentInfo={shipmentInfo} setOpenAddOrders={setOpenAddOrders}/>}
             <AddContent addInfo={addInfo} openAdd={openAdd} setAddInfo={setAddInfo} setOpenAdd={setOpenAdd} reloadData={fetchData} />
-            <OrdersToShipment addOrderToShipment={(orderIds: string[]) => {handleAddOrdersToShipment(orderIds); fetchData()}} openOrders={openAddOrders} reloadData={fetchData} setOpenOrders={setOpenAddOrders} />
+            <OrdersToShipment addOrderToShipment={(orderIds: string[]) => {handleAddOrdersToShipment(orderIds)}} openOrders={openAddOrders} reloadData={fetchData} setOpenOrders={setOpenAddOrders} />
+            <UpdateStatus openUpdate={openUpdateStatus} shippmentId={shipmentInfo?.id} setOpenUpdate={setOpenUpdateStatus} setStaffInfo={setShipmentStatus} staffInfo={shipmentStatus}/>
             <TableSwitcher
                 primaryKey="id"
                 tableData={shipments}

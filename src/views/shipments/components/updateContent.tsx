@@ -14,6 +14,8 @@ import CustomButton2 from "@/views/customTableButton";
 import TableSwitcher from "@/components/table";
 import { columnsData } from "../variables/columnsData2";
 import OrdersToShipment from "./addOrderToShipmemt";
+import { useSubmitNotification } from "@/hooks/SubmitNotificationProvider";
+import { useNotifications } from "@/hooks/NotificationsProvider";
 
 type UpdateFields = {
     id: keyof Shipment,
@@ -31,12 +33,13 @@ type Props = {
     openUpdate: boolean;
     setOpenUpdate: React.Dispatch<React.SetStateAction<boolean>>;
     setOpenAddOrders: React.Dispatch<React.SetStateAction<boolean>>;
+    setOpenUpdateStatus: React.Dispatch<React.SetStateAction<boolean>>;
     shipmentInfo: Shipment;
     setShipmentInfo: React.Dispatch<React.SetStateAction<Shipment | undefined>>;
     reloadData: () => void;
 }
 
-const UpdateContent = ({ openUpdate, setOpenUpdate, shipmentInfo, setShipmentInfo, reloadData, setOpenAddOrders }: Props) => {
+const UpdateContent = ({ openUpdate, setOpenUpdate, shipmentInfo, setShipmentInfo, reloadData, setOpenAddOrders, setOpenUpdateStatus }: Props) => {
     const intl = useTranslations("ShipmentsRoute");
     const shipmentsOp = new ShipmentOperation();
     const [openOrders, setOpenOrders] = useState<boolean>(false);
@@ -44,6 +47,8 @@ const UpdateContent = ({ openUpdate, setOpenUpdate, shipmentInfo, setShipmentInf
     const [selectedRows, setSelectedRows] = useState<OrderData[]>([]);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [currentSize, setCurrentSize] = useState<number>(10);
+    const { addNotification } = useNotifications();
+    const { addSubmitNotification } = useSubmitNotification();
 
     const fetchData = useCallback(async () => {
         const token = getTokenFromCookie();
@@ -79,6 +84,13 @@ const UpdateContent = ({ openUpdate, setOpenUpdate, shipmentInfo, setShipmentInf
             return "!pl-2"
         }
         return "";
+    }
+
+    const handleDecompose = async () => {
+        const token = getTokenFromCookie();
+        if (!token) return;
+        const response = await shipmentsOp.decompose(shipmentInfo.id, token);
+        addNotification({ message: response.message ?? intl("Success2"), type: "success" });
     }
 
     useEffect(() => {
@@ -121,7 +133,7 @@ const UpdateContent = ({ openUpdate, setOpenUpdate, shipmentInfo, setShipmentInf
                                     <CustomButton2 fetchData={fetchData} selectedRows={selectedRows} openAdd={() => { setOpenAddOrders(true); console.log("Them order di") }} />
                                 }
                                 containerClassname="!rounded-xl p-4"
-                                selectType="none"
+                                selectType="multi"
                                 setPageSize={{
                                     setCurrentSize,
                                     sizeOptions: [10, 20, 30]
@@ -140,6 +152,26 @@ const UpdateContent = ({ openUpdate, setOpenUpdate, shipmentInfo, setShipmentInf
                                     active:border-red-700 text-red-500 dark:text-white dark:hover:border-red-400 dark:active:border-red-300 flex justify-center place-items-center"
                     >
                         {intl("OrdersList")}
+                    </CustomButton>
+                    <CustomButton
+                        key="orderlist"
+                        version="1"
+                        color="error"
+                        onClick={() => setOpenUpdateStatus(true)}
+                        className="linear !min-w-10 !px-0 rounded-md bg-lightContainer dark:!bg-darkContainer border border-red-500 dark:!border-red-500 h-10 text-base font-medium transition duration-200 hover:border-red-600
+                                    active:border-red-700 text-red-500 dark:text-white dark:hover:border-red-400 dark:active:border-red-300 flex justify-center place-items-center"
+                    >
+                        {intl("UpdateStatus")}
+                    </CustomButton>
+                    <CustomButton
+                        key="orderlist"
+                        version="1"
+                        color="error"
+                        onClick={() => {addSubmitNotification({ message: intl("Confirm"), submitClick: () => {handleDecompose() }});}}
+                        className="linear !min-w-10 !px-0 rounded-md bg-lightContainer dark:!bg-darkContainer border border-red-500 dark:!border-red-500 h-10 text-base font-medium transition duration-200 hover:border-red-600
+                                    active:border-red-700 text-red-500 dark:text-white dark:hover:border-red-400 dark:active:border-red-300 flex justify-center place-items-center"
+                    >
+                        {intl("Decompose")}
                     </CustomButton>
                 </div>
             </DetailPopup>

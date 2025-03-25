@@ -69,7 +69,7 @@ const AddContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData }: Pr
 
     const addFields: Array<AddFields> = [
         { id: "fullname", type: "text", important: true },
-        { id: "agencyId", type: "text", important: true },
+        // { id: "agencyId", type: "text", important: true },
         { id: "email", type: "text", important: true },
         { id: "phoneNumber", type: "text", important: true },
         { id: "cccd", type: "number", important: true },

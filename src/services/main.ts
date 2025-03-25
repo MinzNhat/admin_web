@@ -1415,7 +1415,7 @@ export class ShipmentOperation {
         }
     }
 
-    async confirmAllOrdersInShipmentLeavingAgency(shipmentId: UUID, token: string) {
+    async confirmAllOrdersInShipmentLeavingAgency(shipmentId: string, token: string) {
         try {
             const response: AxiosResponse = await axios.get(`${this.baseUrl}/order/confirm_leaving_agency/${shipmentId}`, {
                 withCredentials: true,
@@ -1442,7 +1442,7 @@ export class ShipmentOperation {
         }
     }
 
-    async confirmAllOrdersInShipmentEnteringAgency(shipmentId: UUID, token: string) {
+    async confirmAllOrdersInShipmentEnteringAgency(shipmentId: string, token: string) {
         try {
             const response: AxiosResponse = await axios.get(`${this.baseUrl}/order/confirm_entering_agency/${shipmentId}`, {
                 withCredentials: true,
@@ -1469,7 +1469,7 @@ export class ShipmentOperation {
         }
     }
 
-    async decompose(shipmentId: UUID, token: string) {
+    async decompose(shipmentId: string, token: string) {
         try {
             const response: AxiosResponse = await axios.get(`${this.baseUrl}/decompose/${shipmentId}`, {
                 withCredentials: true,

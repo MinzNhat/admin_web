@@ -373,6 +373,8 @@
     "OrdersList": "Order List in Shipment",
     "Submit": "Submit",
     "AddOrderSuccess": "Successfully added order to shipment!",
-    "AddOrderFailed": "Failed to add order to shipment!"
+    "AddOrderFailed": "Failed to add order to shipment!",
+    "Decompose": "Decompose",
+    "UpdateStatus": "Update shipment status"
   }
 }
