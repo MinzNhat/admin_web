@@ -7,6 +7,7 @@ declare type TaskData = {
     journey: string[][];
     order?: OrderData;
     orderId: string;
+    mission: string;
     staff: StaffInfo;
     staffId: string;
     updatedAt: string;

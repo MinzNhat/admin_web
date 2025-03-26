@@ -384,6 +384,10 @@
   "Config": {
     "province" : "Tỉnh/Thành phố",
     "district" : "Quận/Huyện",
-    "ward": "Phường/Xã"
+    "ward": "Phường/Xã",
+    "services": "Dịch vụ",
+    "deposit" : "Tiền đặt cọc thế chân",
+    "submit": "Xác nhận",
+    "SubmitConfig": "Xác nhận thay đổi?"
   }
 }

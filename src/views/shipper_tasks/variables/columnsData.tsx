@@ -14,10 +14,10 @@ export const columnsData = (): Column<TaskData>[] => {
             Header: intl("staff"),
             accessor: "staff",
         },
-        // {
-        //     Header: intl("mission"),
-        //     accessor: "mission",
-        // },
+        {
+            Header: intl("mission"),
+            accessor: "mission",
+        },
         {
             Header: intl("completed"),
             accessor: "completed",

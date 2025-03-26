@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 
-import { AddJourneyNodeDto, AddOrderToShipmentDto, AdministrativePayload, AssignTaskToShipperDto, CalculateFeePayload, ConfigDepositDto, ConfigServicesDto, CreateAgencyDto, CreateCargoInsuranceDto, CreateFavoriteOrderLocationDto, CreateGiftOrderTopicDto, CreateOrderDto, CreateShipmentDto, CreateShippingBillDto, CreateStaffDto, CreateVoucherDto, CustomerLoginDto, FileID, MultiFileUpload, OrderImageType, OrderStatus, SearchCriteria, SearchPayload, StaffLoginDto, UpdateAgencyDto, UpdateCargoInsuranceDto, UpdateCustomerDto, UpdateFavoriteOrderLocationDto, UpdateOrderDto, UpdateOrderLocationDto, UpdateShipperStatusDto, UpdateStaffDto, UpdateTaskDto, VerifyOtpDto } from "./interface";
+import { AddJourneyNodeDto, AddOrderToShipmentDto, AdministrativePayload, AssignTaskToShipperDto, CalculateFeePayload, ConfigDepositDto, ConfigServicesDto, CreateAgencyDto, CreateCargoInsuranceDto, CreateFavoriteOrderLocationDto, CreateGiftOrderTopicDto, CreateOrderDto, CreateShipmentDto, CreateShippingBillDto, CreateStaffDto, CreateVoucherDto, CustomerLoginDto, FileID, MultiFileUpload, OrderImageType, OrderStatus, SearchCriteria, SearchPayload, StaffLoginDto, UpdateAgencyDto, UpdateCargoInsuranceDto, UpdateConfigDto, UpdateCustomerDto, UpdateFavoriteOrderLocationDto, UpdateOrderDto, UpdateOrderLocationDto, UpdateShipperStatusDto, UpdateStaffDto, UpdateTaskDto, VerifyOtpDto } from "./interface";
 import { UUID } from "crypto";
 
 export class AgencyOperation {
@@ -383,6 +383,33 @@ export class ConfigOperation {
     async getServicesByWardId(wardId: number, token: string) {
         try {
             const response: AxiosResponse = await axios.get(`${this.baseUrl}/service/${wardId}`, {
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        } catch (error: any) {
+            console.log("Error fetching services by ward: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null
+            };
+        }
+    }
+
+    async update(payload: UpdateConfigDto, token: string) {
+        try {
+            const response: AxiosResponse = await axios.post(`${this.baseUrl}/update`, payload, {
                 withCredentials: true,
                 validateStatus: status => status >= 200 && status <= 500,
                 headers: {
@@ -2491,7 +2518,30 @@ export class VoucherOperation {
                 status: response.status
             };
         } catch (error: any) {
-            console.log("Error searching vouchers: ", error?.response?.data);
+            console.log("Error seaching wards: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+        }
+    }
+
+    async delete(id: string, token: string) {
+        try {
+            const response: AxiosResponse = await axios.delete(`${this.baseUrl}/delete/${id}`, {
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            });
+
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        } catch (error: any) {
+            console.log("Error delete voucher: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
             return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
         }
@@ -2516,6 +2566,25 @@ export class AdministrativeOperation {
             console.error("Error getting administrative: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
             return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+        }
+    }
+
+    async searchWardWithConfig(payload: SearchPayload) {
+        try {
+            const response: AxiosResponse = await axios.post(`${this.baseUrl}/config/search`, payload, {
+                withCredentials: true
+            });
+
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        } catch (error: any) {
+            console.log("Error seaching wards: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
         }
     }
 }

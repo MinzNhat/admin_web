@@ -172,6 +172,14 @@ export interface ConfigDepositDto {
     ward: string;
 }
 
+export interface UpdateConfigDto {
+    deposit: number;
+    province: string;
+    district: string;
+    ward: string;
+    serviceNames: string[];
+}
+
 export interface ConfigServicesDto {
     wardId: number;
     serviceNames: ServiceType[];
@@ -447,12 +455,13 @@ export interface VerifyOtpDto {
 export interface CreateVoucherDto {
     numOfOrders: number;
     discount: number;
-    startDate: Date;
-    endDate: Date;
+    startDate: string;
+    endDate: string;
+    expiration: string;
     area: {
-        ward: string;
-        district: string;
-        source: string;
+        ward: string | null;
+        district: string | null;
+        province: string | null;
     }
 }
 

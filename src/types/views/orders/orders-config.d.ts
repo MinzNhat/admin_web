@@ -65,7 +65,7 @@ declare type OrderData = {
     serviceType: string;
     shipper?: string;
     signature?: string;
-    signatures: string[];
+    signatures: OrderImage[];
     statusCode: OrderStatus | OrderStatus[];
     takingDescription?: string;
     toMass: number;

@@ -264,7 +264,7 @@ const DetailContent = ({ openDetail, setOpenDetail, selectedOrder, updatePermiss
                             noPadding
                             className="px-4 pt-2 min-h-20 flex place-items-center"
                         >
-                            <JourneyTimeline journey={selectedOrder?.journies} order={true} />
+                            <ImageList images={selectedOrder?.signatures??[]} noImage={intl("noImage")} />
                         </DetailPopup>
                     </RenderCase>
 

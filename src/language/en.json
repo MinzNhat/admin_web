@@ -376,5 +376,14 @@
     "AddOrderFailed": "Failed to add order to shipment!",
     "Decompose": "Decompose",
     "UpdateStatus": "Update shipment status"
+  },
+  "Config": {
+    "province": "Province/City",
+    "district": "District",
+    "ward": "Ward/Commune",
+    "services": "Services",
+    "deposit": "Deposit",
+    "submit": "Submit",
+    "SubmitConfig": "Confirm changes?"
   }
 }

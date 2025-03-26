@@ -10,7 +10,7 @@ const ImageList = ({ images, noImage }: { images: OrderImage[], noImage: string 
     useEffect(() => {
         const fetchImages = async () => {
             const token = getTokenFromCookie();
-            console.log("token", token)
+            console.log("token", token);
             if (!token) return;
 
             const urls: string[] = [];

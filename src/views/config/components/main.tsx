@@ -1,218 +1,179 @@
 "use client";
 
-import { RootState } from "@/store";
-import { useSelector } from "react-redux";
+import { useCallback, useEffect, useState } from "react";
+import { SearchCriteria } from "@/services/interface";
+import { getTokenFromCookie } from "@/utils/token";
 import { useTranslations } from "next-intl";
 import TableSwitcher from "@/components/table";
-import { getTokenFromCookie } from "@/utils/token";
-import { AdministrativeOperation } from "@/services/main";
+import { columnsData } from "../variables/columnsData2";
 import CustomButton from "@/views/customTableButton";
-import { SearchCriteria, ServiceType } from "@/services/interface";
-import { columnsData } from "../variables/columnsData";
-import { useCallback, useEffect, useState } from "react";
 import SearchPopUp, { DetailFields } from "@/views/customTableSearchPopUp";
-import { Card, CardHeader, CardBody, Select, Checkbox, Input, Button } from "@nextui-org/react";
-import CustomInputField from "@/components/input";
-
-// console.log("debug", AdministrativeOperation, VoucherOperation, TaskOperation);
-
-type AddFields = {
-    id: string,
-    type: InputTypes,
-    important?: boolean,
-    version?: TextInputVersion | SelectInputVersion,
-    select_type?: SelectInputType,
-    options?: SelectInputOptionFormat[],
-    isClearable?: boolean,
-    state?: InputState,
-    dropdownPosition?: DropdownPosition;
-}
-
-interface LocationWithDepostService {
-    province: string;
-    district: string;
-    ward: string;
-    deposit: number;
-    services: ServiceType[];
-}
-
-type Location = {
-    id: string;
-    province: string;
-    district: string;
-    ward: string;
-}
-
-type LocationKeys = keyof Location;
+import AddContent from "./addContent";
+import { useSubmitNotification } from "@/hooks/SubmitNotificationProvider";
+import { useNotifications } from "@/hooks/NotificationsProvider";
+import { FaUserCircle } from "react-icons/fa";
+import RenderCase from "@/components/render";
+import DetailPopup from "@/components/popup";
+import { AdministrativeOperation, ConfigOperation } from "@/services/main";
+import { Button } from "@nextui-org/react";
+import { MdAutorenew, MdOutlineRemoveCircleOutline } from "react-icons/md";
+import UpdateContent from "./updateContent";
 
 const ConfigMain = () => {
-    const intl = useTranslations("Config");
-    const [selectedProvince, setSelectedProvince] = useState<string[]>([]);
-    const [selectedDistricts, setSelectedDistricts] = useState<string[]>([]);
-    const [selectedWards, setSelectedWards] = useState<string[]>([]);
-    const [depositAmount, setDepositAmount] = useState("");
-    const [addInfo, setAddInfo] = useState<Location>({id: "", district: "", province: "", ward: ""});
-    const [provinces, setProvinces] = useState<string[]>([]);
-    const [districts, setDistricts] = useState<string[]>([]);
-    const [wards, setWards] = useState<string[]>([]);
+    const intl = useTranslations("ConfigRoute");
+    const TableMessage = useTranslations('Table');
+    const [configs, setConfigs] = useState<ConfigData[]>();
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [openUpdate, setOpenUpdate] = useState(false);
+    const { addSubmitNotification } = useSubmitNotification();
+    const { addNotification } = useNotifications();
+    const [currentSize, setCurrentSize] = useState<number>(10);
+    const [sortBy, setSortBy] = useState<{ id: string; desc: boolean }[]>([]);
+    const [selectedRows, setSelectedRows] = useState<ConfigData[]>([]);
+    const [searchCriteriaValue, setSearchCriteriaValue] = useState<SearchCriteria>({
+        field: [],
+        operator: [],
+        value: null
+    });
+    const [addConfig, setAddConfig] = useState(false);
     const administrativeOperation = new AdministrativeOperation();
 
-    const provinceOptions: SelectInputOptionFormat[] = Object.values(provinces).map(province => ({
-        label: province,
-        value: province
-    }));
-
-    const districtOptions: SelectInputOptionFormat[] = Object.values(districts).map(district => ({
-        label: district,
-        value: district
-    }));
-
-    const wardOptions: SelectInputOptionFormat[] = Object.values(wards).map(ward => ({
-        label: ward,
-        value: ward
-    }));
-
-    const fetchProvinces = async () => {
-        const response = await administrativeOperation.get({});
-        setProvinces(response.data);
-    };
-
-    const fetchDistricts = async (provinces: string[]) => {
-        let newDistricts: string[] = [];
-    
-        for (const province of provinces) {
-            const response = await administrativeOperation.get({ province: province });
-            newDistricts = [...newDistricts, ...response.data];
-        }
-    
-        setDistricts((prevDistricts) => [...prevDistricts, ...newDistricts]); 
-    };
-    
-    const fetchWards = async (provinces: string[], districts: string[]) => {
-        let newWards: string[] = [];
-        for (const province of provinces) {
-            for (const district of districts) {
-                const response = await administrativeOperation.get({ province: province, district: district });
-                newWards = [...newWards, ...response.data];
-            }
-        }
-        setWards((prevWards) => [...prevWards, ... newWards]);
-    };
-
-    const updateValue = (id: string, value: string | string[]) => {
-        setAddInfo(prevData => ({
-            ...prevData,
-            [id]: value,
-        }));
-        if(id === "province") {
-            setSelectedProvince(Array.isArray(value) ? value : [value]);
-            fetchDistricts(Array.isArray(value) ? value : [value]);
-        } else if (id === "district"){
-            setSelectedDistricts(Array.isArray(value) ? value : [value]);
-            fetchWards(provinces, Array.isArray(value) ? value : [value]);
-        } else {
-            setSelectedWards((Array.isArray(value) ? value : [value]));
-        }
-    };
-
-    const addFields: Array<AddFields> = [
-        { id: "province", type: "select", options: provinceOptions, isClearable: false, select_type: "multi", important: true, dropdownPosition: "bottom" },
-        { id: "district", type: "select", options: districtOptions, isClearable: false, select_type: "multi", important: true, dropdownPosition: "bottom" },
-        { id: "ward", type: "select", options: wardOptions, isClearable: false, select_type: "multi", important: true, dropdownPosition: "bottom" },
+    const searchFields: Array<DetailFields> = [
+        { label: intl("id"), label_value: "id", type: "text" },
+        { label: intl("province"), label_value: "province", type: "text" },
+        { label: intl("ward"), label_value: "ward", type: "text" },
+        { label: intl("district"), label_value: "district", type: "text" },
+        { label: intl("deposit"), label_value: "deposit", type: "text" },
+        { label: intl("services"), label_value: "services", type: "text" },
     ];
+
+    const renderCell = (cellHeader: string, cellValue: string | number | boolean | any) => {
+        if (cellHeader === intl("province")) {
+            return <div className="w-full h-full whitespace-nowrap">{cellValue}</div>
+        } else if (cellHeader === intl("ward")) {
+            return <div className="w-full h-full text-center">{cellValue}</div>
+        } else if (cellHeader === intl("district")) {
+            return <div className="w-full h-full line-clamp-4">{`${cellValue}`}</div>
+        } else if (cellHeader === intl("deposit")) {
+            return <div className="w-full h-full line-clamp-4">{`${cellValue}`}</div>
+        } else if (cellHeader === intl("services")) {
+            return (
+                <div className="w-full h-full pl-2">
+                    {Array.isArray(cellValue) ? cellValue.map(item => item.serviceName).join(", ") : cellValue}
+                </div>
+            );
+        }
+    };
+
+    const handleDelete = async () => {
+        const token = getTokenFromCookie();
+        if (!token) return;
+
+        // for (const row of selectedRows) {
+        //     const response = await shipmentsOp.delete(row.id as UUID, token);
+        //     if (response.success) {
+        //         addNotification({ message: `${intl("DeleteSuccess")} ${row.id} ${intl("DeleteSuccess2")}`, type: "success" });
+        //     } else {
+        //         addNotification({ message: `${intl("DeleteSuccess")} ${row.id} ${intl("DeleteFailed2")}`, type: "error" });
+        //     }
+        // }
+
+        setSearchCriteriaValue(prev => prev);
+    }
+
+    const handleUpadte = () => {
+        // const response = await configOperation.
+    }
 
     const fetchData = useCallback(async () => {
         const token = getTokenFromCookie();
-        fetchProvinces();
-    }, [
-        // currentPage, currentSize, sortBy, searchCriteriaValue
-    ]);
+
+        if (!token) return;
+
+        const rawValue = Array.isArray(searchCriteriaValue.value) ? searchCriteriaValue.value[0] : searchCriteriaValue.value;
+        const criteriaField = searchCriteriaValue.field[0];
+        const criteriaValue = rawValue === "true" ? true : rawValue === "false" ? false : rawValue;
+        const criteria: SearchCriteria | null = rawValue ? {
+            field: criteriaField,
+            operator: searchCriteriaValue.operator[0] as SearchOperator,
+            value: criteriaValue
+        } : null;
+
+        const response = await administrativeOperation.searchWardWithConfig({
+            addition: {
+                sort: sortBy.map(({ id, desc }) => [id, desc ? "DESC" : "ASC"]),
+                page: currentPage,
+                size: currentSize,
+                group: []
+            },
+            criteria: criteria ? [criteria] : []
+        });
+
+        if (response.success) {
+            setConfigs(response.data as ConfigData[]);
+            console.log(response.data)
+        }
+        console.log(response);
+    }, [currentPage, currentSize, sortBy, searchCriteriaValue]);
 
     useEffect(() => {
         fetchData();
     }, [fetchData]);
 
     return (
-        <div className="p-6 max-w-2xl mx-auto">
-            <Card>
-                <CardHeader>
-                    <h2>Thiết lập tiền giữ chân & dịch vụ</h2>
-                </CardHeader>
-                <CardBody>
-                    <div className="flex flex-row gap-3 justify-start w-full">
-                        {/* <div className="mt-4">
-                            <p className="text-sm font-medium">Chọn Tỉnh/Thành</p>
-                            {provinces.map((province) => (
-                                <div key={province} className="flex items-center gap-2">
-                                    <Checkbox onChange={(e) => {
-                                        const checked = e.target.checked;
-                                        setSelectedProvince((prev) => checked ? [...prev, province] : prev.filter(d => d !== province));
-                                    }} />
-                                    <span>{province}</span>
+        <>
+            <AddContent openAdd={addConfig} setOpenAdd={setAddConfig} />
+            <UpdateContent openAdd={openUpdate} setOpenAdd={setOpenUpdate} locations={selectedRows.map((row) => {
+                return {
+                    district: row.district,
+                    province: row.province,
+                    ward: row.ward
+                }
+            })} />
+            {/* {shipmentInfo && <UpdateContent setOpenUpdateStatus={setOpenUpdateStatus} openUpdate={openUpdate} reloadData={fetchData} setOpenUpdate={setOpenUpdate} setShipmentInfo={setShipmentInfo} shipmentInfo={shipmentInfo} setOpenAddOrders={setOpenAddOrders}/>} */}
+            <TableSwitcher
+                primaryKey="id"
+                tableData={configs}
+                isPaginated={true}
+                setSortBy={setSortBy}
+                renderCell={renderCell}
+                currentPage={currentPage}
+                currentSize={currentSize}
+                fetchPageData={fetchData}
+                columnsData={columnsData()}
+                selectedRows={selectedRows}
+                setCurrentPage={setCurrentPage}
+                setSelectedRows={setSelectedRows}
+                // openAdd={() => setAddConfig(true)}
+                customButton={
+                    <CustomButton fetchData={fetchData}  selectedRows={selectedRows}
+                        extraButton={
+                            <>
+                                <SearchPopUp fields={searchFields} searchCriteriaValue={searchCriteriaValue} setSearchCriteriaValue={setSearchCriteriaValue} />
+                                <div className="mr-4">
+                                    <RenderCase condition={!!selectedRows}>
+                                        <Button className={`${selectedRows ? "col-span-2" : " col-span-1"} w-full lg:w-fit flex items-center text-md hover:cursor-pointer bg-lightPrimary p-2 hover:bg-gray-100 dark:bg-darkContainerPrimary dark:hover:bg-white/20 dark:active:bg-white/10
+          linear justify-center rounded-lg font-medium dark:font-base transition duration-200`}
+                                            onPress={() => setOpenUpdate(true)}>
+                                            <MdAutorenew className="mr-2" />{intl("Update")} ({selectedRows?.length})
+                                        </Button>
+                                    </RenderCase>
                                 </div>
-                            ))}
-                        </div>
-
-                        {selectedProvince.length > 0 && (
-                            <div className="mt-4">
-                                <p className="text-sm font-medium">Chọn Quận/Huyện</p>
-                                {selectedProvince.flatMap(provinve => districts[provinve] || []).map((district) => (
-                                    <div key={district} className="flex items-center gap-2">
-                                        <Checkbox onChange={(e) => {
-                                            const checked = e.target.checked;
-                                            return setSelectedDistricts((prev) => checked ? [...prev, district] : prev.filter(d => d !== district));
-                                        }} />
-                                        <span>{district}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-
-                        {selectedDistricts.length > 0 && (
-                            <div className="mt-4">
-                                <p className="text-sm font-medium">Chọn Phường/Xã</p>
-                                {selectedDistricts.flatMap(district => wards[district] || []).map((ward) => (
-                                    <div>
-                                        <Checkbox onChange={(e) => {
-                                            const checked = e.target.checked;
-                                            setSelectedWards((prev) => checked ? [...prev, ward] : prev.filter(w => w !== ward));
-                                        }} />
-
-                                        <span>{ward}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        )} */}
-                        {addFields.map(({ id, type, version, isClearable, options, select_type, state, important, dropdownPosition }: AddFields) => (
-                            <CustomInputField
-                                id={id}
-                                key={id}
-                                type={type}
-                                value={addInfo[id as LocationKeys]}
-                                setValue={(value: string | string[]) => updateValue(id, value)}
-                                version={version}
-                                options={options}
-                                select_type={select_type}
-                                isClearable={isClearable}
-                                dropdownPosition={dropdownPosition}
-                                className="w-full"
-                                inputClassName="bg-lightContainer dark:!bg-darkContainerPrimary border border-gray-200 dark:border-white/10"
-                                label={
-                                    <div className='flex gap-1 place-items-center relative mb-2'>
-                                        {intl(id)} {important && <div className="text-red-500">*</div>}
-                                    </div>
-                                } />
-                        ))}
-                    </div>
-                    <div className="mt-4">
-                        <p className="text-sm font-medium">Tiền giữ chân (VNĐ)</p>
-                        <Input type="number" value={depositAmount} onChange={(e) => setDepositAmount(e.target.value)} />
-                    </div>
-
-                    <Button className="mt-4 w-full">Lưu cấu hình</Button>
-                </CardBody>
-            </Card>
-        </div>
+                            </>
+                        } />}
+                containerClassname="!rounded-xl p-4"
+                selectType="multi"
+                setPageSize={{
+                    setCurrentSize,
+                    sizeOptions: [10, 20, 30]
+                }}
+                customSearch={true}
+            // onRowClick={(value: Shipment) => {
+            //     setShipmentInfo(value);
+            //     setOpenUpdate(true);
+            // }}
+            />
+        </>
     );
 }
 

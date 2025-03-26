@@ -11,12 +11,17 @@ import { SearchCriteria } from "@/services/interface";
 import { columnsData } from "../variables/columnsData";
 import { useCallback, useEffect, useState } from "react";
 import SearchPopUp, { DetailFields } from "@/views/customTableSearchPopUp";
+import AddContent from "./addContent";
+import { useSubmitNotification } from "@/hooks/SubmitNotificationProvider";
+import { useNotifications } from "@/hooks/NotificationsProvider";
 
 const VouchersMain = () => {
     const intl = useTranslations("VouchersRoute");
     const vouchersOp = new VoucherOperation();
     const [vouchers, setVouchers] = useState<VoucherData[]>();
     const [currentPage, setCurrentPage] = useState<number>(1);
+    const { addSubmitNotification } = useSubmitNotification();
+    const { addNotification } = useNotifications();
     const [currentSize, setCurrentSize] = useState<number>(10);
     const [selectedRows, setSelectedRows] = useState<VoucherData[]>([]);
     const locale = useSelector((state: RootState) => state.language.locale);
@@ -26,6 +31,7 @@ const VouchersMain = () => {
         operator: [],
         value: null
     });
+    const [openAddVoucher, setOpenAddVoucher] = useState(false);
 
     const searchFields: Array<DetailFields> = [
         { label: intl("discount"), label_value: "discount", type: "text" },
@@ -80,12 +86,25 @@ const VouchersMain = () => {
         };
     }, [currentPage, currentSize, sortBy, searchCriteriaValue]);
 
+    const handleDelete = async () => {
+        const token = getTokenFromCookie();
+        if (!token) return;
+        for(const row of selectedRows) {
+            const response = await vouchersOp.delete(row.id, token);
+        }
+        addNotification({
+            message: intl("Success"),
+            type: "success"
+        });
+    }
+
     useEffect(() => {
         fetchData();
     }, [fetchData]);
 
     return (
         <>
+            <AddContent openAdd={openAddVoucher} setOpenAdd={setOpenAddVoucher}/>
             <TableSwitcher
                 sortBy={sortBy}
                 primaryKey="id"
@@ -104,13 +123,15 @@ const VouchersMain = () => {
                 customSearch={true}
                 customButton={
                     <CustomButton fetchData={fetchData} selectedRows={selectedRows}
+                    openAdd={() => setOpenAddVoucher(true)}
+                    handleDelete={() => {addSubmitNotification({ message: intl("LogoutMessage"), submitClick:  handleDelete})}}
                     extraButton={
-                        <SearchPopUp fields={searchFields} searchCriteriaValue={searchCriteriaValue} setSearchCriteriaValue={setSearchCriteriaValue} />
+                        <SearchPopUp fields={searchFields} searchCriteriaValue={searchCriteriaValue} setSearchCriteriaValue={setSearchCriteriaValue}  />
                     }
                     />
                 }
                 containerClassname="!rounded-xl p-4"
-                selectType="none"
+                selectType="multi"
                 setPageSize={{
                     setCurrentSize,
                     sizeOptions: [10, 20, 30]
