@@ -5,6 +5,7 @@ import { RootState } from "@/store";
 import { useSelector } from "react-redux";
 import { useTranslations } from "next-intl";
 import CustomInputField from "@/components/input";
+import { RoleValue, StaffInfo } from "@/types/store/auth-config";
 
 const InfoContent = () => {
     const intl = useTranslations("StaffInfo");
@@ -26,7 +27,7 @@ const InfoContent = () => {
         setUserData(prev => ({ ...prev, [id]: value }));
     };
 
-    const getRolesValue = (roles: Role[]): string => {
+    const getRolesValue = (roles: RoleValue[]): string => {
         return roles.map(role => role.value).join(", ");
     };
 

@@ -55,7 +55,7 @@ const UpdateContent = ({ openUpdate, setOpenUpdate, staffInfo, setStaffInfo, rel
 
     const hasAdminRole = userInfo?.roles.some((role: RoleValue) =>
         ["ADMIN", "MANAGER", "HUMAN_RESOURCE_MANAGER"].includes(role.value)
-    );
+    ) ?? false;
 
     const roleOptions: SelectInputOptionFormat[] = Object.values(StaffRole).map(role => ({
         label: intl(role),
@@ -152,7 +152,7 @@ const UpdateContent = ({ openUpdate, setOpenUpdate, staffInfo, setStaffInfo, rel
         const updateStaffData: UpdateStaffDto = {
             ...staffInfo,
             cccd: staffInfo.cccd ? staffInfo.cccd : "",
-            agencyId: hasAdminRole ? staffInfo.agencyId : userInfo?.agencyId ?? "",
+            agencyId: hasAdminRole ? staffInfo.agencyId ?? "" : userInfo?.agencyId ?? "",
             birthDate: staffInfo.birthDate ? new Date(staffInfo.birthDate).toISOString().slice(0, 10) : undefined,
             province: staffInfo.province || undefined,
             district: staffInfo.district || undefined,

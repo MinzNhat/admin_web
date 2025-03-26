@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { SetStateAction, useCallback, useEffect, useState } from "react";
 import { DriverTaskOperation } from "@/services/main";
 import { SearchCriteria } from "@/services/interface";
 import { getTokenFromCookie } from "@/utils/token";
@@ -140,7 +140,11 @@ const TasksMain = () => {
     return (
         <>
             {staffInfo && <UpdateContent openUpdate={openUpdateStaff} reloadData={fetchData} setOpenUpdate={setOpenUpdateStaff} setStaffInfo={setStaffInfo} staffInfo={staffInfo} />}
-            {shipment && <UpdateContent2 openUpdate={openShipment} reloadData={fetchData} setOpenUpdate={setOpenShipment} setShipmentInfo={setShipment} shipmentInfo={shipment} />}
+            {shipment && <UpdateContent2 openUpdate={openShipment} reloadData={fetchData} setOpenUpdate={setOpenShipment} setShipmentInfo={setShipment} shipmentInfo={shipment} setOpenAddOrders={function (value: SetStateAction<boolean>): void {
+                throw new Error("Function not implemented.");
+            } } setOpenUpdateStatus={function (value: SetStateAction<boolean>): void {
+                throw new Error("Function not implemented.");
+            } } />}
             <TableSwitcher
                 primaryKey="id"
                 tableData={tasks}
