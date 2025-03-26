@@ -143,39 +143,39 @@ const UpdateContent = ({ openUpdate, setOpenUpdate, staffInfo, setStaffInfo, rel
     }
 
     const handleCreate = async () => {
-        setLoading(true);
-        const token = getTokenFromCookie();
-        if (!token) {
-            return;
-        }
+        // setLoading(true);
+        // const token = getTokenFromCookie();
+        // if (!token) {
+        //     return;
+        // }
 
-        const updateStaffData: UpdateStaffDto = {
-            ...staffInfo,
-            cccd: staffInfo.cccd ? staffInfo.cccd : "",
-            agencyId: hasAdminRole ? staffInfo.agencyId : userInfo?.agencyId ?? "",
-            birthDate: staffInfo.birthDate ? new Date(staffInfo.birthDate).toISOString().slice(0, 10) : undefined,
-            province: staffInfo.province || undefined,
-            district: staffInfo.district || undefined,
-            town: staffInfo.town || undefined,
-            detailAddress: staffInfo.detailAddress || undefined,
-            bank: staffInfo.bank || undefined,
-            bin: staffInfo.bin || undefined,
-            deposit: staffInfo.roles.includes(StaffRole["SHIPPER"]) ? (typeof staffInfo.deposit === 'string' ? parseFloat(staffInfo.deposit) : staffInfo.deposit) : undefined,
-            salary: typeof staffInfo.salary === 'string' ? parseFloat(staffInfo.salary) : staffInfo.salary || undefined,
-            shipperType: staffInfo.roles.includes(StaffRole["SHIPPER"]) ? (Array.isArray(staffInfo.shipperType) ? staffInfo.shipperType[0] : staffInfo.shipperType) : undefined
-        };
-        console.log(updateStaffData)
-        const response = await staffOperation.update(staffInfo.id as UUID, updateStaffData, token);
-        console.log(response)
-        if (response.success) {
-            setInitValue(staffInfo);
-            addNotification({ message: intl("Success2"), type: "success" });
-            reloadData();
-        } else {
-            addDefaultNotification({ message: response.message || intl("Fail2") });
-        }
+        // const updateStaffData: UpdateStaffDto = {
+        //     ...staffInfo,
+        //     cccd: staffInfo.cccd ? staffInfo.cccd : "",
+        //     agencyId: hasAdminRole ? staffInfo.agencyId ?? "" : userInfo?.agencyId ?? "",
+        //     birthDate: staffInfo.birthDate ? new Date(staffInfo.birthDate).toISOString().slice(0, 10) : undefined,
+        //     province: staffInfo.province || undefined,
+        //     district: staffInfo.district || undefined,
+        //     town: staffInfo.town || undefined,
+        //     detailAddress: staffInfo.detailAddress || undefined,
+        //     bank: staffInfo.bank || undefined,
+        //     bin: staffInfo.bin || undefined,
+        //     deposit: staffInfo.roles.includes(StaffRole["SHIPPER"]) ? (typeof staffInfo.deposit === 'string' ? parseFloat(staffInfo.deposit) : staffInfo.deposit) : undefined,
+        //     salary: typeof staffInfo.salary === 'string' ? parseFloat(staffInfo.salary) : staffInfo.salary || undefined,
+        //     shipperType: staffInfo.roles.includes(StaffRole["SHIPPER"]) ? (Array.isArray(staffInfo.shipperType) ? staffInfo.shipperType[0] : staffInfo.shipperType) : undefined
+        // };
+        // console.log(updateStaffData)
+        // const response = await staffOperation.update(staffInfo.id as UUID, updateStaffData, token);
+        // console.log(response)
+        // if (response.success) {
+        //     setInitValue(staffInfo);
+        //     addNotification({ message: intl("Success2"), type: "success" });
+        //     reloadData();
+        // } else {
+        //     addDefaultNotification({ message: response.message || intl("Fail2") });
+        // }
 
-        setLoading(false);
+        // setLoading(false);
     };
 
     useEffect(() => {

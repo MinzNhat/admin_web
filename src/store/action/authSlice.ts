@@ -2,6 +2,7 @@ import { StaffLoginDto } from '@/services/interface';
 import { AuthOperation, StaffOperation } from '@/services/main';
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { getTokenFromCookie, removeTokenFromCookie, setTokenInCookie } from '@/utils/token';
+import { AuthState, RejectedValue, StaffInfo } from '@/types/store/auth-config';
 
 const initialState: AuthState = {
     isAuthenticated: false,
