@@ -162,7 +162,7 @@ const AddContent = ({ openAdd, setOpenAdd }: Props) => {
             expiration: formatDate(expiration ?? "")
         }, token);
         if(response.success) {
-            addNotification({ message: intl("Success"), type: "success" }); 
+            addNotification({ message: intl("SuccessAdded"), type: "success" }); 
         }else {
             addNotification({ message: response.message, type: "success" }); 
         }

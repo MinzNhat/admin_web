@@ -16,6 +16,8 @@ import CustomTableButton from "@/views/customTableButton";
 import { TaskData } from "@/types/views/tasks/tasks-config";
 import { columnsData } from "@/views/shipper_tasks/variables/columnsData";
 import { MdRadioButtonChecked, MdRadioButtonUnchecked } from "react-icons/md";
+import UpdateContent from "@/views/driver_tasks/components/addContent";
+import { StaffInfoUpdate } from "@/types/store/auth-config";
 
 type Props = {
     openDetail: boolean;
@@ -33,6 +35,8 @@ const TaskDetail = ({ openDetail, setOpenDetail, selectedTask, reloadData }: Pro
     const [journeyData, setJourneyData] = useState<string[][]>([]);
     const [selectedRows, setSelectedRows] = useState<TaskData[]>([]);
     const locale = useSelector((state: RootState) => state.language.locale);
+    const [staffInfo, setStaffInfo] = useState<StaffInfoUpdate>();
+    const [openUpdateStaff, setOpenUpdateStaff] = useState(false);
 
     const openMapHandler = (value: string[][]) => {
         setJourneyData(value);
@@ -58,9 +62,10 @@ const TaskDetail = ({ openDetail, setOpenDetail, selectedTask, reloadData }: Pro
                 </RenderCase>
             </div>
         } else if (cellHeader === intl("staff")) {
+            console.log(cellValue)
             return (
                 <div className="flex justify-start place-items-center gap-2 whitespace-nowrap">
-                    <Button className="min-h-5 min-w-5 w-5 h-5 p-0 rounded-full bg-lightContainer dark:!bg-darkContainer" onChange={() => { }}>
+                    <Button className="min-h-5 min-w-5 w-5 h-5 p-0 rounded-full bg-lightContainer dark:!bg-darkContainer" onPress={() => {setStaffInfo(cellValue); setOpenUpdateStaff(true)}}>
                         <IoPersonCircleOutline className="min-h-5 min-w-5" />
                     </Button>
                     {cellValue.fullname}
@@ -105,6 +110,7 @@ const TaskDetail = ({ openDetail, setOpenDetail, selectedTask, reloadData }: Pro
                 icon={<FaBox className="h-4 w-4" />}
                 noPadding
             >
+                {staffInfo && <UpdateContent openUpdate={openUpdateStaff} reloadData={() => {}} setOpenUpdate={setOpenUpdateStaff} setStaffInfo={setStaffInfo} staffInfo={staffInfo} />}
                 <div className="relative">
                     <MapPopup openMap={openMap} setOpenMap={setOpenMap} journey={journeyData} />
                     <TableSwitcher

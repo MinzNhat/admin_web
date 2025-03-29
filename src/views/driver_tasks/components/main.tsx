@@ -19,8 +19,8 @@ import { useSelector } from "react-redux";
 import CustomButton from "@/views/customTableButton";
 import { columnsData } from "../variables/columnsData";
 import TableSwitcher from "@/components/table";
-import UpdateContent from "@/views/staffs/components/updateContent";
-import UpdateContent2 from "@/views/shipments/components/updateContent";
+import UpdateContent from "./addContent";
+import UpdateContent2 from "./updateContent";
 
 const TasksMain = () => {
     const intl = useTranslations("TasksRoute");

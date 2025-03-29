@@ -106,7 +106,9 @@
     "shipperType": "Loại shipper",
     "Submit": "Xác nhận",
     "firstName": "Tên",
-    "lastName": "Họ"
+    "lastName": "Họ",
+    "IsShipper": "Tìm theo shipper",
+    "NoPermit":"Bạn không có quyền truy cập tài nguyên này!"
   },
   "TableCustomButton": {
     "Add": "Thêm",
@@ -124,9 +126,9 @@
     "DELIVERING": "Đang giao tới người nhận",
     "DELIVERED CANCEL": "Đã hủy yêu cầu giao hàng",
     "DELIVERED FAIL": "Giao hàng thất bại",
-    "REFUNDING": "Đang hoàn hàng",
-    "REFUNDED SUCCESS": "Hoàn hàng thành công",
-    "REFUNDED FAIL": "Hoàn hàng thất bại",
+    "REFUNDING": "Đang chuyển hoàn",
+    "REFUNDED SUCCESS": "chuyển hoàn thành công",
+    "REFUNDED FAIL": "chuyển hoàn thất bại",
     "ENTER AGENCY": "Đã tới bưu cục",
     "LEAVE AGENCY": "Đã rời bưu cục",
     "THIRD PARTY DELIVERY": "Kiện hàng được chuyển cho đối tác thứ ba giao",
@@ -210,7 +212,8 @@
     "Submit": "Xác nhận xoá đơn hàng đã chọn?",
     "Success2": "Xoá đơn hàng đã chọn thành công",
     "Fail2": "Xoá đơn hàng đã chọn thất bại",
-    "permission2": "Không đủ quyền hạn"
+    "permission2": "Không đủ quyền hạn",
+    "OrdersList":"Danh sách đơn hàng của shipper"
   },
   "AddStaff": {
     "Title": "Thêm nhân viên",
@@ -300,7 +303,8 @@
     "DeleteSuccess": "Xoá bưu cục - đại lý có id",
     "DeleteSuccess2": "thành công",
     "DeleteFailed2": "thất bại",
-    "Submit": "Xác nhận"
+    "Submit": "Xác nhận",
+    "companytaxcode": "Mã số thuế doanh nghiệp"
   },
   "TasksRoute": {
     "id": "ID công việc",
@@ -320,7 +324,10 @@
     "DeleteSuccess": "Xoá đơn hàng có id",
     "DeleteSuccess2": "thành công",
     "DeleteFailed2": "thất bại",
-    "shipment": "Lô hàng"
+    "shipment": "Lô hàng",
+    "mission": "Loại công việc",
+    "DELIVERING": "Giao hàng",
+    "TAKING": "Lấy hàng"
   },
   "SearchPopUp": {
     "~": "Có (Bao gồm) (~)",
@@ -360,7 +367,19 @@
     "customerId": "ID Khách hàng",
     "discount": "Giảm giá",
     "expiration": "Ngày hết hạn",
-    "id": "Mã voucher"
+    "id": "Mã voucher",
+    "delete": "Xoá các voucher này?",
+    "Success": "Xoá voucher thành công!",
+    "SuccessAdded": "Thêm voucher thành công!",
+    "Title": "Thêm voucher",
+    "Submit": "Xác nhận",
+    "startDate": "Tính từ ngày",
+    "endDate": "Đến ngày",
+    "province":"Tỉnh/Thành phố",
+    "district": "Quận/Huyện",
+    "ward": "Phường/Xã",
+    "numOfOrders": "Số đơn hàng thành công",
+    "SubmitConfig": "Xác nhận tạo?"
   },
   "ShipmentsRoute": {
     "id": "Mã lô hàng",
@@ -379,7 +398,11 @@
     "AddOrderSuccess": "Thêm hàng vào lô hàng thành công!",
     "AddOrderFailed" :"Thêm hàng vào lô hàng thất bại!",
     "Decompose": "Rã lô",
-    "UpdateStatus": "Cập nhật trạng thái lô hàng"
+    "UpdateStatus": "Cập nhật trạng thái lô hàng",
+    "DECOMPOSE": "Đã được rã",
+    "INITIATED": "Được khởi tạo",
+    "ENTERED AGENCY": "Đã đến bưu cục",
+    "LEAVED AGENCY": "Đã rời bưu cục"
   },
   "Config": {
     "province" : "Tỉnh/Thành phố",
@@ -388,6 +411,10 @@
     "services": "Dịch vụ",
     "deposit" : "Tiền đặt cọc thế chân",
     "submit": "Xác nhận",
-    "SubmitConfig": "Xác nhận thay đổi?"
+    "SubmitConfig": "Xác nhận thay đổi?",
+    "Update": "Cập nhật",
+    "Title": "Cập nhật cấu hình",
+    "Submit": "Xác nhận",
+    "NoPermit": "Bạn không có quyền cập nhật!"
   }
 }

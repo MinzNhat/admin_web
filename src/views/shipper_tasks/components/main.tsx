@@ -25,7 +25,7 @@ import { useSubmitNotification } from "@/hooks/SubmitNotificationProvider";
 import SearchPopUp, { DetailFields } from "@/views/customTableSearchPopUp";
 import { MdRadioButtonChecked, MdRadioButtonUnchecked } from "react-icons/md";
 import { StaffInfo, StaffInfoUpdate } from "@/types/store/auth-config";
-import UpdateContent from "@/views/staffs/components/updateContent";
+import UpdateContent from "./addContent";
 
 const TasksMain = () => {
     const taskOp = new TaskOperation();
@@ -174,7 +174,13 @@ const TasksMain = () => {
         }
         console.log(response)
         if (response.success) {
-            setTasks(response.data as TaskData[])
+            const tasks = response.data.map((task: any) => {
+                return {...task, mission: intl(task.mission?task.mission:"NoData")};
+            }) as TaskData[];
+            setTasks(tasks)
+        } else if (response.message === "Người dùng không được phép truy cập tài nguyên này") {
+            // addNotification({message: intl("NoPermission"), type: "error"});
+            setTasks([]);
         }
     }, [currentPage, currentSize, searchCriteriaValue]);
 

@@ -106,7 +106,8 @@
     "shipperType": "Shipper Type",
     "Submit": "Submit",
     "firstName": "First Name",
-    "lastName": "Last Name"
+    "lastName": "Last Name",
+    "IsShipper": "Search by shipper"
   },
   "TableCustomButton": {
     "Add": "Add",
@@ -209,7 +210,8 @@
     "Submit": "Confirm deletion of the selected orders?",
     "Success2": "Successfully deleted the selected orders",
     "Fail2": "Failed to delete the selected orders",
-    "permission2": "Insufficient permissions"
+    "permission2": "Insufficient permissions",
+    "OrdersList":"Shipper's order list"
   },
   "AddStaff": {
     "Title": "Add Staff",
@@ -296,7 +298,8 @@
     "DeleteSuccess": "Deleted agency with id",
     "DeleteSuccess2": "successfully",
     "DeleteFailed2": "failed",
-    "Submit": "Submit"
+    "Submit": "Submit",
+    "companytaxcode": "Company's tax code"
   },
   "TasksRoute": {
     "id": "Task ID",
@@ -316,7 +319,10 @@
     "DeleteSuccess": "Deleted task with id",
     "DeleteSuccess2": "successfully",
     "DeleteFailed2": "failed",
-    "shipment": "Shipment"
+    "shipment": "Shipment",
+    "mission": "Task type",
+    "DELIVERING": "Delivering",
+    "TAKING": "Taking"
   },
   "SearchPopUp": {
     "~": "Contains",
@@ -356,7 +362,19 @@
     "customerId": "Customer ID",
     "discount": "Discount",
     "expiration": "Expiration Date",
-    "id": "Voucher ID"
+    "id": "Voucher ID",
+    "delete": "Delete these voucher?",
+    "Success": "Deleted vouchers successfully!",
+    "SuccessAdded": "Added vouchers successfully!",
+    "Title": "Add vouchers",
+    "Submit": "Submit",
+    "startDate": "From date",
+    "endDate": "To date",
+    "province": "Province/City",
+    "district": "District",
+    "ward": "Ward/Commune",
+    "numOfOrders": "Number of succeed orders",
+    "SubmitConfig": "Confirm add?"
   },
   "ShipmentsRoute": {
     "id": "Shipment ID",
@@ -375,7 +393,11 @@
     "AddOrderSuccess": "Successfully added order to shipment!",
     "AddOrderFailed": "Failed to add order to shipment!",
     "Decompose": "Decompose",
-    "UpdateStatus": "Update shipment status"
+    "UpdateStatus": "Update shipment status",
+    "DECOMPOSE": "Decomposed",
+    "INITIATED": "Initiated",
+    "ENTERED AGENCY": "Arrived at agency",
+    "LEAVED AGENCY": "Departed from agency"
   },
   "Config": {
     "province": "Province/City",
@@ -384,6 +406,10 @@
     "services": "Services",
     "deposit": "Deposit",
     "submit": "Submit",
-    "SubmitConfig": "Confirm changes?"
+    "SubmitConfig": "Confirm changes?",
+    "Update": "Update",
+    "Submit": "Submit",
+    "Title": "Update config",
+    "NoPermit": "No permission!"
   }
 }

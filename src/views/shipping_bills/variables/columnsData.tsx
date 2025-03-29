@@ -21,5 +21,13 @@ export const columnsData = (): Column<ShippingBillData>[] => {
             Header: intl("taxCode"),
             accessor: "taxCode",
         },
+        {
+            Header: intl("companyAddress"),
+            accessor: "companyAddress",
+        },
+        {
+            Header: intl("createdAt"),
+            accessor: "createdAt",
+        },
     ];
 };

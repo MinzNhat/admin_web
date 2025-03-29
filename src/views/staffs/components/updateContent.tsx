@@ -1,25 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { RootState } from "@/store";
 import { useSelector } from "react-redux";
 import { useTranslations } from "next-intl";
 import DetailPopup from "@/components/popup";
 import RenderCase from "@/components/render";
-import LoadingUI from "@/components/loading";
-import { FaUserCircle } from "react-icons/fa";
-import Container from "@/components/container";
-import CustomButton from "@/components/button";
-import { StaffOperation } from "@/services/main";
-import CustomInputField from "@/components/input";
-import { IoReloadOutline } from "react-icons/io5";
+import { FaShippingFast, FaUserCircle } from "react-icons/fa";
+import CustomButton from "@/views/customTableButton";
+import { OrdersOperation, StaffOperation, TaskOperation } from "@/services/main";
 import { getTokenFromCookie } from "@/utils/token";
 import { useNotifications } from "@/hooks/NotificationsProvider";
-import { RoleValue, StaffInfoUpdate } from "@/types/store/auth-config"
+import { RoleValue, StaffInfo, StaffInfoUpdate } from "@/types/store/auth-config"
 import { useSubmitNotification } from "@/hooks/SubmitNotificationProvider";
-import { useDefaultNotification } from "@/hooks/DefaultNotificationProvider";
-import { UpdateStaffDto, ShipperType, StaffRole } from "@/services/interface";
+import { SearchCriteria, OrderStatus, ServiceType } from "@/services/interface";
 import { UUID } from "crypto";
+import { OrderData, OrderState } from "@/types/views/orders/orders-config";
+import { DetailFields } from "@/views/customTableSearchPopUp";
+import { MdRadioButtonChecked, MdRadioButtonUnchecked } from "react-icons/md";
+import { Button } from "@nextui-org/react";
+import { BiTrash } from "react-icons/bi";
+import TableSwitcher from "@/components/table";
+import { columnsData } from "../variables/columnsData3";
+import { TaskData } from "@/types/views/tasks/tasks-config";
 
 type UpdateFields = {
     id: keyof StaffInfoUpdate,
@@ -34,208 +37,217 @@ type UpdateFields = {
 }
 
 type Props = {
-    openUpdate: boolean;
-    setOpenUpdate: React.Dispatch<React.SetStateAction<boolean>>;
-    staffInfo: StaffInfoUpdate;
-    setStaffInfo: React.Dispatch<React.SetStateAction<StaffInfoUpdate | undefined>>;
+    openOrders: boolean;
+    setOpenOrders: React.Dispatch<React.SetStateAction<boolean>>;
     reloadData: () => void;
+    shipperData: StaffInfo;
 }
 
-const UpdateContent = ({ openUpdate, setOpenUpdate, staffInfo, setStaffInfo, reloadData }: Props) => {
-    const intl = useTranslations("AddStaff");
-    const intl2 = useTranslations("StaffInfo");
-    const staffOperation = new StaffOperation();
+const UpdateContent = ({ openOrders, setOpenOrders, reloadData, shipperData }: Props) => {
+    const taskOp = new TaskOperation();
+    const intl = useTranslations("OrdersRoute");
+    const [orderId, setOrderId] = useState<UUID>();
     const { addNotification } = useNotifications();
-    const [error, setError] = useState<boolean>(false);
-    const [loading, setLoading] = useState<boolean>(false);
+    const [orders, setOrders] = useState<OrderData[]>();
     const { addSubmitNotification } = useSubmitNotification();
-    const { addDefaultNotification } = useDefaultNotification();
-    const [initValue, setInitValue] = useState<StaffInfoUpdate>();
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [currentSize, setCurrentSize] = useState<number>(10);
+    const [openDetail, setOpenDetail] = useState<boolean>(false);
+    const [selectedOrder, setSelectedOrder] = useState<OrderData>();
+    const [selectedRows, setSelectedRows] = useState<OrderData[]>([]);
     const userInfo = useSelector((state: RootState) => state.auth.userInfo);
+    const [sortBy, setSortBy] = useState<{ id: string; desc: boolean }[]>([]);
+    const [currentOrderState, setCurrentOrderState] = useState<OrderState[]>(['ALL']);
 
-    const hasAdminRole = userInfo?.roles.some((role: RoleValue) =>
-        ["ADMIN", "MANAGER", "HUMAN_RESOURCE_MANAGER"].includes(role.value)
-    ) ?? false;
+    const orderStateOptions: OrderState[] = ['ALL', 'PROCESSING', 'NTHIRD_PARTY_DELIVERY'];
+    const [searchCriteriaValue, setSearchCriteriaValue] = useState<SearchCriteria>({
+        field: [],
+        operator: [],
+        value: null
+    });
 
-    const roleOptions: SelectInputOptionFormat[] = Object.values(StaffRole).map(role => ({
-        label: intl(role),
-        value: role
-    }));
-
-    const shipperTypeOptions: SelectInputOptionFormat[] = Object.values(ShipperType).map(type => ({
-        label: intl2(type),
+    const changeStateOptions: SelectInputOptionFormat[] = orderStateOptions.map(type => ({
+        label: intl(type),
         value: type
     }));
 
-    const UpdateFields: Array<UpdateFields> = [
-        { id: "fullname", type: "text", important: true },
-        { id: "email", type: "text", important: true },
-        { id: "phoneNumber", type: "text", important: true },
-        { id: "cccd", type: "number", important: true },
-        { id: "birthDate", type: "date", dropdownPosition: "bottom", important: true },
-        { id: "roles", type: "select", options: roleOptions, isClearable: false, select_type: "multi", important: true, dropdownPosition: "bottom" },
-        ...(staffInfo.roles?.includes(StaffRole["SHIPPER"]) ? [
-            { id: "shipperType" as keyof StaffInfoUpdate, type: "select" as InputTypes, select_type: "single" as SelectInputType, options: shipperTypeOptions, isClearable: false, important: true, dropdownPosition: "bottom" as DropdownPosition }
-        ] : []),
-        { id: "province", type: "text" },
-        { id: "district", type: "text" },
-        { id: "town", type: "text" },
-        { id: "detailAddress", type: "text" },
-        { id: "bank", type: "text" },
-        { id: "bin", type: "text" },
-        ...(staffInfo.roles?.includes(StaffRole["SHIPPER"]) ? [{ id: "deposit" as keyof UpdateStaffDto, type: "number" as InputTypes }] : []),
-        { id: "salary", type: "number" },
-        { id: "managedWards", type: "select", options: [], select_type: "multi", dropdownPosition: "top" }
+    const statusCodeOptions: SelectInputOptionFormat[] = Object.values(OrderStatus).map(type => ({
+        label: intl(type),
+        value: type
+    }));
+
+    const serviceTypeOptions: SelectInputOptionFormat[] = Object.values(ServiceType).map(type => ({
+        label: type,
+        value: type
+    }));
+
+    const agencyId2TypeOptions: SelectInputOptionFormat[] = ["yes", "no"].map(type => ({
+        label: intl(type),
+        value: type
+    }));
+
+    const searchFields: Array<DetailFields> = [
+        { label: intl("id"), label_value: "id", type: "text" },
+        { label: intl("agencyId2"), label_value: "agencyId2", type: "select", options: agencyId2TypeOptions, select_type: "single", dropdownPosition: "top", hideOperator: true },
+        { label: intl("trackingNumber"), label_value: "trackingNumber", type: "text" },
+        { label: intl("statusCode"), label_value: "statusCode", type: "select", options: statusCodeOptions, select_type: "single", dropdownPosition: "top" },
+        { label: intl("serviceType"), label_value: "serviceType", type: "select", options: serviceTypeOptions, select_type: "single", dropdownPosition: "top" },
+        { label: intl("nameSender"), label_value: "nameSender", type: "text" },
+        { label: intl("nameReceiver"), label_value: "nameReceiver", type: "text" },
+        { label: intl("phoneNumberSender"), label_value: "phoneNumberSender", type: "text" },
+        { label: intl("phoneNumberReceiver"), label_value: "phoneNumberReceiver", type: "text" },
     ];
 
-    if (hasAdminRole) {
-        UpdateFields.unshift({ id: "agencyId", type: "text", important: true });
-    }
-
-    const updateValue = (id: keyof StaffInfoUpdate, value: string | string[]) => {
-        setStaffInfo(prevData => {
-            if (!prevData) return prevData;
-            return {
-                ...prevData,
-                [id]: value,
-            };
-        });
-    };
-
-    const checkImportantFields = (staffInfo: StaffInfoUpdate, UpdateFields: Array<UpdateFields>) => {
-        const missingFields: string[] = [];
-        UpdateFields.forEach(({ id, important }) => {
-            if (important && !staffInfo[id]) {
-                missingFields.push(id);
-            }
-        });
-        return missingFields;
-    };
-
-    const handleReload = () => {
-        if (loading) { return; };
-        setStaffInfo(initValue);
-    }
-
-    const handleSubmit = () => {
-        if (loading) { return; };
-
-        const missingFields = checkImportantFields(staffInfo, UpdateFields);
-        if (missingFields.length > 0) {
-            setError(true);
-            const missingFieldsLabels = missingFields.map(field => intl2(field));
-            addDefaultNotification({
-                children: (
-                    <div>
-                        <p>{intl("MissingField")}</p>
-                        <ul className="list-disc pl-5">
-                            {missingFieldsLabels.map((label, index) => (
-                                <li key={index} className="text-left">{label}</li>
-                            ))}
-                        </ul>
-                    </div>
-                )
-            });
-        } else {
-            setError(false)
-            addSubmitNotification({ message: intl("Confirm2"), submitClick: handleCreate });
+    const renderHeader = (cellHeader: string): string => {
+        if (cellHeader === intl("delete")) {
+            return "!text-end !pr-2"
+        } else if (cellHeader === intl("trackingNumber")) {
+            return "!pl-2"
         }
+        return "";
     }
 
-    const handleCreate = async () => {
-        setLoading(true);
+    const renderCell = (cellHeader: string, cellValue: string | number | boolean, rowValue: OrderData) => {
+        if (cellHeader === intl("statusCode")) {
+            return <div className="w-full h-full whitespace-nowrap">{intl(cellValue)}</div>
+        } else if (cellHeader === intl("serviceType")) {
+            return <div className="w-full h-full text-center">{rowValue.serviceType}</div>
+        } else if (cellHeader === intl("detailSource")) {
+            return <div className="w-full h-full line-clamp-4">{`${rowValue.detailSource}, ${rowValue.wardSource}, ${rowValue.districtSource}, ${rowValue.provinceSource}`}</div>
+        } else if (cellHeader === intl("detailDest")) {
+            return <div className="w-full h-full line-clamp-4">{`${rowValue.detailDest}, ${rowValue.wardDest}, ${rowValue.districtDest}, ${rowValue.provinceDest}`}</div>
+        } else if (cellHeader === intl("trackingNumber")) {
+            return <div className="w-full h-full pl-2">{rowValue.trackingNumber}</div>
+        } else if (cellHeader === intl("agencyId2")) {
+            return (
+                <div className="flex justify-center pt-1">
+                    <RenderCase condition={userInfo && userInfo.agencyId ? userInfo.agencyId === cellValue : false}>
+                        <MdRadioButtonChecked />
+                    </RenderCase>
+                    <RenderCase condition={!(userInfo && userInfo.agencyId ? userInfo.agencyId === cellValue : false)}>
+                        <MdRadioButtonUnchecked />
+                    </RenderCase>
+                </div>
+            )
+        } else if (cellHeader === intl("delete")) {
+            return (
+                <div className="flex justify-center whitespace-nowrap">
+                    <RenderCase condition={userInfo && userInfo.agencyId ? userInfo.agencyId === rowValue.agencyId : false}>
+                        <Button className="min-h-5 min-w-5 w-5 h-5 p-0 rounded-full bg-lightContainer dark:!bg-darkContainer" onPress={() => { setOrderId(cellValue as UUID); addSubmitNotification({ message: intl("Submit"), submitClick: handleDelete }) }}>
+                            <BiTrash className="min-h-5 min-w-5" />
+                        </Button>
+                    </RenderCase>
+                    <RenderCase condition={!(userInfo && userInfo.agencyId ? userInfo.agencyId === rowValue.agencyId : false)}>
+                        {intl("permission2")}
+                    </RenderCase>
+                </div>
+            )
+        }
+    };
+
+    const onRowClick = (value: OrderData) => {
+        const newValue = { ...value, statuscode: [value.statusCode] };
+        setSelectedOrder(newValue);
+        setOpenDetail(true);
+    };
+
+    const fetchData = useCallback(async () => {
         const token = getTokenFromCookie();
-        if (!token) {
-            return;
+        setOrders(undefined);
+        setSelectedRows([]);
+
+        if (!token) return;
+
+        const rawValue = Array.isArray(searchCriteriaValue.value) ? searchCriteriaValue.value[0] : searchCriteriaValue.value;
+
+        const shipperCriteria: SearchCriteria = {
+            field: "staff.id",
+            operator: "~",
+            value: shipperData.id
         }
 
-        const updateStaffData: UpdateStaffDto = {
-            ...staffInfo,
-            cccd: staffInfo.cccd ? staffInfo.cccd : "",
-            agencyId: hasAdminRole ? staffInfo.agencyId ?? "" : userInfo?.agencyId ?? "",
-            birthDate: staffInfo.birthDate ? new Date(staffInfo.birthDate).toISOString().slice(0, 10) : undefined,
-            province: staffInfo.province || undefined,
-            district: staffInfo.district || undefined,
-            town: staffInfo.town || undefined,
-            detailAddress: staffInfo.detailAddress || undefined,
-            bank: staffInfo.bank || undefined,
-            bin: staffInfo.bin || undefined,
-            deposit: staffInfo.roles.includes(StaffRole["SHIPPER"]) ? (typeof staffInfo.deposit === 'string' ? parseFloat(staffInfo.deposit) : staffInfo.deposit) : undefined,
-            salary: typeof staffInfo.salary === 'string' ? parseFloat(staffInfo.salary) : staffInfo.salary || undefined,
-            shipperType: staffInfo.roles.includes(StaffRole["SHIPPER"]) ? (Array.isArray(staffInfo.shipperType) ? staffInfo.shipperType[0] : staffInfo.shipperType) : undefined,
-            managedWards: staffInfo.managedWards ? staffInfo.managedWards.map(ward => ward.toString()) : []
-        };
-        console.log(updateStaffData)
-        const response = await staffOperation.update(staffInfo.id as UUID, updateStaffData, token);
-        console.log(response)
+        const response = await taskOp.search({
+            addition: {
+                sort: sortBy.map(({ id, desc }) => [id, desc ? "DESC" : "ASC"]),
+                page: currentPage,
+                size: currentSize,
+                group: []
+            },
+            criteria: [shipperCriteria]
+        }, token);
+
         if (response.success) {
-            setInitValue(staffInfo);
-            addNotification({ message: intl("Success2"), type: "success" });
-            reloadData();
-        } else {
-            addDefaultNotification({ message: response.message || intl("Fail2") });
+            const fetchedOrders = (response.data
+                .filter((task: TaskData) => task.order !== null)
+                .map((task: TaskData) => {
+                    if (task.order) {
+                        task.order.images = [];
+                        task.order.signatures = [];
+                        task.order.journies = [];
+                    }
+                    return task.order;
+                }) as OrderData[]);
+            console.log(fetchedOrders);
+            setOrders(fetchedOrders);
+        } else if(response.message === "Người dùng không được phép truy cập tài nguyên này") {
+            // addNotification({message: intl("NoPermit"), type: "error"});
+            setOrders([]);
         }
+    }, [currentPage, currentSize, sortBy, currentOrderState[0], searchCriteriaValue]);
 
-        setLoading(false);
-    };
+    const handleDelete = async () => {
+        // const token = getTokenFromCookie();
+        // if (!token) return;
+        // if (!orderId) return;
+
+        // const response = await taskOp.deleteOrder(orderId, token);
+        // if (response.success) {
+        //     addNotification({ message: response.message ?? intl("Success2"), type: "success" });
+        // } else {
+        //     addNotification({ message: response.message ?? intl("Fail2"), type: "error" });
+        // }
+
+        // setSearchCriteriaValue(prev => prev);
+    }
 
     useEffect(() => {
-        if (staffInfo) setInitValue(staffInfo);
-    }, [staffInfo])
+        fetchData();
+    }, [fetchData]);
 
     return (
-        <RenderCase condition={openUpdate}>
+        <RenderCase condition={openOrders}>
             <DetailPopup
                 customWidth="w-full md:w-fit"
-                title={intl("Title2")}
-                onClose={() => setOpenUpdate(false)}
-                icon={<FaUserCircle className="w-full h-full" />}
+                title={intl("OrdersList")}
+                onClose={() => setOpenOrders(false)}
+                icon={<FaShippingFast className="w-full h-full" />}
                 noPadding
             >
-                <div className="relative">
-                    <div className="flex flex-col gap-2 px-2 pb-1 md:grid grid-cols-2 md:w-[700px]">
-                        {UpdateFields.map(({ id, type, version, isClearable, options, select_type, state, important, dropdownPosition }: UpdateFields) => (
-                            <CustomInputField
-                                id={id}
-                                key={id}
-                                type={type}
-                                value={staffInfo[id]}
-                                setValue={(value: string | string[]) => updateValue(id, value)}
-                                state={error && important && !staffInfo[id] ? "error" : state}
-                                version={version}
-                                options={options}
-                                select_type={select_type}
-                                isClearable={isClearable}
-                                dropdownPosition={dropdownPosition}
-                                className="w-full"
-                                inputClassName="bg-lightContainer dark:!bg-darkContainerPrimary border border-gray-200 dark:border-white/10"
-                                label={
-                                    <div className='flex gap-1 place-items-center relative mb-2'>
-                                        {intl2(id)} {important && <div className="text-red-500">*</div>}
-                                    </div>
-                                } />
-                        ))}
-                    </div>
-                    <Container className="sticky bottom-0 w-full p-2 !rounded-none flex gap-1.5">
-                        <CustomButton
-                            version="1"
-                            color="error"
-                            onClick={handleReload}
-                            className="linear !min-w-10 !w-10 !px-0 rounded-md bg-lightContainer dark:!bg-darkContainer border border-red-500 dark:!border-red-500 h-10 text-base font-medium transition duration-200 hover:border-red-600 
-                            active:border-red-700 text-red-500 dark:text-white dark:hover:border-red-400 dark:active:border-red-300 flex justify-center place-items-center"
-                        >
-                            <IoReloadOutline />
-                        </CustomButton>
-                        <CustomButton
-                            version="1"
-                            color="error"
-                            onClick={handleSubmit}
-                            className="linear w-full rounded-md bg-red-500 dark:!bg-red-500 h-10 text-base font-medium text-white transition duration-200 hover:bg-red-600 
-                            active:bg-red-700 dark:text-white dark:hover:bg-red-400 dark:active:bg-red-300 flex justify-center place-items-center"
-                        >
-                            {loading ? <LoadingUI /> : intl2("Submit")}
-                        </CustomButton>
-                    </Container>
+                <div className="relative flex flex-col gap-2 p-2">
+                    <TableSwitcher
+                        primaryKey="id"
+                        tableData={orders}
+                        isPaginated={true}
+                        renderCell={renderCell}
+                        currentPage={currentPage}
+                        currentSize={currentSize}
+                        fetchPageData={fetchData}
+                        fetchSearchSortData={true}
+                        columnsData={columnsData()}
+                        renderHeader={renderHeader}
+                        selectedRows={selectedRows}
+                        setCurrentPage={setCurrentPage}
+                        setSelectedRows={setSelectedRows}
+                        customButton={
+                            <CustomButton fetchData={fetchData} selectedRows={selectedRows}  />
+                        }
+                        containerClassname="!rounded-xl p-4"
+                        selectType="none"
+                        setPageSize={{
+                            setCurrentSize,
+                            sizeOptions: [10, 20, 30]
+                        }}
+                    />
                 </div>
             </DetailPopup>
         </RenderCase>

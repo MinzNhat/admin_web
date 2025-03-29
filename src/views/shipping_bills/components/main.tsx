@@ -67,7 +67,10 @@ const ShippingBillsMain = () => {
 
         if (response.success) {
             setShippingBills(response.data as ShippingBillData[]);
-        };
+        } else if (response.message === "Người dùng không được phép truy cập tài nguyên này") {
+            // addNotification({message: intl("NoPermission"), type: "error"});
+            setShippingBills([]);
+        }
     }, [currentPage, currentSize, sortBy, searchCriteriaValue]);
 
     useEffect(() => {

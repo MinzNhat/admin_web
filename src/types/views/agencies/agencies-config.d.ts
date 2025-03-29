@@ -20,6 +20,18 @@ declare type ManagerInfo = {
     username: string;
 };
 
+declare License = {
+    name: string,
+    path: string
+}
+
+declare type Company = {
+    id: string,
+    taxCode: string,
+    name: string,
+    licenses: License[]
+}
+
 declare type AgencyInfo = {
     bank: string;
     bin: string;
@@ -43,4 +55,6 @@ declare type AgencyInfo = {
     town: string;
     type: string;
     updatedAt: string;
+    company: Company;
+    contracts: License[];
 };

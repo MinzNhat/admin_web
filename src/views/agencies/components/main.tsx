@@ -13,6 +13,10 @@ import { useNotifications } from "@/hooks/NotificationsProvider";
 import SearchPopUp, { DetailFields } from "@/views/customTableSearchPopUp";
 import { AgencyType, CreateAgencyDto, CreateAgencyManager, CreateCompanyDto, SearchCriteria } from "@/services/interface";
 import { useSubmitNotification } from "@/hooks/SubmitNotificationProvider";
+import { HiOutlineMagnifyingGlassCircle } from "react-icons/hi2";
+import { Button } from "@nextui-org/react";
+import FileOpen from "./fileOpen";
+import { IoRepeat } from "react-icons/io5";
 
 const AgenciesMain = () => {
     const agencyOp = new AgencyOperation();
@@ -22,11 +26,13 @@ const AgenciesMain = () => {
     const [agencies, setAgencies] = useState<AgencyInfo[]>();
     const { addSubmitNotification } = useSubmitNotification();
     const [currentPage, setCurrentPage] = useState<number>(1);
+    const [openAgencyDetail, setOpenAgencyDetail] = useState(false);
     const [currentSize, setCurrentSize] = useState<number>(10);
     const [selectedRows, setSelectedRows] = useState<AgencyInfo[]>([]);
     const [addInfo, setAddInfo] = useState<CreateAgencyManager>({
         fullname: "", cccd: "", phoneNumber: "", email: "", province: "", district: "", town: "", detailAddress: "", birthDate: "", bin: "", bank: "", salary: 0,
     });
+    const [isAgency, setIsAgency] = useState(false);
     const [addInfo3, setAddInfo3] = useState<CreateCompanyDto>({ taxcode: "", name: "" });
     const [addInfo2, setAddInfo2] = useState<CreateAgencyDto>({
         agencyId: "", name: "", phoneNumber: "", email: "", bin: "", province: "", district: "", town: "", detailAddress: "", latitude: 0, longitude: 0, commissionRate: 0, bank: "",
@@ -50,7 +56,7 @@ const AgenciesMain = () => {
     ];
 
 
-    const renderCell = (cellHeader: string, _cellValue: string | boolean | number, rowValue: AgencyInfo) => {
+    const renderCell = (cellHeader: string, _cellValue: string | boolean | number | any, rowValue: AgencyInfo) => {
         if (cellHeader === intl("detailAddress")) {
             return (
                 <div className="w-full h-full line-clamp-4">
@@ -63,8 +69,54 @@ const AgenciesMain = () => {
                     {rowValue.manager.fullname}
                 </div>
             );
+        } else if (cellHeader === intl('company')) {
+            return (
+                <div className="w-full h-full whitespace-nowrap">
+                    {_cellValue.name}
+                </div>
+            );
+        } else if (cellHeader === intl('contracts')) {
+            return (
+                <div className="w-full h-full whitespace-nowrap">
+                    <Button className="min-h-5 min-w-5 w-5 h-5 p-0 rounded-full bg-lightContainer dark:!bg-darkContainer" onPress={() => setOpenAgencyDetail(true)}>
+                        <HiOutlineMagnifyingGlassCircle className="min-h-5 min-w-5" />
+                    </Button>
+                    {_cellValue.length > 0 ? _cellValue[0].name : ""}
+                </div>
+            );
         }
     };
+
+    const toggleType = () => {
+        setIsAgency(!isAgency);
+        fetchData();
+    }
+
+    const fetchData = async () => {
+        const token = getTokenFromCookie();
+        setAgencies(undefined);
+        setSelectedRows([]);
+        if (!token) return;
+        const typeCriteria = {
+            field: "type",
+            operator: "=",
+            value: isAgency?"DL":"BC"
+        } as SearchCriteria;
+
+        const response = await agencyOp.search({
+            addition: {
+                sort: sortBy.map(({ id, desc }) => [id, desc ? "DESC" : "ASC"]),
+                page: currentPage,
+                size: currentSize,
+                group: []
+            },
+            criteria: [typeCriteria]
+        }, token);
+        console.log(response)
+        if (response.success) {
+            setAgencies(response.data as AgencyInfo[])
+        }
+    }
 
     const reloadData = useCallback(async () => {
         const token = getTokenFromCookie();
@@ -83,6 +135,12 @@ const AgenciesMain = () => {
             value: criteriaValue
         } : null;
 
+        const typeCriteria = {
+            field: "type",
+            operator: "=",
+            value: "BC"
+        } as SearchCriteria;
+
         const response = await agencyOp.search({
             addition: {
                 sort: sortBy.map(({ id, desc }) => [id, desc ? "DESC" : "ASC"]),
@@ -90,7 +148,7 @@ const AgenciesMain = () => {
                 size: currentSize,
                 group: []
             },
-            criteria: criteria ? [criteria] : []
+            criteria: criteria ? [criteria, typeCriteria] : [typeCriteria]
         }, token);
         console.log(response)
         if (response.success) {
@@ -121,6 +179,7 @@ const AgenciesMain = () => {
     return (
         <>
             <AddAgencyContent addInfo={addInfo} openAdd={openAdd} setAddInfo={setAddInfo} addInfo2={addInfo2} setAddInfo2={setAddInfo2} setOpenAdd={setOpenAdd} reloadData={reloadData} addInfo3={addInfo3} setAddInfo3={setAddInfo3} />
+            {/* <FileOpen /> */}
             <TableSwitcher
                 primaryKey="id"
                 tableData={agencies}
@@ -137,7 +196,23 @@ const AgenciesMain = () => {
                 setSelectedRows={setSelectedRows}
                 customButton={<CustomButton fetchData={reloadData} handleDelete={() => addSubmitNotification({ message: intl("Confirm2"), submitClick: handleDelete })} selectedRows={selectedRows} openAdd={() => { setOpenAdd(true) }}
                     extraButton={
-                        <SearchPopUp fields={searchFields} searchCriteriaValue={searchCriteriaValue} setSearchCriteriaValue={setSearchCriteriaValue} />
+                        <>
+                            <SearchPopUp fields={searchFields} searchCriteriaValue={searchCriteriaValue} setSearchCriteriaValue={setSearchCriteriaValue} />
+                            <div className="mr-4">
+                                
+                                <Button
+                                    className={`
+            w-full lg:w-fit flex items-center text-md hover:cursor-pointer 
+            bg-lightPrimary dark:bg-darkContainerPrimary hover:bg-gray-100 dark:hover:bg-white/20 dark:active:bg-white/10
+            linear justify-center rounded-lg font-medium dark:font-base transition duration-200
+        `}
+                                    onPress={toggleType}
+                                >
+                                    <IoRepeat size={24} className="text-gray-500" />
+                                    {intl(isAgency?"IsAgency":"IsPostOffice")}
+                                </Button>
+                            </div>
+                        </>
                     } />}
                 containerClassname="!rounded-xl p-4"
                 selectType="multi"

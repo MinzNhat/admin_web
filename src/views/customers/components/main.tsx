@@ -9,11 +9,14 @@ import { columnsData } from "../variables/columnsData";
 import CustomButton from "@/views/customTableButton";
 import TableSwitcher from "@/components/table";
 import SearchPopUp, { DetailFields } from "@/views/customTableSearchPopUp";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 const CustomerMain = () => {
     const customerOp = new CustomerOperation();
     const intl = useTranslations("StaffInfo");
     const [customers, setCustomers] = useState<Customer[]>();
+    const locale = useSelector((state: RootState) => state.language.locale);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [currentSize, setCurrentSize] = useState<number>(10);
     const [selectedRows, setSelectedRows] = useState<Customer[]>([]);
@@ -23,6 +26,27 @@ const CustomerMain = () => {
         operator: [],
         value: null
     });
+
+    const renderCell = (cellHeader: string, cellValue: string | number | boolean | any) => {
+        if (cellHeader === intl("firstName")) {
+            return <div className="w-full h-full whitespace-nowrap">{cellValue}</div>
+        } else if (cellHeader === intl("lastName")) {
+            return <div className="w-full h-full whitespace-nowrap">{cellValue}</div>
+        } else if (cellHeader === intl("createdAt")){
+            return cellValue? new Intl.DateTimeFormat(locale, {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+                second: "numeric"
+            }).format(new Date(cellValue)).replace(/^\w/, (c) => c.toUpperCase()) : "";
+        } else if (cellHeader === intl("id")) {
+            return <div className="w-full h-full whitespace-nowrap">{cellValue}</div>
+        } else if (cellHeader === intl("user")) {
+            return <div className="w-full h-full whitespace-nowrap">{cellValue.active?intl("active"):intl("inactive")}</div>
+        }
+    };
 
     const searchFields: Array<DetailFields> = [
         { label: intl("id"), label_value: "id", type: "text" },
@@ -60,6 +84,9 @@ const CustomerMain = () => {
 
         if (response.success) {
             setCustomers(response.data as Customer[]);
+        } else if (response.message === "Người dùng không được phép truy cập tài nguyên này") {
+            // addNotification({message: intl("NoPermission"), type: "error"});
+            setCustomers([]);
         }
     }, [currentPage, currentSize, sortBy, searchCriteriaValue]);
 
@@ -73,6 +100,7 @@ const CustomerMain = () => {
                 primaryKey="id"
                 tableData={customers}
                 isPaginated={true}
+                renderCell={renderCell}
                 setSortBy={setSortBy}
                 currentPage={currentPage}
                 currentSize={currentSize}

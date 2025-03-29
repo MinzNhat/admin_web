@@ -46,7 +46,7 @@ type Props = {
 }
 
 const UpdateStatus = ({ openUpdate, setOpenUpdate, staffInfo, setStaffInfo, shippmentId }: Props) => {
-    const intl = useTranslations("ShipmentRoute");
+    const intl = useTranslations("ShipmentsRoute");
     const [error, setError] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const { addNotification } = useNotifications();
@@ -158,7 +158,7 @@ const UpdateStatus = ({ openUpdate, setOpenUpdate, staffInfo, setStaffInfo, ship
         <RenderCase condition={openUpdate}>
             <DetailPopup
                 customWidth="w-full md:w-fit"
-                title={intl("Title2")}
+                title={intl("UpdateStatus")}
                 onClose={() => setOpenUpdate(false)}
                 icon={<FaUserCircle className="w-full h-full" />}
                 noPadding

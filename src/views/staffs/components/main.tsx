@@ -8,10 +8,15 @@ import { StaffOperation } from "@/services/main";
 import { getTokenFromCookie } from "@/utils/token";
 import CustomButton from "@/views/customTableButton";
 import { columnsData } from "../variables/columnsData";
+import { columnsData2 } from "../variables/columnsData2";
 import { useCallback, useEffect, useState } from "react";
 import SearchPopUp, { DetailFields } from "@/views/customTableSearchPopUp";
 import { RoleValue, StaffInfo, StaffInfoUpdate } from "@/types/store/auth-config";
 import { CreateStaffDto, SearchCriteria, ShipperType, StaffRole } from "@/services/interface";
+import Switch from "@/components/switch";
+import RenderCase from "@/components/render";
+import { Button } from "@nextui-org/react";
+import { MdAutorenew } from "react-icons/md";
 
 const StaffsMain = () => {
     const staffOp = new StaffOperation();
@@ -22,9 +27,10 @@ const StaffsMain = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [currentSize, setCurrentSize] = useState<number>(10);
     const [openUpdate, setOpenUpdate] = useState<boolean>(false);
-    const [staffInfo, setStaffInfo] = useState<StaffInfoUpdate>();
+    const [staffInfo, setStaffInfo] = useState<StaffInfo>();
     const [selectedRows, setSelectedRows] = useState<StaffInfo[]>([]);
     const [sortBy, setSortBy] = useState<{ id: string; desc: boolean }[]>([]);
+    const [shipperTab, setShipperTab] = useState(false);
     const [searchCriteriaValue, setSearchCriteriaValue] = useState<SearchCriteria>({
         field: [],
         operator: [],
@@ -77,14 +83,52 @@ const StaffsMain = () => {
                         : TableMessage("DefaultNoDataValue")}
                 </div>
             );
+        } else if (cellHeader === intl("managedWards")) {
+            return (
+                <div className="w-full h-full whitespace-nowrap">
+                    {Array.isArray(cellValue) && cellValue.length !== 0
+                        ? cellValue
+                            .map((ward) => `${ward.ward}, ${ward.district}, ${ward.province}`)
+                            .join(", ")
+                        : TableMessage("DefaultNoDataValue")}
+                </div>
+            );
         } else if (cellHeader === intl("fullname")) {
             return (
                 <div className="w-full h-full whitespace-nowrap">
                     {cellValue as string}
                 </div>
             );
+        } else if (cellHeader === intl("shipperType")) {
+            return (
+                <div className="w-full h-full whitespace-nowrap">
+                    {intl(cellValue)}
+                </div>
+            );
+        } else if (cellHeader === intl("shipperStatus")) {
+            return (
+                <div className="w-full h-full whitespace-nowrap">
+                    {intl(cellValue?"active":"inactive")}
+                </div>
+            );
         }
     };
+
+    const handleShipperButton = async () => {
+        if(shipperTab) {
+            fetchData();
+            setShipperTab(false);
+            return;
+        }
+        const token = getTokenFromCookie();
+        if (!token) return;
+
+        const response = await staffOp.searchByRole("SHIPPER", token);
+        if(response.success) {
+            setStaffs(response.data as StaffInfo[]);
+        }
+        setShipperTab(true);
+    }
 
 
     const fetchData = useCallback(async () => {
@@ -135,7 +179,7 @@ const StaffsMain = () => {
 
     return (
         <>
-            {staffInfo && <UpdateContent openUpdate={openUpdate} reloadData={fetchData} setOpenUpdate={setOpenUpdate} setStaffInfo={setStaffInfo} staffInfo={staffInfo} />}
+            {shipperTab && staffInfo && <UpdateContent openOrders={openUpdate} reloadData={fetchData} setOpenOrders={setOpenUpdate} shipperData={staffInfo}/>}
             <AddContent addInfo={addInfo} openAdd={openAdd} setAddInfo={setAddInfo} setOpenAdd={setOpenAdd} reloadData={fetchData} />
             <TableSwitcher
                 primaryKey="id"
@@ -146,13 +190,29 @@ const StaffsMain = () => {
                 currentPage={currentPage}
                 currentSize={currentSize}
                 fetchPageData={fetchData}
-                columnsData={columnsData()}
+                columnsData={shipperTab?columnsData2():columnsData()}
                 selectedRows={selectedRows}
                 setCurrentPage={setCurrentPage}
                 setSelectedRows={setSelectedRows}
                 customButton={<CustomButton fetchData={fetchData} selectedRows={selectedRows} openAdd={() => { setOpenAdd(true) }}
                     extraButton={
-                        <SearchPopUp fields={searchFields} searchCriteriaValue={searchCriteriaValue} setSearchCriteriaValue={setSearchCriteriaValue} />
+                        <>
+                            <SearchPopUp fields={searchFields} searchCriteriaValue={searchCriteriaValue} setSearchCriteriaValue={setSearchCriteriaValue} />
+                            <div className="mr-4">
+                                <Button
+                                    className={`
+            w-full lg:w-fit flex items-center text-md hover:cursor-pointer 
+            ${shipperTab ? "bg-red-500 dark:bg-red-700 hover:bg-red-600 dark:hover:bg-red-800 text-white"
+                                            : "bg-lightPrimary dark:bg-darkContainerPrimary hover:bg-gray-100 dark:hover:bg-white/20 dark:active:bg-white/10"} 
+            linear justify-center rounded-lg font-medium dark:font-base transition duration-200
+        `}
+                                    onPress={handleShipperButton}
+                                >
+                                    {intl("IsShipper")}
+                                </Button>
+                            </div>
+
+                        </>
                     } />}
                 containerClassname="!rounded-xl p-4"
                 selectType="none"
@@ -166,8 +226,8 @@ const StaffsMain = () => {
                         ...value,
                         roles: value.roles.map(role => role.value)
                     };
-                    setStaffInfo(updatedStaffInfo);
-                    setOpenUpdate(true);
+                    setStaffInfo(value);
+                    setOpenUpdate(shipperTab);
                 }}
             />
         </>

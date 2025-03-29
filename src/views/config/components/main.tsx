@@ -20,7 +20,7 @@ import { MdAutorenew, MdOutlineRemoveCircleOutline } from "react-icons/md";
 import UpdateContent from "./updateContent";
 
 const ConfigMain = () => {
-    const intl = useTranslations("ConfigRoute");
+    const intl = useTranslations("Config");
     const TableMessage = useTranslations('Table');
     const [configs, setConfigs] = useState<ConfigData[]>();
     const [currentPage, setCurrentPage] = useState<number>(1);
@@ -50,16 +50,21 @@ const ConfigMain = () => {
     const renderCell = (cellHeader: string, cellValue: string | number | boolean | any) => {
         if (cellHeader === intl("province")) {
             return <div className="w-full h-full whitespace-nowrap">{cellValue}</div>
-        } else if (cellHeader === intl("ward")) {
+        } 
+        else if (cellHeader === intl("ward")) {
             return <div className="w-full h-full text-center">{cellValue}</div>
-        } else if (cellHeader === intl("district")) {
+        } 
+        else if (cellHeader === intl("district")) {
             return <div className="w-full h-full line-clamp-4">{`${cellValue}`}</div>
-        } else if (cellHeader === intl("deposit")) {
+        } 
+        else if (cellHeader === intl("deposit")) {
             return <div className="w-full h-full line-clamp-4">{`${cellValue}`}</div>
-        } else if (cellHeader === intl("services")) {
+        } 
+        else if (cellHeader === intl("services")) {
+            console.log(cellValue)
             return (
                 <div className="w-full h-full pl-2">
-                    {Array.isArray(cellValue) ? cellValue.map(item => item.serviceName).join(", ") : cellValue}
+                    {Array.isArray(cellValue) ? cellValue.map(item => intl(item)).join(", ") : cellValue}
                 </div>
             );
         }
@@ -109,9 +114,39 @@ const ConfigMain = () => {
             criteria: criteria ? [criteria] : []
         });
 
+        // {
+        //     "id": 5,
+        //     "wardId": 8,
+        //     "ward": "Phường Liễu Giai",
+        //     "level": "Phường",
+        //     "districtId": 1,
+        //     "district": "Quận Ba Đình",
+        //     "provinceId": 1,
+        //     "province": "Thành phố Hà Nội",
+        //     "postalCode": null,
+        //     "deposit": 12000,
+        //     "agencyId": null,
+        //     "services": [
+        //         {
+        //             "id": 46,
+        //             "wardId": 5,
+        //             "serviceName": "SR",
+        //             "createdAt": "2025-03-26T10:19:24.000Z",
+        //             "updatedAt": "2025-03-26T10:19:24.000Z"
+        //         }
+        //     ]
+        // }
+
         if (response.success) {
-            setConfigs(response.data as ConfigData[]);
-            console.log(response.data)
+            const configs = response.data.map((config: any) => {
+                if(config) {
+                    return {...config, services: config.services.map((service: any) => {
+                        console.log(service); return service.serviceName})}
+                }
+            }) as ConfigData[];
+            setConfigs(configs);
+            // setConfigs([]);
+            console.log(configs)
         }
         console.log(response);
     }, [currentPage, currentSize, sortBy, searchCriteriaValue]);

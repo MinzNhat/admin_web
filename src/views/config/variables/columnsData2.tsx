@@ -12,7 +12,7 @@ interface ConfigData {
 }
 
 export const columnsData = (): Column<ConfigData>[] => {
-    const intl = useTranslations("ConfigRoute");
+    const intl = useTranslations("Config");
 
     return [
         {

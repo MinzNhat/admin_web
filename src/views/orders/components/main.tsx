@@ -43,7 +43,7 @@ const OrdersMain = () => {
     const [searchCriteriaValue, setSearchCriteriaValue] = useState<SearchCriteria>({
         field: [],
         operator: [],
-        value: null
+        value: []
     });
 
     const changeStateOptions: SelectInputOptionFormat[] = orderStateOptions.map(type => ({
@@ -137,6 +137,7 @@ const OrdersMain = () => {
         setSelectedRows([]);
 
         if (!token) return;
+        console.log(searchCriteriaValue);
 
         const rawValue = Array.isArray(searchCriteriaValue.value) ? searchCriteriaValue.value[0] : searchCriteriaValue.value;
         const criteria: SearchCriteria | null = rawValue ? {
@@ -167,7 +168,9 @@ const OrdersMain = () => {
         }, token);
 
         if (response.success) {
-            setOrders(response.data as OrderData[]);
+            const fetchEdOrders = response.data as OrderData[];
+            console.log(fetchEdOrders);
+            setOrders(fetchEdOrders);
         }
     }, [currentPage, currentSize, sortBy, currentOrderState[0], searchCriteriaValue]);
 

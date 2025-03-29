@@ -106,7 +106,8 @@ const ShipmentsMain = () => {
         }, token);
 
         if (response.success) {
-            setShipments(response.data as Shipment[]);
+            const shipments = response.data.map((shipment: any) => {return {...shipment, status: intl(shipment.status)}}) as Shipment[];
+            setShipments(shipments);
         }
     }, [currentPage, currentSize, sortBy, searchCriteriaValue]);
 

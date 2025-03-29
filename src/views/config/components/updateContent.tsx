@@ -21,6 +21,7 @@ import LoadingUI from "@/components/loading";
 import { IoReloadOutline } from "react-icons/io5";
 import { useDefaultNotification } from "@/hooks/DefaultNotificationProvider";
 import { useSubmitNotification } from "@/hooks/SubmitNotificationProvider";
+import { useNotifications } from "@/hooks/NotificationsProvider";
 
 // console.log("debug", AdministrativeOperation, VoucherOperation, TaskOperation);
 
@@ -78,7 +79,7 @@ const UpdateContent = ({ openAdd, setOpenAdd, locations }: Props) => {
     const [loading, setLoading] = useState(false);
     const { addSubmitNotification } = useSubmitNotification();
     const configOperation = new ConfigOperation();
-    const { addDefaultNotification } = useDefaultNotification();
+    const { addNotification } = useNotifications();
 
     const serviceOptions = [
         'Siêu nhanh', 'Siêu rẻ',
@@ -117,6 +118,9 @@ const UpdateContent = ({ openAdd, setOpenAdd, locations }: Props) => {
                 serviceNames: services.map((service)=>{return service === 'Siêu nhanh'? "SN": service == 'Siêu rẻ'? "SR": ""}),
                 ward: location.ward
             }, token);
+            if(response.message === "Người dùng không được phép truy cập tài nguyên này") {
+                addNotification({message: intl("NoPermit"), type: "error"});
+            }
         }
     }
 

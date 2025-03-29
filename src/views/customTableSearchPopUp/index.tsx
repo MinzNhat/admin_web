@@ -39,7 +39,7 @@ const SearchPopUp = ({ setSearchCriteriaValue, fields, searchCriteriaValue }: Pr
     const [searchCriteria, setSearchCriteria] = useState<SearchCriteria>({
         field: [fields[0].label_value],
         operator: ["~"],
-        value: null
+        value: []
     });
 
     const options: SelectInputOptionFormat[] = fields.map(({ label, label_value }) => ({
@@ -87,18 +87,18 @@ const SearchPopUp = ({ setSearchCriteriaValue, fields, searchCriteriaValue }: Pr
                     <div onPointerDown={(e) => e.stopPropagation()}>
                         <Button
                             onPress={() => {
-                            if (!!searchCriteriaValue.value) {
-                                setSearchCriteria({
-                                field: [fields[0].label_value],
-                                operator: ["~"],
-                                value: null
-                                });
-                                setSearchCriteriaValue({
-                                field: [fields[0].label_value],
-                                operator: ["~"],
-                                value: null
-                                });
-                            }
+                                if (!!searchCriteriaValue.value) {
+                                    setSearchCriteria({
+                                        field: [fields[0].label_value],
+                                        operator: ["~"],
+                                        value: null
+                                    });
+                                    setSearchCriteriaValue({
+                                        field: [fields[0].label_value],
+                                        operator: ["~"],
+                                        value: null
+                                    });
+                                }
                             }}
                             className="!bg-red-500 dark:!bg-darkContainer shadow-sm h-8 min-w-8 px-2 flex justify-center
                             gap-1 rounded-full place-items-center flex-shrink-0 text-white"
@@ -139,15 +139,15 @@ const SearchPopUp = ({ setSearchCriteriaValue, fields, searchCriteriaValue }: Pr
                                 dropdownPosition="top"
                                 isClearable={false}
                                 options={options}
-                                select_type="single"
-                                setValue={(value: string | string[]) => setSearchCriteria({ ...searchCriteria, field: value })}
+                                select_type="multi"
+                                setValue={(value: string | string[]) => setSearchCriteria({ ...searchCriteria, field: value, value: (value as string[]).map((_) => "") })}
                                 value={searchCriteria.field}
                                 className="w-full"
                                 containerClassName={`flex flex-col gap-1 ${fields.find(f => f.label_value === searchCriteria.field[0])?.hideOperator ? "col-span-2" : ""}`}
                                 inputClassName="bg-lightContainer dark:!bg-darkContainerPrimary border border-gray-200 dark:border-white/10"
                                 label={intl("Field")}
                             />
-                            <RenderCase condition={!!searchCriteria.field[0] && !fields.find(f => f.label_value === searchCriteria.field[0])?.hideOperator}>
+                            {/* <RenderCase condition={!!searchCriteria.field[0] && !fields.find(f => f.label_value === searchCriteria.field[0])?.hideOperator}>
                                 <CustomInputField
                                     id="Search_op"
                                     key="Search_op"
@@ -163,20 +163,39 @@ const SearchPopUp = ({ setSearchCriteriaValue, fields, searchCriteriaValue }: Pr
                                     inputClassName="bg-lightContainer dark:!bg-darkContainerPrimary border border-gray-200 dark:border-white/10"
                                     label={intl("Method")}
                                 />
-                            </RenderCase>
+                            </RenderCase> */}
 
                             {fields.map(({ label, label_value, type, dropdownPosition, options, select_type }: DetailFields) => (
-                                <RenderCase condition={searchCriteria.field[0] === label_value}>
+                                <RenderCase condition={searchCriteria.field === label_value || (searchCriteria.field as string[]).includes(label_value)}>
                                     <CustomInputField
                                         id={label}
                                         key={label}
                                         type={type ?? "text"}
                                         dropdownPosition={dropdownPosition}
                                         options={options}
-                                        value={searchCriteria.value}
+                                        value={() => {
+                                            const fieldIndex = (searchCriteria.field as string[]).findIndex(field => field === label_value);
+                                            const fieldValue = fieldIndex !== -1 ? searchCriteria.value[fieldIndex] : "";
+
+                                            return fieldValue;
+                                        }}
                                         select_type={select_type}
                                         isClearable={false}
-                                        setValue={(value: string | string[]) => setSearchCriteria({ ...searchCriteria, value: value })}
+                                        setValue={(newValue: string | string[]) => {
+                                            const newFields = [...searchCriteria.field];
+                                            const newValues = [...searchCriteria.value];
+                                            const fieldIndex = newFields.findIndex(field => field === label_value);
+
+                                            if (fieldIndex !== -1) {
+                                                newValues[fieldIndex] = newValue;
+                                            } else {
+                                                newFields.push(label_value);
+                                                newValues.push(newValue);
+                                            }
+
+                                            setSearchCriteria({ ...searchCriteria, field: newFields, value: newValues });
+                                        }}
+
                                         containerClassName="col-span-2 flex flex-col gap-1"
                                         className="w-full"
                                         inputClassName="bg-lightContainer dark:!bg-darkContainerPrimary border border-gray-200 dark:border-white/10"

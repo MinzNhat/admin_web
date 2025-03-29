@@ -385,7 +385,7 @@ export interface SearchAddition {
 export interface SearchCriteria {
     field: string | string[];
     operator: SearchOperator | SearchOperator[];
-    value?: any;
+    value?: string | string[] | any;
 }
 
 export type SearchOperator = '~' | '!~' | '=' | '!=' | 'isSet' | 'isNotSet' | '<' | '<=' | '>' | '>=';

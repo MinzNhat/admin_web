@@ -50,15 +50,19 @@ const VouchersMain = () => {
                 minute: "numeric",
                 second: "numeric"
             }).format(new Date(cellValue)).replace(/^\w/, (c) => c.toUpperCase()) : "";
+        } else if (cellHeader === intl("id")) {
+            return <div className="w-full h-full whitespace-nowrap">{cellValue}</div>
+        } else if (cellHeader === intl("discount")) {
+            return <div className="w-full h-full whitespace-nowrap">{cellValue}</div>
         }
     };
 
     const fetchData = useCallback(async () => {
         const token = getTokenFromCookie();
+        if (!token) return;
+
         setVouchers(undefined);
         setSelectedRows([]);
-
-        if (!token) return;
 
         const rawValue = Array.isArray(searchCriteriaValue.value) ? searchCriteriaValue.value[0] : searchCriteriaValue.value;
         const criteriaField = searchCriteriaValue.field[0];
@@ -83,7 +87,10 @@ const VouchersMain = () => {
 
         if (response.success) {
             setVouchers(response.data as VoucherData[]);
-        };
+        } else if (response.message === "Người dùng không được phép truy cập tài nguyên này") {
+            // addNotification({message: intl("NoPermission"), type: "error"});
+            setVouchers([]);
+        }
     }, [currentPage, currentSize, sortBy, searchCriteriaValue]);
 
     const handleDelete = async () => {
@@ -124,7 +131,7 @@ const VouchersMain = () => {
                 customButton={
                     <CustomButton fetchData={fetchData} selectedRows={selectedRows}
                     openAdd={() => setOpenAddVoucher(true)}
-                    handleDelete={() => {addSubmitNotification({ message: intl("LogoutMessage"), submitClick:  handleDelete})}}
+                    handleDelete={() => {addSubmitNotification({ message: intl("delete"), submitClick:  handleDelete})}}
                     extraButton={
                         <SearchPopUp fields={searchFields} searchCriteriaValue={searchCriteriaValue} setSearchCriteriaValue={setSearchCriteriaValue}  />
                     }

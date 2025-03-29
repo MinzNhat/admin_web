@@ -32,6 +32,7 @@ declare type StaffInfo = {
     birthDate?: string;
     cccd?: string;
     createdAt: string;
+    shipperDeposit?: number;
     deposit?: number;
     detailAddress?: string;
     district?: string;
@@ -49,6 +50,7 @@ declare type StaffInfo = {
     username: string;
     managedWards?: ManagedWard[];
     shipperType?: ShipperType | ShipperType[];
+    shipperStatus: boolean;
 };
 
 declare type StaffInfoUpdate = Omit<StaffInfo, 'roles'> & {
