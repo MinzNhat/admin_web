@@ -16,13 +16,14 @@ import { useSubmitNotification } from "@/hooks/SubmitNotificationProvider";
 import { SearchCriteria, OrderStatus, ServiceType } from "@/services/interface";
 import { UUID } from "crypto";
 import { OrderData, OrderState } from "@/types/views/orders/orders-config";
-import { DetailFields } from "@/views/customTableSearchPopUp";
+import SearchPopUp, { DetailFields } from "@/views/customTableSearchPopUp";
 import { MdRadioButtonChecked, MdRadioButtonUnchecked } from "react-icons/md";
 import { Button } from "@nextui-org/react";
 import { BiTrash } from "react-icons/bi";
 import TableSwitcher from "@/components/table";
 import { columnsData } from "../variables/columnsData3";
 import { TaskData } from "@/types/views/tasks/tasks-config";
+import CustomInputField from "@/components/input";
 
 type UpdateFields = {
     id: keyof StaffInfoUpdate,
@@ -44,6 +45,7 @@ type Props = {
 }
 
 const UpdateContent = ({ openOrders, setOpenOrders, reloadData, shipperData }: Props) => {
+    const orderOp = new OrdersOperation();
     const taskOp = new TaskOperation();
     const intl = useTranslations("OrdersRoute");
     const [orderId, setOrderId] = useState<UUID>();
@@ -157,41 +159,54 @@ const UpdateContent = ({ openOrders, setOpenOrders, reloadData, shipperData }: P
         setSelectedRows([]);
 
         if (!token) return;
+        console.log(searchCriteriaValue);
+        let criterias: SearchCriteria[] = [];
 
-        const rawValue = Array.isArray(searchCriteriaValue.value) ? searchCriteriaValue.value[0] : searchCriteriaValue.value;
+        (searchCriteriaValue.field as string[]).forEach((field, index) => {
+            console.log(`Field: ${field}, Value: ${searchCriteriaValue.value[index]}`);
+            const value = Array.isArray(searchCriteriaValue.value[index]) ? searchCriteriaValue.value[index][0] : searchCriteriaValue.value[index];
+            criterias.push({
+                field: field,
+                operator: value === "yes" ? "=" : value === "no" ? "!=" :
+                    (field === "id" || field === "trackingNumber" || field === "agencyId2") ? "=" : "~",
+                value: value === "yes" ? true : value === "no" ? false : value
+            })
+        });
 
-        const shipperCriteria: SearchCriteria = {
-            field: "staff.id",
-            operator: "~",
-            value: shipperData.id
-        }
 
-        const response = await taskOp.search({
+        // const rawValue = Array.isArray(searchCriteriaValue.value) ? searchCriteriaValue.value[0] : searchCriteriaValue.value;
+        // const criteria: SearchCriteria | null = rawValue ? {
+        //     field: searchCriteriaValue.field[0] === "agencyId2" ? "agencyId" : searchCriteriaValue.field[0],
+        //     operator: searchCriteriaValue.field[0] === "agencyId2"
+        //         ? (rawValue === "yes" ? "=" : "!=")
+        //         : searchCriteriaValue.operator[0] as SearchOperator,
+        //     value: searchCriteriaValue.field[0] === "agencyId2" ?
+        //         (userInfo?.agencyId ?? "This account has no agencyId") :
+        //         (rawValue === "true" ? true : rawValue === "false" ? false : rawValue)
+        // } : null;
+
+        const response = await orderOp.search({
             addition: {
                 sort: sortBy.map(({ id, desc }) => [id, desc ? "DESC" : "ASC"]),
                 page: currentPage,
                 size: currentSize,
                 group: []
             },
-            criteria: [shipperCriteria]
+            criteria: criterias
+            // [
+            //     ...(currentOrderState[0] !== 'ALL' ? [{
+            //         field: currentOrderState[0] === 'NTHIRD_PARTY_DELIVERY' ? "isThirdPartyDelivery" : "statusCode",
+            //         operator: "=" as SearchOperator,
+            //         value: currentOrderState[0] === 'NTHIRD_PARTY_DELIVERY' ? true : "PROCESSING"
+            //     }] : []),
+            //     ...(criteria ? [criteria] : [])
+            // ]
         }, token);
 
         if (response.success) {
-            const fetchedOrders = (response.data
-                .filter((task: TaskData) => task.order !== null)
-                .map((task: TaskData) => {
-                    if (task.order) {
-                        task.order.images = [];
-                        task.order.signatures = [];
-                        task.order.journies = [];
-                    }
-                    return task.order;
-                }) as OrderData[]);
-            console.log(fetchedOrders);
-            setOrders(fetchedOrders);
-        } else if(response.message === "Người dùng không được phép truy cập tài nguyên này") {
-            // addNotification({message: intl("NoPermit"), type: "error"});
-            setOrders([]);
+            const fetchEdOrders = response.data as OrderData[];
+            console.log(fetchEdOrders);
+            setOrders(fetchEdOrders);
         }
     }, [currentPage, currentSize, sortBy, currentOrderState[0], searchCriteriaValue]);
 
@@ -236,10 +251,15 @@ const UpdateContent = ({ openOrders, setOpenOrders, reloadData, shipperData }: P
                         columnsData={columnsData()}
                         renderHeader={renderHeader}
                         selectedRows={selectedRows}
+                        customSearch={true}
                         setCurrentPage={setCurrentPage}
                         setSelectedRows={setSelectedRows}
                         customButton={
-                            <CustomButton fetchData={fetchData} selectedRows={selectedRows}  />
+                            <CustomButton fetchData={fetchData} selectedRows={selectedRows} extraButton={
+                                <div className="flex flex-col lg:flex-row w-full">
+                                    <SearchPopUp fields={searchFields} searchCriteriaValue={searchCriteriaValue} setSearchCriteriaValue={setSearchCriteriaValue} />
+                                </div>
+                            } />
                         }
                         containerClassname="!rounded-xl p-4"
                         selectType="none"
