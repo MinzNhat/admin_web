@@ -32,7 +32,7 @@ declare type StaffInfo = {
     birthDate?: string;
     cccd?: string;
     createdAt: string;
-    shipperDeposit?: number;
+    shipperDeposit?: number | {deposit: number};
     deposit?: number;
     detailAddress?: string;
     district?: string;

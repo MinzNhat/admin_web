@@ -138,17 +138,30 @@ const OrdersMain = () => {
 
         if (!token) return;
         console.log(searchCriteriaValue);
+        let criterias : SearchCriteria[] = [];
 
-        const rawValue = Array.isArray(searchCriteriaValue.value) ? searchCriteriaValue.value[0] : searchCriteriaValue.value;
-        const criteria: SearchCriteria | null = rawValue ? {
-            field: searchCriteriaValue.field[0] === "agencyId2" ? "agencyId" : searchCriteriaValue.field[0],
-            operator: searchCriteriaValue.field[0] === "agencyId2"
-                ? (rawValue === "yes" ? "=" : "!=")
-                : searchCriteriaValue.operator[0] as SearchOperator,
-            value: searchCriteriaValue.field[0] === "agencyId2" ?
-                (userInfo?.agencyId ?? "This account has no agencyId") :
-                (rawValue === "true" ? true : rawValue === "false" ? false : rawValue)
-        } : null;
+        (searchCriteriaValue.field as string[]).forEach((field, index) => {
+            console.log(`Field: ${field}, Value: ${searchCriteriaValue.value[index]}`);
+            const value = Array.isArray(searchCriteriaValue.value[index])?searchCriteriaValue.value[index][0]: searchCriteriaValue.value[index];
+            criterias.push({
+                field: field,
+                operator:value === "yes" ? "=": value === "no"? "!=":
+                        (field === "id" || field === "trackingNumber" || field === "agencyId2")? "=": "~",
+                value: value === "yes" ? true : value === "no" ? false : value
+            })
+        });
+        
+
+        // const rawValue = Array.isArray(searchCriteriaValue.value) ? searchCriteriaValue.value[0] : searchCriteriaValue.value;
+        // const criteria: SearchCriteria | null = rawValue ? {
+        //     field: searchCriteriaValue.field[0] === "agencyId2" ? "agencyId" : searchCriteriaValue.field[0],
+        //     operator: searchCriteriaValue.field[0] === "agencyId2"
+        //         ? (rawValue === "yes" ? "=" : "!=")
+        //         : searchCriteriaValue.operator[0] as SearchOperator,
+        //     value: searchCriteriaValue.field[0] === "agencyId2" ?
+        //         (userInfo?.agencyId ?? "This account has no agencyId") :
+        //         (rawValue === "true" ? true : rawValue === "false" ? false : rawValue)
+        // } : null;
 
         const response = await orderOp.search({
             addition: {
@@ -157,14 +170,15 @@ const OrdersMain = () => {
                 size: currentSize,
                 group: []
             },
-            criteria: [
-                ...(currentOrderState[0] !== 'ALL' ? [{
-                    field: currentOrderState[0] === 'NTHIRD_PARTY_DELIVERY' ? "isThirdPartyDelivery" : "statusCode",
-                    operator: "=" as SearchOperator,
-                    value: currentOrderState[0] === 'NTHIRD_PARTY_DELIVERY' ? true : "PROCESSING"
-                }] : []),
-                ...(criteria ? [criteria] : [])
-            ]
+            criteria: criterias
+            // [
+            //     ...(currentOrderState[0] !== 'ALL' ? [{
+            //         field: currentOrderState[0] === 'NTHIRD_PARTY_DELIVERY' ? "isThirdPartyDelivery" : "statusCode",
+            //         operator: "=" as SearchOperator,
+            //         value: currentOrderState[0] === 'NTHIRD_PARTY_DELIVERY' ? true : "PROCESSING"
+            //     }] : []),
+            //     ...(criteria ? [criteria] : [])
+            // ]
         }, token);
 
         if (response.success) {

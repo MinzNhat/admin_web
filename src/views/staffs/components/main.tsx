@@ -49,7 +49,7 @@ const StaffsMain = () => {
         { label: intl("phoneNumber"), label_value: "phoneNumber", type: "text" },
         { label: intl("email"), label_value: "email", type: "text" },
         { label: intl("cccd"), label_value: "cccd", type: "text", hideOperator: true },
-        { label: intl("roles"), label_value: "roles", type: "select", options: roleOptions, select_type: "single", dropdownPosition: "top", hideOperator: true },
+        // { label: intl("roles"), label_value: "roles", type: "select", options: roleOptions, select_type: "single", dropdownPosition: "top", hideOperator: true },
     ];
 
     const [addInfo, setAddInfo] = useState<CreateStaffDto>({
@@ -72,7 +72,7 @@ const StaffsMain = () => {
         shipperType: [ShipperType["LT"]]
     });
 
-    const renderCell = (cellHeader: string, cellValue: string | number | boolean | unknown) => {
+    const renderCell = (cellHeader: string, cellValue: string | number | boolean | any) => {
         if (cellHeader === intl("roles")) {
             return (
                 <div className="w-full h-full whitespace-nowrap">
@@ -111,6 +111,12 @@ const StaffsMain = () => {
                     {intl(cellValue?"active":"inactive")}
                 </div>
             );
+        } else if (cellHeader === intl("shipperDeposit")) {
+            return (
+                <div className="w-full h-full whitespace-nowrap">
+                    {(cellValue && cellValue.deposit)?(cellValue.deposit as string): cellValue as string}
+                </div>
+            );
         }
     };
 
@@ -137,23 +143,36 @@ const StaffsMain = () => {
         setSelectedRows([]);
 
         if (!token) return;
+        let criterias : SearchCriteria[] = [];
 
-        const rawValue = Array.isArray(searchCriteriaValue.value) ? searchCriteriaValue.value[0] : searchCriteriaValue.value;
-        const criteriaField = searchCriteriaValue.field[0];
-        const criteriaValue = rawValue === "true" ? true : rawValue === "false" ? false : rawValue;
+        (searchCriteriaValue.field as string[]).forEach((field, index) => {
+            console.log(`Field: ${field}, Value: ${searchCriteriaValue.value[index]}`);
+            const value = Array.isArray(searchCriteriaValue.value[index])?searchCriteriaValue.value[index][0]: searchCriteriaValue.value[index];
+            if(!value) return;
+            criterias.push({
+                field: field === "staffId"? "id": field,
+                operator:value === "yes" ? "=": value === "no"? "!=":
+                        (field === "staffId" || field === "phoneNumber" || field === "agencyId")? "=": "~",
+                value: value === "yes" ? true : value === "no" ? false : value
+            })
+        });
+
+        // const rawValue = Array.isArray(searchCriteriaValue.value) ? searchCriteriaValue.value[0] : searchCriteriaValue.value;
+        // const criteriaField = searchCriteriaValue.field[0];
+        // const criteriaValue = rawValue === "true" ? true : rawValue === "false" ? false : rawValue;
 
         let response;
 
-        if (criteriaField === "cccd") {
-            response = await staffOp.searchByCccd(criteriaValue as string, token);
-        } else if (criteriaField === "roles") {
-            response = await staffOp.searchByRole(criteriaValue as string, token);
-        } else {
-            const criteria: SearchCriteria | null = rawValue ? {
-                field: criteriaField,
-                operator: searchCriteriaValue.operator[0] as SearchOperator,
-                value: criteriaValue
-            } : null;
+        // if (criteriaField === "cccd") {
+        //     response = await staffOp.searchByCccd(criteriaValue as string, token);
+        // } else if (criteriaField === "roles") {
+        //     response = await staffOp.searchByRole(criteriaValue as string, token);
+        // } else {
+        //     const criteria: SearchCriteria | null = rawValue ? {
+        //         field: criteriaField,
+        //         operator: searchCriteriaValue.operator[0] as SearchOperator,
+        //         value: criteriaValue
+        //     } : null;
 
             response = await staffOp.search({
                 addition: {
@@ -162,9 +181,14 @@ const StaffsMain = () => {
                     size: currentSize,
                     group: []
                 },
-                criteria: criteria ? [criteria] : []
+                criteria: criterias
+                // criteria: [{
+                //     field: "id",
+                //     operator: "=",
+                //     value: "8bf8a710-ac6e-4c69-93f3-ce1a781bbaff"
+                // }]
             }, token);
-        }
+        // }
 
         console.log(response);
 
