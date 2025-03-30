@@ -20,7 +20,9 @@ const InfoContent = () => {
         phoneNumber: "",
         roles: [],
         updatedAt: "",
-        username: ""
+        username: "",
+        shipperStatus: false,
+        agencyId:"",
     });
 
     const handleChange = (id: keyof StaffInfo, value: string) => {
