@@ -53,6 +53,14 @@ declare type StaffInfo = {
     shipperStatus: boolean;
 };
 
+declare type DayOffInfo = {
+    id: string;
+    startDate: string;
+    endDate: string;
+    reason: string;
+    staffId: string;
+}
+
 declare type StaffInfoUpdate = Omit<StaffInfo, 'roles'> & {
     roles: StaffRole[];
 };

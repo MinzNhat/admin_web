@@ -299,7 +299,9 @@
     "DeleteSuccess2": "successfully",
     "DeleteFailed2": "failed",
     "Submit": "Submit",
-    "companytaxcode": "Company's tax code"
+    "companytaxcode": "Company's tax code",
+    "IsPostOffice": "Post office",
+    "IsAgency": "Agency"
   },
   "TasksRoute": {
     "id": "Task ID",
@@ -411,5 +413,13 @@
     "Submit": "Submit",
     "Title": "Update config",
     "NoPermit": "No permission!"
+  },
+  "DayOff": {
+    "Title": "Staff Information",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "reason": "Reason",
+    "Submit": "Submit Request",
+    "SuccessAdd": "Create day off successfully"
   }
 }

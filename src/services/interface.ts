@@ -388,6 +388,13 @@ export interface SearchCriteria {
     value?: string | string[] | any;
 }
 
+export interface CreateDayOffDto {
+    startDate: string;
+    endDate: string;
+    reason?: string;
+    staffId: string;
+}
+
 export type SearchOperator = '~' | '!~' | '=' | '!=' | 'isSet' | 'isNotSet' | '<' | '<=' | '>' | '>=';
 
 export interface CreateStaffDto {

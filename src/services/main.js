@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AdministrativeOperation = exports.VoucherOperation = exports.TaskOperation = exports.StaffOperation = exports.DriverTaskOperation = exports.CustomerOperation = exports.ShippingBillOperation = exports.ShipmentOperation = exports.AuthOperation = exports.SendingOrderRequestOperation = exports.OrderLocationOperation = exports.GiftOrderTopicOperation = exports.FavouriteOrderLocationOperation = exports.OrdersOperation = exports.ConfigOperation = exports.CargoInsuranceOperation = exports.AgencyOperation = void 0;
+exports.AdministrativeOperation = exports.VoucherOperation = exports.TaskOperation = exports.DayOffOperation = exports.StaffOperation = exports.DriverTaskOperation = exports.CustomerOperation = exports.ShippingBillOperation = exports.ShipmentOperation = exports.AuthOperation = exports.SendingOrderRequestOperation = exports.OrderLocationOperation = exports.GiftOrderTopicOperation = exports.FavouriteOrderLocationOperation = exports.OrdersOperation = exports.ConfigOperation = exports.CargoInsuranceOperation = exports.AgencyOperation = void 0;
 var axios_1 = require("axios");
 var AgencyOperation = /** @class */ (function () {
     function AgencyOperation() {
@@ -2738,6 +2738,87 @@ var StaffOperation = /** @class */ (function () {
     return StaffOperation;
 }());
 exports.StaffOperation = StaffOperation;
+var DayOffOperation = /** @class */ (function () {
+    function DayOffOperation() {
+        this.baseUrl = 'https://api.tdlogistics.net.vn/v3/staff_day_off';
+    }
+    DayOffOperation.prototype.search = function (payload, token) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, error_73;
+            var _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        _c.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, axios_1.default.post("".concat(this.baseUrl, "/search"), payload, {
+                                withCredentials: true,
+                                validateStatus: function (status) { return status >= 200 && status <= 500; },
+                                headers: {
+                                    Authorization: "Bearer ".concat(token)
+                                },
+                            })];
+                    case 1:
+                        response = _c.sent();
+                        return [2 /*return*/, {
+                                success: response.data.success,
+                                message: response.data.message,
+                                data: response.data.data,
+                                status: response.status
+                            }];
+                    case 2:
+                        error_73 = _c.sent();
+                        console.log("Error searching day off: ", (_a = error_73 === null || error_73 === void 0 ? void 0 : error_73.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_73 === null || error_73 === void 0 ? void 0 : error_73.request);
+                        return [2 /*return*/, {
+                                success: (_b = error_73 === null || error_73 === void 0 ? void 0 : error_73.response) === null || _b === void 0 ? void 0 : _b.data,
+                                request: error_73 === null || error_73 === void 0 ? void 0 : error_73.request,
+                                status: error_73.response ? error_73.response.status : null
+                            }];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    DayOffOperation.prototype.create = function (payload, token) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, error_74;
+            var _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        _c.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, axios_1.default.post("".concat(this.baseUrl, "/create"), payload, {
+                                withCredentials: true,
+                                validateStatus: function (status) { return status >= 200 && status <= 500; },
+                                headers: {
+                                    Authorization: "Bearer ".concat(token)
+                                },
+                            })];
+                    case 1:
+                        response = _c.sent();
+                        return [2 /*return*/, {
+                                success: response.data.success,
+                                message: response.data.message,
+                                data: response.data.data,
+                                status: response.status
+                            }];
+                    case 2:
+                        error_74 = _c.sent();
+                        console.log("Error creating day off: ", (_a = error_74 === null || error_74 === void 0 ? void 0 : error_74.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_74 === null || error_74 === void 0 ? void 0 : error_74.request);
+                        return [2 /*return*/, {
+                                success: (_b = error_74 === null || error_74 === void 0 ? void 0 : error_74.response) === null || _b === void 0 ? void 0 : _b.data,
+                                request: error_74 === null || error_74 === void 0 ? void 0 : error_74.request,
+                                status: error_74.response ? error_74.response.status : null
+                            }];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    return DayOffOperation;
+}());
+exports.DayOffOperation = DayOffOperation;
 var TaskOperation = /** @class */ (function () {
     function TaskOperation() {
         this.baseUrl = 'https://api.tdlogistics.net.vn/v3/task';
@@ -2745,7 +2826,7 @@ var TaskOperation = /** @class */ (function () {
     // SHIPPER: Tìm kiếm công việc theo payload
     TaskOperation.prototype.search = function (payload, token) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_73;
+            var response, error_75;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -2767,13 +2848,13 @@ var TaskOperation = /** @class */ (function () {
                                 status: response.status
                             }];
                     case 2:
-                        error_73 = _c.sent();
-                        console.log("Error searching tasks: ", (_a = error_73 === null || error_73 === void 0 ? void 0 : error_73.response) === null || _a === void 0 ? void 0 : _a.data);
-                        console.error("Request that caused the error: ", error_73 === null || error_73 === void 0 ? void 0 : error_73.request);
+                        error_75 = _c.sent();
+                        console.log("Error searching tasks: ", (_a = error_75 === null || error_75 === void 0 ? void 0 : error_75.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_75 === null || error_75 === void 0 ? void 0 : error_75.request);
                         return [2 /*return*/, {
-                                success: (_b = error_73 === null || error_73 === void 0 ? void 0 : error_73.response) === null || _b === void 0 ? void 0 : _b.data,
-                                request: error_73 === null || error_73 === void 0 ? void 0 : error_73.request,
-                                status: error_73.response ? error_73.response.status : null
+                                success: (_b = error_75 === null || error_75 === void 0 ? void 0 : error_75.response) === null || _b === void 0 ? void 0 : _b.data,
+                                request: error_75 === null || error_75 === void 0 ? void 0 : error_75.request,
+                                status: error_75.response ? error_75.response.status : null
                             }];
                     case 3: return [2 /*return*/];
                 }
@@ -2783,7 +2864,7 @@ var TaskOperation = /** @class */ (function () {
     // SHIPPER: Xác nhận không tiếp nhận đơn hàng (do TIMEOUT, SHIPPER hoặc CUSTOMER_CANCELLING)
     TaskOperation.prototype.confirmTakenFail = function (id, dueTo, token) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_74;
+            var response, error_76;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -2806,13 +2887,13 @@ var TaskOperation = /** @class */ (function () {
                                 status: response.status
                             }];
                     case 2:
-                        error_74 = _c.sent();
-                        console.log("Error confirming taken fail: ", (_a = error_74 === null || error_74 === void 0 ? void 0 : error_74.response) === null || _a === void 0 ? void 0 : _a.data);
-                        console.error("Request that caused the error: ", error_74 === null || error_74 === void 0 ? void 0 : error_74.request);
+                        error_76 = _c.sent();
+                        console.log("Error confirming taken fail: ", (_a = error_76 === null || error_76 === void 0 ? void 0 : error_76.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_76 === null || error_76 === void 0 ? void 0 : error_76.request);
                         return [2 /*return*/, {
-                                success: (_b = error_74 === null || error_74 === void 0 ? void 0 : error_74.response) === null || _b === void 0 ? void 0 : _b.data,
-                                request: error_74 === null || error_74 === void 0 ? void 0 : error_74.request,
-                                status: error_74.response ? error_74.response.status : null
+                                success: (_b = error_76 === null || error_76 === void 0 ? void 0 : error_76.response) === null || _b === void 0 ? void 0 : _b.data,
+                                request: error_76 === null || error_76 === void 0 ? void 0 : error_76.request,
+                                status: error_76.response ? error_76.response.status : null
                             }];
                     case 3: return [2 /*return*/];
                 }
@@ -2822,7 +2903,7 @@ var TaskOperation = /** @class */ (function () {
     // SHIPPER: Xác nhận đã tiếp nhận đơn hàng thành công
     TaskOperation.prototype.confirmTakenSuccess = function (id, token) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_75;
+            var response, error_77;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -2845,13 +2926,13 @@ var TaskOperation = /** @class */ (function () {
                                 status: response.status
                             }];
                     case 2:
-                        error_75 = _c.sent();
-                        console.log("Error confirming taken success: ", (_a = error_75 === null || error_75 === void 0 ? void 0 : error_75.response) === null || _a === void 0 ? void 0 : _a.data);
-                        console.error("Request that caused the error: ", error_75 === null || error_75 === void 0 ? void 0 : error_75.request);
+                        error_77 = _c.sent();
+                        console.log("Error confirming taken success: ", (_a = error_77 === null || error_77 === void 0 ? void 0 : error_77.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_77 === null || error_77 === void 0 ? void 0 : error_77.request);
                         return [2 /*return*/, {
-                                success: (_b = error_75 === null || error_75 === void 0 ? void 0 : error_75.response) === null || _b === void 0 ? void 0 : _b.data,
-                                request: error_75 === null || error_75 === void 0 ? void 0 : error_75.request,
-                                status: error_75.response ? error_75.response.status : null
+                                success: (_b = error_77 === null || error_77 === void 0 ? void 0 : error_77.response) === null || _b === void 0 ? void 0 : _b.data,
+                                request: error_77 === null || error_77 === void 0 ? void 0 : error_77.request,
+                                status: error_77.response ? error_77.response.status : null
                             }];
                     case 3: return [2 /*return*/];
                 }
@@ -2861,7 +2942,7 @@ var TaskOperation = /** @class */ (function () {
     // SHIPPER: Xác nhận đang giao hàng
     TaskOperation.prototype.confirmDelivering = function (id, token) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_76;
+            var response, error_78;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -2884,13 +2965,13 @@ var TaskOperation = /** @class */ (function () {
                                 status: response.status
                             }];
                     case 2:
-                        error_76 = _c.sent();
-                        console.log("Error confirming delivering: ", (_a = error_76 === null || error_76 === void 0 ? void 0 : error_76.response) === null || _a === void 0 ? void 0 : _a.data);
-                        console.error("Request that caused the error: ", error_76 === null || error_76 === void 0 ? void 0 : error_76.request);
+                        error_78 = _c.sent();
+                        console.log("Error confirming delivering: ", (_a = error_78 === null || error_78 === void 0 ? void 0 : error_78.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_78 === null || error_78 === void 0 ? void 0 : error_78.request);
                         return [2 /*return*/, {
-                                success: (_b = error_76 === null || error_76 === void 0 ? void 0 : error_76.response) === null || _b === void 0 ? void 0 : _b.data,
-                                request: error_76 === null || error_76 === void 0 ? void 0 : error_76.request,
-                                status: error_76.response ? error_76.response.status : null
+                                success: (_b = error_78 === null || error_78 === void 0 ? void 0 : error_78.response) === null || _b === void 0 ? void 0 : _b.data,
+                                request: error_78 === null || error_78 === void 0 ? void 0 : error_78.request,
+                                status: error_78.response ? error_78.response.status : null
                             }];
                     case 3: return [2 /*return*/];
                 }
@@ -2900,7 +2981,7 @@ var TaskOperation = /** @class */ (function () {
     // SHIPPER: Xác nhận đã nhận hàng thành công
     TaskOperation.prototype.confirmReceived = function (id, token) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_77;
+            var response, error_79;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -2923,13 +3004,13 @@ var TaskOperation = /** @class */ (function () {
                                 status: response.status
                             }];
                     case 2:
-                        error_77 = _c.sent();
-                        console.log("Error confirming received: ", (_a = error_77 === null || error_77 === void 0 ? void 0 : error_77.response) === null || _a === void 0 ? void 0 : _a.data);
-                        console.error("Request that caused the error: ", error_77 === null || error_77 === void 0 ? void 0 : error_77.request);
+                        error_79 = _c.sent();
+                        console.log("Error confirming received: ", (_a = error_79 === null || error_79 === void 0 ? void 0 : error_79.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_79 === null || error_79 === void 0 ? void 0 : error_79.request);
                         return [2 /*return*/, {
-                                success: (_b = error_77 === null || error_77 === void 0 ? void 0 : error_77.response) === null || _b === void 0 ? void 0 : _b.data,
-                                request: error_77 === null || error_77 === void 0 ? void 0 : error_77.request,
-                                status: error_77.response ? error_77.response.status : null
+                                success: (_b = error_79 === null || error_79 === void 0 ? void 0 : error_79.response) === null || _b === void 0 ? void 0 : _b.data,
+                                request: error_79 === null || error_79 === void 0 ? void 0 : error_79.request,
+                                status: error_79.response ? error_79.response.status : null
                             }];
                     case 3: return [2 /*return*/];
                 }
@@ -2939,7 +3020,7 @@ var TaskOperation = /** @class */ (function () {
     // SHIPPER: Thêm node vào hành trình (journey) của đơn hàng
     TaskOperation.prototype.addJourneyNode = function (journeyNodeId, payload, token) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_78;
+            var response, error_80;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -2962,13 +3043,13 @@ var TaskOperation = /** @class */ (function () {
                                 status: response.status
                             }];
                     case 2:
-                        error_78 = _c.sent();
-                        console.log("Error adding journey node: ", (_a = error_78 === null || error_78 === void 0 ? void 0 : error_78.response) === null || _a === void 0 ? void 0 : _a.data);
-                        console.error("Request that caused the error: ", error_78 === null || error_78 === void 0 ? void 0 : error_78.request);
+                        error_80 = _c.sent();
+                        console.log("Error adding journey node: ", (_a = error_80 === null || error_80 === void 0 ? void 0 : error_80.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_80 === null || error_80 === void 0 ? void 0 : error_80.request);
                         return [2 /*return*/, {
-                                success: (_b = error_78 === null || error_78 === void 0 ? void 0 : error_78.response) === null || _b === void 0 ? void 0 : _b.data,
-                                request: error_78 === null || error_78 === void 0 ? void 0 : error_78.request,
-                                status: error_78.response ? error_78.response.status : null
+                                success: (_b = error_80 === null || error_80 === void 0 ? void 0 : error_80.response) === null || _b === void 0 ? void 0 : _b.data,
+                                request: error_80 === null || error_80 === void 0 ? void 0 : error_80.request,
+                                status: error_80.response ? error_80.response.status : null
                             }];
                     case 3: return [2 /*return*/];
                 }
@@ -2978,7 +3059,7 @@ var TaskOperation = /** @class */ (function () {
     // SHIPPER: Lấy thông tin hành trình của đơn hàng
     TaskOperation.prototype.getJourneyNode = function (journeyNodeId, token) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_79;
+            var response, error_81;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -3001,13 +3082,13 @@ var TaskOperation = /** @class */ (function () {
                                 status: response.status
                             }];
                     case 2:
-                        error_79 = _c.sent();
-                        console.log("Error getting journey node: ", (_a = error_79 === null || error_79 === void 0 ? void 0 : error_79.response) === null || _a === void 0 ? void 0 : _a.data);
-                        console.error("Request that caused the error: ", error_79 === null || error_79 === void 0 ? void 0 : error_79.request);
+                        error_81 = _c.sent();
+                        console.log("Error getting journey node: ", (_a = error_81 === null || error_81 === void 0 ? void 0 : error_81.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_81 === null || error_81 === void 0 ? void 0 : error_81.request);
                         return [2 /*return*/, {
-                                success: (_b = error_79 === null || error_79 === void 0 ? void 0 : error_79.response) === null || _b === void 0 ? void 0 : _b.data,
-                                request: error_79 === null || error_79 === void 0 ? void 0 : error_79.request,
-                                status: error_79.response ? error_79.response.status : null
+                                success: (_b = error_81 === null || error_81 === void 0 ? void 0 : error_81.response) === null || _b === void 0 ? void 0 : _b.data,
+                                request: error_81 === null || error_81 === void 0 ? void 0 : error_81.request,
+                                status: error_81.response ? error_81.response.status : null
                             }];
                     case 3: return [2 /*return*/];
                 }
@@ -3016,7 +3097,7 @@ var TaskOperation = /** @class */ (function () {
     };
     TaskOperation.prototype.assignTaskToShipper = function (payload, token) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_80;
+            var response, error_82;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -3038,13 +3119,13 @@ var TaskOperation = /** @class */ (function () {
                                 status: response.status
                             }];
                     case 2:
-                        error_80 = _c.sent();
-                        console.log("Error assigning task to shipper: ", (_a = error_80 === null || error_80 === void 0 ? void 0 : error_80.response) === null || _a === void 0 ? void 0 : _a.data);
-                        console.error("Request that caused the error: ", error_80 === null || error_80 === void 0 ? void 0 : error_80.request);
+                        error_82 = _c.sent();
+                        console.log("Error assigning task to shipper: ", (_a = error_82 === null || error_82 === void 0 ? void 0 : error_82.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_82 === null || error_82 === void 0 ? void 0 : error_82.request);
                         return [2 /*return*/, {
-                                success: (_b = error_80 === null || error_80 === void 0 ? void 0 : error_80.response) === null || _b === void 0 ? void 0 : _b.data,
-                                request: error_80 === null || error_80 === void 0 ? void 0 : error_80.request,
-                                status: error_80.response ? error_80.response.status : null
+                                success: (_b = error_82 === null || error_82 === void 0 ? void 0 : error_82.response) === null || _b === void 0 ? void 0 : _b.data,
+                                request: error_82 === null || error_82 === void 0 ? void 0 : error_82.request,
+                                status: error_82.response ? error_82.response.status : null
                             }];
                     case 3: return [2 /*return*/];
                 }
@@ -3054,7 +3135,7 @@ var TaskOperation = /** @class */ (function () {
     // AGENCY: Cập nhật thông tin công việc
     TaskOperation.prototype.updateTask = function (id, payload, token) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_81;
+            var response, error_83;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -3076,13 +3157,13 @@ var TaskOperation = /** @class */ (function () {
                                 status: response.status
                             }];
                     case 2:
-                        error_81 = _c.sent();
-                        console.log("Error updating task: ", (_a = error_81 === null || error_81 === void 0 ? void 0 : error_81.response) === null || _a === void 0 ? void 0 : _a.data);
-                        console.error("Request that caused the error: ", error_81 === null || error_81 === void 0 ? void 0 : error_81.request);
+                        error_83 = _c.sent();
+                        console.log("Error updating task: ", (_a = error_83 === null || error_83 === void 0 ? void 0 : error_83.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_83 === null || error_83 === void 0 ? void 0 : error_83.request);
                         return [2 /*return*/, {
-                                success: (_b = error_81 === null || error_81 === void 0 ? void 0 : error_81.response) === null || _b === void 0 ? void 0 : _b.data,
-                                request: error_81 === null || error_81 === void 0 ? void 0 : error_81.request,
-                                status: error_81.response ? error_81.response.status : null
+                                success: (_b = error_83 === null || error_83 === void 0 ? void 0 : error_83.response) === null || _b === void 0 ? void 0 : _b.data,
+                                request: error_83 === null || error_83 === void 0 ? void 0 : error_83.request,
+                                status: error_83.response ? error_83.response.status : null
                             }];
                     case 3: return [2 /*return*/];
                 }
@@ -3092,7 +3173,7 @@ var TaskOperation = /** @class */ (function () {
     // AGENCY: Xóa công việc
     TaskOperation.prototype.deleteTask = function (id, token) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_82;
+            var response, error_84;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -3114,13 +3195,13 @@ var TaskOperation = /** @class */ (function () {
                                 status: response.status
                             }];
                     case 2:
-                        error_82 = _c.sent();
-                        console.log("Error deleting task: ", (_a = error_82 === null || error_82 === void 0 ? void 0 : error_82.response) === null || _a === void 0 ? void 0 : _a.data);
-                        console.error("Request that caused the error: ", error_82 === null || error_82 === void 0 ? void 0 : error_82.request);
+                        error_84 = _c.sent();
+                        console.log("Error deleting task: ", (_a = error_84 === null || error_84 === void 0 ? void 0 : error_84.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_84 === null || error_84 === void 0 ? void 0 : error_84.request);
                         return [2 /*return*/, {
-                                success: (_b = error_82 === null || error_82 === void 0 ? void 0 : error_82.response) === null || _b === void 0 ? void 0 : _b.data,
-                                request: error_82 === null || error_82 === void 0 ? void 0 : error_82.request,
-                                status: error_82.response ? error_82.response.status : null
+                                success: (_b = error_84 === null || error_84 === void 0 ? void 0 : error_84.response) === null || _b === void 0 ? void 0 : _b.data,
+                                request: error_84 === null || error_84 === void 0 ? void 0 : error_84.request,
+                                status: error_84.response ? error_84.response.status : null
                             }];
                     case 3: return [2 /*return*/];
                 }
@@ -3130,7 +3211,7 @@ var TaskOperation = /** @class */ (function () {
     // AGENCY: Xác nhận công việc hoàn thành
     TaskOperation.prototype.confirmCompletedTask = function (id, token) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_83;
+            var response, error_85;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -3152,13 +3233,13 @@ var TaskOperation = /** @class */ (function () {
                                 status: response.status
                             }];
                     case 2:
-                        error_83 = _c.sent();
-                        console.log("Error confirming completed task: ", (_a = error_83 === null || error_83 === void 0 ? void 0 : error_83.response) === null || _a === void 0 ? void 0 : _a.data);
-                        console.error("Request that caused the error: ", error_83 === null || error_83 === void 0 ? void 0 : error_83.request);
+                        error_85 = _c.sent();
+                        console.log("Error confirming completed task: ", (_a = error_85 === null || error_85 === void 0 ? void 0 : error_85.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_85 === null || error_85 === void 0 ? void 0 : error_85.request);
                         return [2 /*return*/, {
-                                success: (_b = error_83 === null || error_83 === void 0 ? void 0 : error_83.response) === null || _b === void 0 ? void 0 : _b.data,
-                                request: error_83 === null || error_83 === void 0 ? void 0 : error_83.request,
-                                status: error_83.response ? error_83.response.status : null
+                                success: (_b = error_85 === null || error_85 === void 0 ? void 0 : error_85.response) === null || _b === void 0 ? void 0 : _b.data,
+                                request: error_85 === null || error_85 === void 0 ? void 0 : error_85.request,
+                                status: error_85.response ? error_85.response.status : null
                             }];
                     case 3: return [2 /*return*/];
                 }
@@ -3168,7 +3249,7 @@ var TaskOperation = /** @class */ (function () {
     // Tìm kiếm công việc theo trạng thái hoàn thành (completed)
     TaskOperation.prototype.searchByCompleted = function (completed, token) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_84;
+            var response, error_86;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -3190,13 +3271,13 @@ var TaskOperation = /** @class */ (function () {
                                 status: response.status
                             }];
                     case 2:
-                        error_84 = _c.sent();
-                        console.log("Error searching tasks by completed status: ", (_a = error_84 === null || error_84 === void 0 ? void 0 : error_84.response) === null || _a === void 0 ? void 0 : _a.data);
-                        console.error("Request that caused the error: ", error_84 === null || error_84 === void 0 ? void 0 : error_84.request);
+                        error_86 = _c.sent();
+                        console.log("Error searching tasks by completed status: ", (_a = error_86 === null || error_86 === void 0 ? void 0 : error_86.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_86 === null || error_86 === void 0 ? void 0 : error_86.request);
                         return [2 /*return*/, {
-                                success: (_b = error_84 === null || error_84 === void 0 ? void 0 : error_84.response) === null || _b === void 0 ? void 0 : _b.data,
-                                request: error_84 === null || error_84 === void 0 ? void 0 : error_84.request,
-                                status: error_84.response ? error_84.response.status : null
+                                success: (_b = error_86 === null || error_86 === void 0 ? void 0 : error_86.response) === null || _b === void 0 ? void 0 : _b.data,
+                                request: error_86 === null || error_86 === void 0 ? void 0 : error_86.request,
+                                status: error_86.response ? error_86.response.status : null
                             }];
                     case 3: return [2 /*return*/];
                 }
@@ -3206,7 +3287,7 @@ var TaskOperation = /** @class */ (function () {
     // Tìm kiếm công việc theo tên shipper
     TaskOperation.prototype.searchByShipperName = function (shipperName, token) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_85;
+            var response, error_87;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -3228,13 +3309,13 @@ var TaskOperation = /** @class */ (function () {
                                 status: response.status
                             }];
                     case 2:
-                        error_85 = _c.sent();
-                        console.log("Error searching tasks by shipper name: ", (_a = error_85 === null || error_85 === void 0 ? void 0 : error_85.response) === null || _a === void 0 ? void 0 : _a.data);
-                        console.error("Request that caused the error: ", error_85 === null || error_85 === void 0 ? void 0 : error_85.request);
+                        error_87 = _c.sent();
+                        console.log("Error searching tasks by shipper name: ", (_a = error_87 === null || error_87 === void 0 ? void 0 : error_87.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_87 === null || error_87 === void 0 ? void 0 : error_87.request);
                         return [2 /*return*/, {
-                                success: (_b = error_85 === null || error_85 === void 0 ? void 0 : error_85.response) === null || _b === void 0 ? void 0 : _b.data,
-                                request: error_85 === null || error_85 === void 0 ? void 0 : error_85.request,
-                                status: error_85.response ? error_85.response.status : null
+                                success: (_b = error_87 === null || error_87 === void 0 ? void 0 : error_87.response) === null || _b === void 0 ? void 0 : _b.data,
+                                request: error_87 === null || error_87 === void 0 ? void 0 : error_87.request,
+                                status: error_87.response ? error_87.response.status : null
                             }];
                     case 3: return [2 /*return*/];
                 }
@@ -3244,7 +3325,7 @@ var TaskOperation = /** @class */ (function () {
     // Tìm kiếm công việc theo orderId
     TaskOperation.prototype.searchByOrderId = function (orderId, token) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_86;
+            var response, error_88;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -3266,13 +3347,13 @@ var TaskOperation = /** @class */ (function () {
                                 status: response.status
                             }];
                     case 2:
-                        error_86 = _c.sent();
-                        console.log("Error searching tasks by order ID: ", (_a = error_86 === null || error_86 === void 0 ? void 0 : error_86.response) === null || _a === void 0 ? void 0 : _a.data);
-                        console.error("Request that caused the error: ", error_86 === null || error_86 === void 0 ? void 0 : error_86.request);
+                        error_88 = _c.sent();
+                        console.log("Error searching tasks by order ID: ", (_a = error_88 === null || error_88 === void 0 ? void 0 : error_88.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_88 === null || error_88 === void 0 ? void 0 : error_88.request);
                         return [2 /*return*/, {
-                                success: (_b = error_86 === null || error_86 === void 0 ? void 0 : error_86.response) === null || _b === void 0 ? void 0 : _b.data,
-                                request: error_86 === null || error_86 === void 0 ? void 0 : error_86.request,
-                                status: error_86.response ? error_86.response.status : null
+                                success: (_b = error_88 === null || error_88 === void 0 ? void 0 : error_88.response) === null || _b === void 0 ? void 0 : _b.data,
+                                request: error_88 === null || error_88 === void 0 ? void 0 : error_88.request,
+                                status: error_88.response ? error_88.response.status : null
                             }];
                     case 3: return [2 /*return*/];
                 }
@@ -3288,7 +3369,7 @@ var VoucherOperation = /** @class */ (function () {
     }
     VoucherOperation.prototype.create = function (payload, token) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_87;
+            var response, error_89;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -3310,10 +3391,10 @@ var VoucherOperation = /** @class */ (function () {
                                 status: response.status
                             }];
                     case 2:
-                        error_87 = _c.sent();
-                        console.log("Error creating voucher: ", (_a = error_87 === null || error_87 === void 0 ? void 0 : error_87.response) === null || _a === void 0 ? void 0 : _a.data);
-                        console.error("Request that caused the error: ", error_87 === null || error_87 === void 0 ? void 0 : error_87.request);
-                        return [2 /*return*/, { success: (_b = error_87 === null || error_87 === void 0 ? void 0 : error_87.response) === null || _b === void 0 ? void 0 : _b.data, request: error_87 === null || error_87 === void 0 ? void 0 : error_87.request, status: error_87.response ? error_87.response.status : null }];
+                        error_89 = _c.sent();
+                        console.log("Error creating voucher: ", (_a = error_89 === null || error_89 === void 0 ? void 0 : error_89.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_89 === null || error_89 === void 0 ? void 0 : error_89.request);
+                        return [2 /*return*/, { success: (_b = error_89 === null || error_89 === void 0 ? void 0 : error_89.response) === null || _b === void 0 ? void 0 : _b.data, request: error_89 === null || error_89 === void 0 ? void 0 : error_89.request, status: error_89.response ? error_89.response.status : null }];
                     case 3: return [2 /*return*/];
                 }
             });
@@ -3321,7 +3402,7 @@ var VoucherOperation = /** @class */ (function () {
     };
     VoucherOperation.prototype.getVouchersByCustomer = function (page, size, token) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_88;
+            var response, error_90;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -3347,10 +3428,10 @@ var VoucherOperation = /** @class */ (function () {
                                 status: response.status
                             }];
                     case 2:
-                        error_88 = _c.sent();
-                        console.log("Error fetching vouchers: ", (_a = error_88 === null || error_88 === void 0 ? void 0 : error_88.response) === null || _a === void 0 ? void 0 : _a.data);
-                        console.error("Request that caused the error: ", error_88 === null || error_88 === void 0 ? void 0 : error_88.request);
-                        return [2 /*return*/, { success: (_b = error_88 === null || error_88 === void 0 ? void 0 : error_88.response) === null || _b === void 0 ? void 0 : _b.data, request: error_88 === null || error_88 === void 0 ? void 0 : error_88.request, status: error_88.response ? error_88.response.status : null }];
+                        error_90 = _c.sent();
+                        console.log("Error fetching vouchers: ", (_a = error_90 === null || error_90 === void 0 ? void 0 : error_90.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_90 === null || error_90 === void 0 ? void 0 : error_90.request);
+                        return [2 /*return*/, { success: (_b = error_90 === null || error_90 === void 0 ? void 0 : error_90.response) === null || _b === void 0 ? void 0 : _b.data, request: error_90 === null || error_90 === void 0 ? void 0 : error_90.request, status: error_90.response ? error_90.response.status : null }];
                     case 3: return [2 /*return*/];
                 }
             });
@@ -3358,7 +3439,7 @@ var VoucherOperation = /** @class */ (function () {
     };
     VoucherOperation.prototype.search = function (payload, token) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_89;
+            var response, error_91;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -3380,10 +3461,10 @@ var VoucherOperation = /** @class */ (function () {
                                 status: response.status
                             }];
                     case 2:
-                        error_89 = _c.sent();
-                        console.log("Error seaching wards: ", (_a = error_89 === null || error_89 === void 0 ? void 0 : error_89.response) === null || _a === void 0 ? void 0 : _a.data);
-                        console.error("Request that caused the error: ", error_89 === null || error_89 === void 0 ? void 0 : error_89.request);
-                        return [2 /*return*/, { success: (_b = error_89 === null || error_89 === void 0 ? void 0 : error_89.response) === null || _b === void 0 ? void 0 : _b.data, request: error_89 === null || error_89 === void 0 ? void 0 : error_89.request, status: error_89.response ? error_89.response.status : null }];
+                        error_91 = _c.sent();
+                        console.log("Error seaching wards: ", (_a = error_91 === null || error_91 === void 0 ? void 0 : error_91.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_91 === null || error_91 === void 0 ? void 0 : error_91.request);
+                        return [2 /*return*/, { success: (_b = error_91 === null || error_91 === void 0 ? void 0 : error_91.response) === null || _b === void 0 ? void 0 : _b.data, request: error_91 === null || error_91 === void 0 ? void 0 : error_91.request, status: error_91.response ? error_91.response.status : null }];
                     case 3: return [2 /*return*/];
                 }
             });
@@ -3391,7 +3472,7 @@ var VoucherOperation = /** @class */ (function () {
     };
     VoucherOperation.prototype.delete = function (id, token) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_90;
+            var response, error_92;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -3413,10 +3494,10 @@ var VoucherOperation = /** @class */ (function () {
                                 status: response.status
                             }];
                     case 2:
-                        error_90 = _c.sent();
-                        console.log("Error delete voucher: ", (_a = error_90 === null || error_90 === void 0 ? void 0 : error_90.response) === null || _a === void 0 ? void 0 : _a.data);
-                        console.error("Request that caused the error: ", error_90 === null || error_90 === void 0 ? void 0 : error_90.request);
-                        return [2 /*return*/, { success: (_b = error_90 === null || error_90 === void 0 ? void 0 : error_90.response) === null || _b === void 0 ? void 0 : _b.data, request: error_90 === null || error_90 === void 0 ? void 0 : error_90.request, status: error_90.response ? error_90.response.status : null }];
+                        error_92 = _c.sent();
+                        console.log("Error delete voucher: ", (_a = error_92 === null || error_92 === void 0 ? void 0 : error_92.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_92 === null || error_92 === void 0 ? void 0 : error_92.request);
+                        return [2 /*return*/, { success: (_b = error_92 === null || error_92 === void 0 ? void 0 : error_92.response) === null || _b === void 0 ? void 0 : _b.data, request: error_92 === null || error_92 === void 0 ? void 0 : error_92.request, status: error_92.response ? error_92.response.status : null }];
                     case 3: return [2 /*return*/];
                 }
             });
@@ -3431,7 +3512,7 @@ var AdministrativeOperation = /** @class */ (function () {
     }
     AdministrativeOperation.prototype.get = function (conditions) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_91;
+            var response, error_93;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -3444,10 +3525,10 @@ var AdministrativeOperation = /** @class */ (function () {
                         response = _c.sent();
                         return [2 /*return*/, { error: response.data.error, data: response.data.data, message: response.data.message }];
                     case 2:
-                        error_91 = _c.sent();
-                        console.error("Error getting administrative: ", (_a = error_91 === null || error_91 === void 0 ? void 0 : error_91.response) === null || _a === void 0 ? void 0 : _a.data);
-                        console.error("Request that caused the error: ", error_91 === null || error_91 === void 0 ? void 0 : error_91.request);
-                        return [2 /*return*/, { error: (_b = error_91 === null || error_91 === void 0 ? void 0 : error_91.response) === null || _b === void 0 ? void 0 : _b.data, request: error_91 === null || error_91 === void 0 ? void 0 : error_91.request, status: error_91.response ? error_91.response.status : null }];
+                        error_93 = _c.sent();
+                        console.error("Error getting administrative: ", (_a = error_93 === null || error_93 === void 0 ? void 0 : error_93.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_93 === null || error_93 === void 0 ? void 0 : error_93.request);
+                        return [2 /*return*/, { error: (_b = error_93 === null || error_93 === void 0 ? void 0 : error_93.response) === null || _b === void 0 ? void 0 : _b.data, request: error_93 === null || error_93 === void 0 ? void 0 : error_93.request, status: error_93.response ? error_93.response.status : null }];
                     case 3: return [2 /*return*/];
                 }
             });
@@ -3455,7 +3536,7 @@ var AdministrativeOperation = /** @class */ (function () {
     };
     AdministrativeOperation.prototype.searchWardWithConfig = function (payload) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_92;
+            var response, error_94;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -3473,10 +3554,10 @@ var AdministrativeOperation = /** @class */ (function () {
                                 status: response.status
                             }];
                     case 2:
-                        error_92 = _c.sent();
-                        console.log("Error seaching wards: ", (_a = error_92 === null || error_92 === void 0 ? void 0 : error_92.response) === null || _a === void 0 ? void 0 : _a.data);
-                        console.error("Request that caused the error: ", error_92 === null || error_92 === void 0 ? void 0 : error_92.request);
-                        return [2 /*return*/, { success: (_b = error_92 === null || error_92 === void 0 ? void 0 : error_92.response) === null || _b === void 0 ? void 0 : _b.data, request: error_92 === null || error_92 === void 0 ? void 0 : error_92.request, status: error_92.response ? error_92.response.status : null }];
+                        error_94 = _c.sent();
+                        console.log("Error seaching wards: ", (_a = error_94 === null || error_94 === void 0 ? void 0 : error_94.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_94 === null || error_94 === void 0 ? void 0 : error_94.request);
+                        return [2 /*return*/, { success: (_b = error_94 === null || error_94 === void 0 ? void 0 : error_94.response) === null || _b === void 0 ? void 0 : _b.data, request: error_94 === null || error_94 === void 0 ? void 0 : error_94.request, status: error_94.response ? error_94.response.status : null }];
                     case 3: return [2 /*return*/];
                 }
             });

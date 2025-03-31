@@ -32,7 +32,7 @@ const AgenciesMain = () => {
     const [addInfo, setAddInfo] = useState<CreateAgencyManager>({
         fullname: "", cccd: "", phoneNumber: "", email: "", province: "", district: "", town: "", detailAddress: "", birthDate: "", bin: "", bank: "", salary: 0,
     });
-    const [isAgency, setIsAgency] = useState(false);
+    const [isAgency, setIsAgency] = useState(true);
     const [addInfo3, setAddInfo3] = useState<CreateCompanyDto>({ taxcode: "", name: "" });
     const [addInfo2, setAddInfo2] = useState<CreateAgencyDto>({
         agencyId: "", name: "", phoneNumber: "", email: "", bin: "", province: "", district: "", town: "", detailAddress: "", latitude: 0, longitude: 0, commissionRate: 0, bank: "",
@@ -100,7 +100,7 @@ const AgenciesMain = () => {
         const typeCriteria = {
             field: "type",
             operator: "=",
-            value: isAgency?"DL":"BC"
+            value: isAgency?"BC":"DL"
         } as SearchCriteria;
 
         const response = await agencyOp.search({
@@ -138,7 +138,7 @@ const AgenciesMain = () => {
         const typeCriteria = {
             field: "type",
             operator: "=",
-            value: "BC"
+            value: "DL"
         } as SearchCriteria;
 
         const response = await agencyOp.search({

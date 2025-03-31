@@ -108,7 +108,7 @@
     "firstName": "Tên",
     "lastName": "Họ",
     "IsShipper": "Tìm theo shipper",
-    "NoPermit":"Bạn không có quyền truy cập tài nguyên này!"
+    "NoPermit": "Bạn không có quyền truy cập tài nguyên này!"
   },
   "TableCustomButton": {
     "Add": "Thêm",
@@ -213,7 +213,7 @@
     "Success2": "Xoá đơn hàng đã chọn thành công",
     "Fail2": "Xoá đơn hàng đã chọn thất bại",
     "permission2": "Không đủ quyền hạn",
-    "OrdersList":"Danh sách đơn hàng của shipper"
+    "OrdersList": "Danh sách đơn hàng của shipper"
   },
   "AddStaff": {
     "Title": "Thêm nhân viên",
@@ -304,7 +304,9 @@
     "DeleteSuccess2": "thành công",
     "DeleteFailed2": "thất bại",
     "Submit": "Xác nhận",
-    "companytaxcode": "Mã số thuế doanh nghiệp"
+    "companytaxcode": "Mã số thuế doanh nghiệp",
+    "IsPostOffice": "Đại lý",
+    "IsAgency": "Bưu cục"
   },
   "TasksRoute": {
     "id": "ID công việc",
@@ -375,7 +377,7 @@
     "Submit": "Xác nhận",
     "startDate": "Tính từ ngày",
     "endDate": "Đến ngày",
-    "province":"Tỉnh/Thành phố",
+    "province": "Tỉnh/Thành phố",
     "district": "Quận/Huyện",
     "ward": "Phường/Xã",
     "numOfOrders": "Số đơn hàng thành công",
@@ -396,7 +398,7 @@
     "OrdersList": "Danh sách đơn hàng trong lô hàng",
     "Submit": "Xác nhận",
     "AddOrderSuccess": "Thêm hàng vào lô hàng thành công!",
-    "AddOrderFailed" :"Thêm hàng vào lô hàng thất bại!",
+    "AddOrderFailed": "Thêm hàng vào lô hàng thất bại!",
     "Decompose": "Rã lô",
     "UpdateStatus": "Cập nhật trạng thái lô hàng",
     "DECOMPOSE": "Đã được rã",
@@ -405,16 +407,24 @@
     "LEAVED AGENCY": "Đã rời bưu cục"
   },
   "Config": {
-    "province" : "Tỉnh/Thành phố",
-    "district" : "Quận/Huyện",
+    "province": "Tỉnh/Thành phố",
+    "district": "Quận/Huyện",
     "ward": "Phường/Xã",
     "services": "Dịch vụ",
-    "deposit" : "Tiền đặt cọc thế chân",
+    "deposit": "Tiền đặt cọc thế chân",
     "submit": "Xác nhận",
     "SubmitConfig": "Xác nhận thay đổi?",
     "Update": "Cập nhật",
     "Title": "Cập nhật cấu hình",
     "Submit": "Xác nhận",
     "NoPermit": "Bạn không có quyền cập nhật!"
+  },
+  "DayOff": {
+    "Title": "Thông tin nhân viên",
+    "startDate": "Ngày bắt đầu",
+    "endDate": "Ngày kết thúc",
+    "reason": "Lý do",
+    "Submit": "Gửi yêu cầu",
+    "SuccessAdd": "Thêm ngày nghỉ thành công"
   }
 }

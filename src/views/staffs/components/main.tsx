@@ -17,6 +17,7 @@ import Switch from "@/components/switch";
 import RenderCase from "@/components/render";
 import { Button } from "@nextui-org/react";
 import { MdAutorenew } from "react-icons/md";
+import AddDayOff from "./dayOff";
 
 const StaffsMain = () => {
     const staffOp = new StaffOperation();
@@ -24,6 +25,7 @@ const StaffsMain = () => {
     const TableMessage = useTranslations('Table');
     const [staffs, setStaffs] = useState<StaffInfo[]>();
     const [openAdd, setOpenAdd] = useState<boolean>(false);
+    const [openDayOff, setOpenDayOff] = useState(false);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [currentSize, setCurrentSize] = useState<number>(10);
     const [openUpdate, setOpenUpdate] = useState<boolean>(false);
@@ -203,7 +205,9 @@ const StaffsMain = () => {
 
     return (
         <>
-            {shipperTab && staffInfo && <UpdateContent openOrders={openUpdate} reloadData={fetchData} setOpenOrders={setOpenUpdate} shipperData={staffInfo}/>}
+            {staffInfo && (shipperTab? 
+            <UpdateContent openOrders={openUpdate} reloadData={fetchData} setOpenOrders={setOpenUpdate} shipperData={staffInfo}/>: 
+            <AddDayOff openAdd={openDayOff} setOpenAdd={setOpenDayOff} staffId={staffInfo?(staffInfo as StaffInfo).id:""}/>)}
             <AddContent addInfo={addInfo} openAdd={openAdd} setAddInfo={setAddInfo} setOpenAdd={setOpenAdd} reloadData={fetchData} />
             <TableSwitcher
                 primaryKey="id"
@@ -252,6 +256,7 @@ const StaffsMain = () => {
                     };
                     setStaffInfo(value);
                     setOpenUpdate(shipperTab);
+                    setOpenDayOff(true);
                 }}
             />
         </>

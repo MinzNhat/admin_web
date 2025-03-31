@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 
-import { AddJourneyNodeDto, AddOrderToShipmentDto, AdministrativePayload, AssignTaskToShipperDto, CalculateFeePayload, ConfigDepositDto, ConfigServicesDto, CreateAgencyDto, CreateCargoInsuranceDto, CreateFavoriteOrderLocationDto, CreateGiftOrderTopicDto, CreateOrderDto, CreateShipmentDto, CreateShippingBillDto, CreateStaffDto, CreateVoucherDto, CustomerLoginDto, FileID, MultiFileUpload, OrderImageType, OrderStatus, SearchCriteria, SearchPayload, StaffLoginDto, UpdateAgencyDto, UpdateCargoInsuranceDto, UpdateConfigDto, UpdateCustomerDto, UpdateFavoriteOrderLocationDto, UpdateOrderDto, UpdateOrderLocationDto, UpdateShipperStatusDto, UpdateStaffDto, UpdateTaskDto, VerifyOtpDto } from "./interface";
+import { AddJourneyNodeDto, AddOrderToShipmentDto, AdministrativePayload, AssignTaskToShipperDto, CalculateFeePayload, ConfigDepositDto, ConfigServicesDto, CreateAgencyDto, CreateCargoInsuranceDto, CreateDayOffDto, CreateFavoriteOrderLocationDto, CreateGiftOrderTopicDto, CreateOrderDto, CreateShipmentDto, CreateShippingBillDto, CreateStaffDto, CreateVoucherDto, CustomerLoginDto, FileID, MultiFileUpload, OrderImageType, OrderStatus, SearchCriteria, SearchPayload, StaffLoginDto, UpdateAgencyDto, UpdateCargoInsuranceDto, UpdateConfigDto, UpdateCustomerDto, UpdateFavoriteOrderLocationDto, UpdateOrderDto, UpdateOrderLocationDto, UpdateShipperStatusDto, UpdateStaffDto, UpdateTaskDto, VerifyOtpDto } from "./interface";
 import { UUID } from "crypto";
 
 export class AgencyOperation {
@@ -2035,6 +2035,68 @@ export class StaffOperation {
             console.log("Error fetching shipper extended info: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
             return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+        }
+    }
+}
+
+export class DayOffOperation {
+    private baseUrl: string;
+
+    constructor() {
+        this.baseUrl = 'https://api.tdlogistics.net.vn/v3/staff_day_off';
+    }
+
+    async search(payload: SearchPayload, token: string) {
+        try {
+            const response: AxiosResponse = await axios.post(`${this.baseUrl}/search`, payload, {
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            });
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        }
+        catch (error: any) {
+            console.log("Error searching day off: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null
+            };
+        }
+    }
+
+    async create(payload: CreateDayOffDto, token: string) {
+        try {
+            const response: AxiosResponse = await axios.post(`${this.baseUrl}/create`, payload, {
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            });
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        }
+        catch (error: any) {
+            console.log("Error creating day off: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null
+            };
         }
     }
 }
