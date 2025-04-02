@@ -23,6 +23,9 @@ const InfoContent = () => {
         username: "",
         shipperStatus: false,
         agencyId:"",
+        paidDebt: 0,
+        unpaidDebt: 0,
+        
     });
 
     const handleChange = (id: keyof StaffInfo, value: string) => {
