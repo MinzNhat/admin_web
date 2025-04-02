@@ -4,7 +4,7 @@ import AddContent from "./addContent";
 import { useTranslations } from "next-intl";
 import UpdateContent from "./updateContent";
 import TableSwitcher from "@/components/table";
-import { StaffOperation } from "@/services/main";
+import { StaffOperation, TaskOperation } from "@/services/main";
 import { getTokenFromCookie } from "@/utils/token";
 import CustomButton from "@/views/customTableButton";
 import { columnsData } from "../variables/columnsData";
@@ -33,6 +33,7 @@ const StaffsMain = () => {
     const [selectedRows, setSelectedRows] = useState<StaffInfo[]>([]);
     const [sortBy, setSortBy] = useState<{ id: string; desc: boolean }[]>([]);
     const [shipperTab, setShipperTab] = useState(false);
+    const taskOperation = new TaskOperation();
     const [searchCriteriaValue, setSearchCriteriaValue] = useState<SearchCriteria>({
         field: [],
         operator: [],
@@ -104,7 +105,7 @@ const StaffsMain = () => {
         } else if (cellHeader === intl("shipperType")) {
             return (
                 <div className="w-full h-full whitespace-nowrap">
-                    {intl(cellValue)}
+                    {intl(cellValue??"NoInfor")}
                 </div>
             );
         } else if (cellHeader === intl("shipperStatus")) {
@@ -116,7 +117,15 @@ const StaffsMain = () => {
         } else if (cellHeader === intl("shipperDeposit")) {
             return (
                 <div className="w-full h-full whitespace-nowrap">
-                    {(cellValue && cellValue.deposit)?(cellValue.deposit as string): cellValue as string}
+                    {(cellValue && cellValue.deposit > 0)?(cellValue.deposit as number): cellValue as number}
+                    {/* {cellValue.deposit as string} */}
+                </div>
+            );
+        } else if (cellHeader === intl("paidDebt") || cellHeader === intl("unpaidDebt")) {
+            // console.log(cellHeader, cellValue)
+            return (
+                <div className="w-full h-full whitespace-nowrap">
+                    {cellValue === 0? "0": cellValue as number}
                 </div>
             );
         }
@@ -128,6 +137,7 @@ const StaffsMain = () => {
             setShipperTab(false);
             return;
         }
+        // setStaffInfo(null)
         const token = getTokenFromCookie();
         if (!token) return;
 
@@ -195,9 +205,25 @@ const StaffsMain = () => {
         console.log(response);
 
         if (response.success) {
-            setStaffs(response.data as StaffInfo[]);
+            const token = getTokenFromCookie();
+            if (!token) return;
+            const staffs = await Promise.all(
+                response.data.map(async (staff: StaffInfo) => {
+                    const paidDebt = await taskOperation.getPaidDebt(staff.id, token);
+                    
+                    const unPaidDebt = await taskOperation.getUnPaidDebt(staff.id, token);
+                    console.log(paidDebt, unPaidDebt);
+                    return {
+                        ...staff,
+                        paidDebt: paidDebt.data,
+                        unpaidDebt: unPaidDebt.data,
+                    };
+                })
+            ) as StaffInfo[];
+            console.log("staffs", staffs);
+            setStaffs(staffs);
         }
-    }, [currentPage, currentSize, sortBy, searchCriteriaValue]);
+    }, [currentPage, currentSize, sortBy, searchCriteriaValue, shipperTab]);
 
     useEffect(() => {
         fetchData();
@@ -207,7 +233,7 @@ const StaffsMain = () => {
         <>
             {staffInfo && (shipperTab? 
             <UpdateContent openOrders={openUpdate} reloadData={fetchData} setOpenOrders={setOpenUpdate} shipperData={staffInfo}/>: 
-            <AddDayOff openAdd={openDayOff} setOpenAdd={setOpenDayOff} staffId={staffInfo?(staffInfo as StaffInfo).id:""}/>)}
+            <AddDayOff openAdd={openDayOff} setOpenAdd={setOpenDayOff} staff={staffInfo}/>)}
             <AddContent addInfo={addInfo} openAdd={openAdd} setAddInfo={setAddInfo} setOpenAdd={setOpenAdd} reloadData={fetchData} />
             <TableSwitcher
                 primaryKey="id"

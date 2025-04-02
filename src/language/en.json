@@ -233,7 +233,9 @@
     "Success": "Successfully created a new staff member.",
     "Success2": "Successfully updated staff member.",
     "Fail": "Failed to create a new staff member, please try again later.",
-    "Fail2": "Failed to update staff member, please try again later."
+    "Fail2": "Failed to update staff member, please try again later.",
+    "DayOff": "Day Off",
+    "Submit":"Submit Request"
   },
   "AgenciesRoute": {
     "Title": "Add Post Office - Agency",
@@ -420,6 +422,8 @@
     "endDate": "End Date",
     "reason": "Reason",
     "Submit": "Submit Request",
-    "SuccessAdd": "Create day off successfully"
+    "SuccessAdd": "Create day off successfully",
+    "DayOff": "Day off info",
+    "UpdateInfo": "Update"
   }
 }

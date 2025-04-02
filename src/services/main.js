@@ -3360,6 +3360,80 @@ var TaskOperation = /** @class */ (function () {
             });
         });
     };
+    TaskOperation.prototype.getPaidDebt = function (staffId, token) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, error_89;
+            var _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        _c.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, axios_1.default.get("".concat(this.baseUrl, "/shipper/debt/calculate_paid/").concat(staffId), {
+                                withCredentials: true,
+                                validateStatus: function (status) { return status >= 200 && status <= 500; },
+                                headers: {
+                                    Authorization: "Bearer ".concat(token)
+                                },
+                            })];
+                    case 1:
+                        response = _c.sent();
+                        return [2 /*return*/, {
+                                success: response.data.success,
+                                message: response.data.message,
+                                data: response.data.data,
+                                status: response.status
+                            }];
+                    case 2:
+                        error_89 = _c.sent();
+                        console.log("Error get paid debt: ", (_a = error_89 === null || error_89 === void 0 ? void 0 : error_89.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_89 === null || error_89 === void 0 ? void 0 : error_89.request);
+                        return [2 /*return*/, {
+                                success: (_b = error_89 === null || error_89 === void 0 ? void 0 : error_89.response) === null || _b === void 0 ? void 0 : _b.data,
+                                request: error_89 === null || error_89 === void 0 ? void 0 : error_89.request,
+                                status: error_89.response ? error_89.response.status : null
+                            }];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    TaskOperation.prototype.getUnPaidDebt = function (staffId, token) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, error_90;
+            var _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        _c.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, axios_1.default.get("".concat(this.baseUrl, "/shipper/debt/calculate_unpaid/").concat(staffId), {
+                                withCredentials: true,
+                                validateStatus: function (status) { return status >= 200 && status <= 500; },
+                                headers: {
+                                    Authorization: "Bearer ".concat(token)
+                                },
+                            })];
+                    case 1:
+                        response = _c.sent();
+                        return [2 /*return*/, {
+                                success: response.data.success,
+                                message: response.data.message,
+                                data: response.data.data,
+                                status: response.status
+                            }];
+                    case 2:
+                        error_90 = _c.sent();
+                        console.log("Error get paid debt: ", (_a = error_90 === null || error_90 === void 0 ? void 0 : error_90.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_90 === null || error_90 === void 0 ? void 0 : error_90.request);
+                        return [2 /*return*/, {
+                                success: (_b = error_90 === null || error_90 === void 0 ? void 0 : error_90.response) === null || _b === void 0 ? void 0 : _b.data,
+                                request: error_90 === null || error_90 === void 0 ? void 0 : error_90.request,
+                                status: error_90.response ? error_90.response.status : null
+                            }];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
     return TaskOperation;
 }());
 exports.TaskOperation = TaskOperation;
@@ -3369,7 +3443,7 @@ var VoucherOperation = /** @class */ (function () {
     }
     VoucherOperation.prototype.create = function (payload, token) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_89;
+            var response, error_91;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -3391,10 +3465,10 @@ var VoucherOperation = /** @class */ (function () {
                                 status: response.status
                             }];
                     case 2:
-                        error_89 = _c.sent();
-                        console.log("Error creating voucher: ", (_a = error_89 === null || error_89 === void 0 ? void 0 : error_89.response) === null || _a === void 0 ? void 0 : _a.data);
-                        console.error("Request that caused the error: ", error_89 === null || error_89 === void 0 ? void 0 : error_89.request);
-                        return [2 /*return*/, { success: (_b = error_89 === null || error_89 === void 0 ? void 0 : error_89.response) === null || _b === void 0 ? void 0 : _b.data, request: error_89 === null || error_89 === void 0 ? void 0 : error_89.request, status: error_89.response ? error_89.response.status : null }];
+                        error_91 = _c.sent();
+                        console.log("Error creating voucher: ", (_a = error_91 === null || error_91 === void 0 ? void 0 : error_91.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_91 === null || error_91 === void 0 ? void 0 : error_91.request);
+                        return [2 /*return*/, { success: (_b = error_91 === null || error_91 === void 0 ? void 0 : error_91.response) === null || _b === void 0 ? void 0 : _b.data, request: error_91 === null || error_91 === void 0 ? void 0 : error_91.request, status: error_91.response ? error_91.response.status : null }];
                     case 3: return [2 /*return*/];
                 }
             });
@@ -3402,7 +3476,7 @@ var VoucherOperation = /** @class */ (function () {
     };
     VoucherOperation.prototype.getVouchersByCustomer = function (page, size, token) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_90;
+            var response, error_92;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -3428,10 +3502,10 @@ var VoucherOperation = /** @class */ (function () {
                                 status: response.status
                             }];
                     case 2:
-                        error_90 = _c.sent();
-                        console.log("Error fetching vouchers: ", (_a = error_90 === null || error_90 === void 0 ? void 0 : error_90.response) === null || _a === void 0 ? void 0 : _a.data);
-                        console.error("Request that caused the error: ", error_90 === null || error_90 === void 0 ? void 0 : error_90.request);
-                        return [2 /*return*/, { success: (_b = error_90 === null || error_90 === void 0 ? void 0 : error_90.response) === null || _b === void 0 ? void 0 : _b.data, request: error_90 === null || error_90 === void 0 ? void 0 : error_90.request, status: error_90.response ? error_90.response.status : null }];
+                        error_92 = _c.sent();
+                        console.log("Error fetching vouchers: ", (_a = error_92 === null || error_92 === void 0 ? void 0 : error_92.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_92 === null || error_92 === void 0 ? void 0 : error_92.request);
+                        return [2 /*return*/, { success: (_b = error_92 === null || error_92 === void 0 ? void 0 : error_92.response) === null || _b === void 0 ? void 0 : _b.data, request: error_92 === null || error_92 === void 0 ? void 0 : error_92.request, status: error_92.response ? error_92.response.status : null }];
                     case 3: return [2 /*return*/];
                 }
             });
@@ -3439,7 +3513,7 @@ var VoucherOperation = /** @class */ (function () {
     };
     VoucherOperation.prototype.search = function (payload, token) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_91;
+            var response, error_93;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -3461,10 +3535,10 @@ var VoucherOperation = /** @class */ (function () {
                                 status: response.status
                             }];
                     case 2:
-                        error_91 = _c.sent();
-                        console.log("Error seaching wards: ", (_a = error_91 === null || error_91 === void 0 ? void 0 : error_91.response) === null || _a === void 0 ? void 0 : _a.data);
-                        console.error("Request that caused the error: ", error_91 === null || error_91 === void 0 ? void 0 : error_91.request);
-                        return [2 /*return*/, { success: (_b = error_91 === null || error_91 === void 0 ? void 0 : error_91.response) === null || _b === void 0 ? void 0 : _b.data, request: error_91 === null || error_91 === void 0 ? void 0 : error_91.request, status: error_91.response ? error_91.response.status : null }];
+                        error_93 = _c.sent();
+                        console.log("Error seaching wards: ", (_a = error_93 === null || error_93 === void 0 ? void 0 : error_93.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_93 === null || error_93 === void 0 ? void 0 : error_93.request);
+                        return [2 /*return*/, { success: (_b = error_93 === null || error_93 === void 0 ? void 0 : error_93.response) === null || _b === void 0 ? void 0 : _b.data, request: error_93 === null || error_93 === void 0 ? void 0 : error_93.request, status: error_93.response ? error_93.response.status : null }];
                     case 3: return [2 /*return*/];
                 }
             });
@@ -3472,7 +3546,7 @@ var VoucherOperation = /** @class */ (function () {
     };
     VoucherOperation.prototype.delete = function (id, token) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_92;
+            var response, error_94;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -3494,10 +3568,10 @@ var VoucherOperation = /** @class */ (function () {
                                 status: response.status
                             }];
                     case 2:
-                        error_92 = _c.sent();
-                        console.log("Error delete voucher: ", (_a = error_92 === null || error_92 === void 0 ? void 0 : error_92.response) === null || _a === void 0 ? void 0 : _a.data);
-                        console.error("Request that caused the error: ", error_92 === null || error_92 === void 0 ? void 0 : error_92.request);
-                        return [2 /*return*/, { success: (_b = error_92 === null || error_92 === void 0 ? void 0 : error_92.response) === null || _b === void 0 ? void 0 : _b.data, request: error_92 === null || error_92 === void 0 ? void 0 : error_92.request, status: error_92.response ? error_92.response.status : null }];
+                        error_94 = _c.sent();
+                        console.log("Error delete voucher: ", (_a = error_94 === null || error_94 === void 0 ? void 0 : error_94.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_94 === null || error_94 === void 0 ? void 0 : error_94.request);
+                        return [2 /*return*/, { success: (_b = error_94 === null || error_94 === void 0 ? void 0 : error_94.response) === null || _b === void 0 ? void 0 : _b.data, request: error_94 === null || error_94 === void 0 ? void 0 : error_94.request, status: error_94.response ? error_94.response.status : null }];
                     case 3: return [2 /*return*/];
                 }
             });
@@ -3512,7 +3586,7 @@ var AdministrativeOperation = /** @class */ (function () {
     }
     AdministrativeOperation.prototype.get = function (conditions) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_93;
+            var response, error_95;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -3525,10 +3599,10 @@ var AdministrativeOperation = /** @class */ (function () {
                         response = _c.sent();
                         return [2 /*return*/, { error: response.data.error, data: response.data.data, message: response.data.message }];
                     case 2:
-                        error_93 = _c.sent();
-                        console.error("Error getting administrative: ", (_a = error_93 === null || error_93 === void 0 ? void 0 : error_93.response) === null || _a === void 0 ? void 0 : _a.data);
-                        console.error("Request that caused the error: ", error_93 === null || error_93 === void 0 ? void 0 : error_93.request);
-                        return [2 /*return*/, { error: (_b = error_93 === null || error_93 === void 0 ? void 0 : error_93.response) === null || _b === void 0 ? void 0 : _b.data, request: error_93 === null || error_93 === void 0 ? void 0 : error_93.request, status: error_93.response ? error_93.response.status : null }];
+                        error_95 = _c.sent();
+                        console.error("Error getting administrative: ", (_a = error_95 === null || error_95 === void 0 ? void 0 : error_95.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_95 === null || error_95 === void 0 ? void 0 : error_95.request);
+                        return [2 /*return*/, { error: (_b = error_95 === null || error_95 === void 0 ? void 0 : error_95.response) === null || _b === void 0 ? void 0 : _b.data, request: error_95 === null || error_95 === void 0 ? void 0 : error_95.request, status: error_95.response ? error_95.response.status : null }];
                     case 3: return [2 /*return*/];
                 }
             });
@@ -3536,7 +3610,7 @@ var AdministrativeOperation = /** @class */ (function () {
     };
     AdministrativeOperation.prototype.searchWardWithConfig = function (payload) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_94;
+            var response, error_96;
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -3554,10 +3628,10 @@ var AdministrativeOperation = /** @class */ (function () {
                                 status: response.status
                             }];
                     case 2:
-                        error_94 = _c.sent();
-                        console.log("Error seaching wards: ", (_a = error_94 === null || error_94 === void 0 ? void 0 : error_94.response) === null || _a === void 0 ? void 0 : _a.data);
-                        console.error("Request that caused the error: ", error_94 === null || error_94 === void 0 ? void 0 : error_94.request);
-                        return [2 /*return*/, { success: (_b = error_94 === null || error_94 === void 0 ? void 0 : error_94.response) === null || _b === void 0 ? void 0 : _b.data, request: error_94 === null || error_94 === void 0 ? void 0 : error_94.request, status: error_94.response ? error_94.response.status : null }];
+                        error_96 = _c.sent();
+                        console.log("Error seaching wards: ", (_a = error_96 === null || error_96 === void 0 ? void 0 : error_96.response) === null || _a === void 0 ? void 0 : _a.data);
+                        console.error("Request that caused the error: ", error_96 === null || error_96 === void 0 ? void 0 : error_96.request);
+                        return [2 /*return*/, { success: (_b = error_96 === null || error_96 === void 0 ? void 0 : error_96.response) === null || _b === void 0 ? void 0 : _b.data, request: error_96 === null || error_96 === void 0 ? void 0 : error_96.request, status: error_96.response ? error_96.response.status : null }];
                     case 3: return [2 /*return*/];
                 }
             });

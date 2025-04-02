@@ -1894,7 +1894,7 @@ export class StaffOperation {
         }
     }
 
-    async update(id: UUID, dto: UpdateStaffDto, token: string) {
+    async update(id: string, dto: UpdateStaffDto, token: string) {
         try {
             const response: AxiosResponse = await axios.put(`${this.baseUrl}/update/${id}`, dto, {
                 withCredentials: true,
@@ -2496,6 +2496,60 @@ export class TaskOperation {
         }
         catch (error: any) {
             console.log("Error searching tasks by order ID: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null
+            };
+        }
+    }
+
+    async getPaidDebt(staffId: string, token: string) {
+        try {
+            const response: AxiosResponse = await axios.get(`${this.baseUrl}/shipper/debt/calculate_paid/${staffId}`, {
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            });
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        }
+        catch (error: any) {
+            console.log("Error get paid debt: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return {
+                success: error?.response?.data,
+                request: error?.request,
+                status: error.response ? error.response.status : null
+            };
+        }
+    }
+
+    async getUnPaidDebt(staffId: string, token: string) {
+        try {
+            const response: AxiosResponse = await axios.get(`${this.baseUrl}/shipper/debt/calculate_unpaid/${staffId}`, {
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            });
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        }
+        catch (error: any) {
+            console.log("Error get paid debt: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
             return {
                 success: error?.response?.data,

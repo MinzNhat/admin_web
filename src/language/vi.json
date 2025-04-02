@@ -238,7 +238,9 @@
     "Success3": "Cập nhật khách hàng thành công",
     "Fail": "Tạo nhân viên mới thất bại, vui lòng thử lại sau",
     "Fail2": "Cập nhật nhân viên thất bại, vui lòng thử lại sau",
-    "Fail3": "Cập nhật khách hàng thất bại, vui lòng thử lại sau"
+    "Fail3": "Cập nhật khách hàng thất bại, vui lòng thử lại sau",
+    "DayOff": "Ngày nghỉ",
+    "Submit":"Gửi yêu cầu"
   },
   "AgenciesRoute": {
     "Title": "Thêm bưu cục - đại lý",
@@ -425,6 +427,8 @@
     "endDate": "Ngày kết thúc",
     "reason": "Lý do",
     "Submit": "Gửi yêu cầu",
-    "SuccessAdd": "Thêm ngày nghỉ thành công"
+    "SuccessAdd": "Thêm ngày nghỉ thành công",
+    "DayOff": "Thông tin ngày nghỉ",
+    "UpdateInfo": "Cập nhật"
   }
 }

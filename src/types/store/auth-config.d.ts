@@ -51,6 +51,8 @@ declare type StaffInfo = {
     managedWards?: ManagedWard[];
     shipperType?: ShipperType | ShipperType[];
     shipperStatus: boolean;
+    paidDebt: number;
+    unpaidDebt: number;
 };
 
 declare type DayOffInfo = {
