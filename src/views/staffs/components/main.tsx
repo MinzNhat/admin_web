@@ -269,7 +269,7 @@ const StaffsMain = () => {
                         </>
                     } />}
                 containerClassname="!rounded-xl p-4"
-                selectType="none"
+                selectType="multi"
                 setPageSize={{
                     setCurrentSize,
                     sizeOptions: [10, 20, 30]
