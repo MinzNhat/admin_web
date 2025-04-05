@@ -445,11 +445,14 @@ export class OrdersOperation {
 
     async create(payload: CreateOrderDto, token: string) {
         try {
-            const response: AxiosResponse = await axios.post(`${this.baseUrl}/create`, payload, {
+            const formData = new FormData();
+            formData.append("data", JSON.stringify(payload));
+
+            const response = await axios.post(`${this.baseUrl}/create`, formData, {
                 withCredentials: true,
-                validateStatus: status => status >= 200 && status <= 500,
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: "Bearer " + token,
+                    "Content-Type": "multipart/form-data",
                 },
             });
 
@@ -461,7 +464,7 @@ export class OrdersOperation {
             };
         }
         catch (error: any) {
-            console.log("Error creating order: ", error?.response?.data);
+            console.log("Error searching orders: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
             return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
         }
@@ -927,6 +930,30 @@ export class OrdersOperation {
                 request: error?.request,
                 status: error.response ? error.response.status : null,
             };
+        }
+    }
+}
+
+export class MapOperation {
+    async getCoordinates(address: string, ggmapkey: string): Promise<{ lat: number; lng: number } | null> {
+        try {
+            const response = await axios.get("https://maps.googleapis.com/maps/api/geocode/json", {
+                params: {
+                    address,
+                    key: ggmapkey,
+                },
+            });
+
+            if (response.data.status === "OK") {
+                const location = response.data.results[0].geometry.location;
+                return { lat: location.lat, lng: location.lng };
+            } else {
+                console.error("Lỗi khi lấy tọa độ:", response.data.status);
+                return null;
+            }
+        } catch (error) {
+            console.error("Lỗi API Google Geocoding:", error);
+            return null;
         }
     }
 }

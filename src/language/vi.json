@@ -213,7 +213,7 @@
     "Success2": "Xoá đơn hàng đã chọn thành công",
     "Fail2": "Xoá đơn hàng đã chọn thất bại",
     "permission2": "Không đủ quyền hạn",
-    "OrdersList": "Danh sách đơn hàng của shipper"
+    "OrdersList": "Danh sách đơn hàng"
   },
   "AddStaff": {
     "Title": "Thêm nhân viên",

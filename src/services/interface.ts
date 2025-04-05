@@ -222,11 +222,12 @@ export interface CalculateFeePayload {
 }
 
 export interface CreateOrderDto {
-    serviceType: string;
     nameSender: string;
     phoneNumberSender: string;
     nameReceiver: string;
     phoneNumberReceiver: string;
+    fromMass: number;
+    toMass: number;
     mass: number;
     height: number;
     width: number;
@@ -235,18 +236,23 @@ export interface CreateOrderDto {
     districtSource: string;
     wardSource: string;
     detailSource: string;
-    longSource: number;
-    latSource: number;
     provinceDest: string;
     districtDest: string;
     wardDest: string;
     detailDest: string;
+    longSource: number;
+    latSource: number;
     longDestination: number;
     latDestination: number;
-    fee: number;
     cod: number;
-    agencyId: string;
-    userId: string;
+    serviceType: string;
+    goodType: string;
+    receiverWillPay: boolean;
+    deliverDoorToDoor: boolean;
+    isBulkyGood: boolean;
+    note: string;
+    paymentMethod: 'BY_CASH' | 'BY_BANK_TRANSFER';
+    willExportInvoice: boolean;
 }
 
 

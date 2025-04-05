@@ -11,6 +11,7 @@ import TableSwitcher from "@/components/table";
 import SearchPopUp, { DetailFields } from "@/views/customTableSearchPopUp";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
+import UpdateContent from "./updateContent";
 
 const CustomerMain = () => {
     const customerOp = new CustomerOperation();
@@ -18,9 +19,11 @@ const CustomerMain = () => {
     const [customers, setCustomers] = useState<Customer[]>();
     const locale = useSelector((state: RootState) => state.language.locale);
     const [currentPage, setCurrentPage] = useState<number>(1);
+    const [openOrders, setOpenOrders] = useState<boolean>(false);
     const [currentSize, setCurrentSize] = useState<number>(10);
     const [selectedRows, setSelectedRows] = useState<Customer[]>([]);
     const [sortBy, setSortBy] = useState<{ id: string; desc: boolean }[]>([]);
+    const [userId, setUserId] = useState<string | null>(null);
     const [searchCriteriaValue, setSearchCriteriaValue] = useState<SearchCriteria>({
         field: [],
         operator: [],
@@ -32,8 +35,8 @@ const CustomerMain = () => {
             return <div className="w-full h-full whitespace-nowrap">{cellValue}</div>
         } else if (cellHeader === intl("lastName")) {
             return <div className="w-full h-full whitespace-nowrap">{cellValue}</div>
-        } else if (cellHeader === intl("createdAt")){
-            return cellValue? new Intl.DateTimeFormat(locale, {
+        } else if (cellHeader === intl("createdAt")) {
+            return cellValue ? new Intl.DateTimeFormat(locale, {
                 year: "numeric",
                 month: "long",
                 day: "numeric",
@@ -44,7 +47,7 @@ const CustomerMain = () => {
         } else if (cellHeader === intl("id")) {
             return <div className="w-full h-full whitespace-nowrap">{cellValue}</div>
         } else if (cellHeader === intl("user")) {
-            return <div className="w-full h-full whitespace-nowrap">{cellValue.active?intl("active"):intl("inactive")}</div>
+            return <div className="w-full h-full whitespace-nowrap">{cellValue.active ? intl("active") : intl("inactive")}</div>
         }
     };
 
@@ -96,6 +99,14 @@ const CustomerMain = () => {
 
     return (
         <>
+            {userId !== null && (
+                <UpdateContent
+                    openOrders={openOrders}
+                    setOpenOrders={(value) => {setOpenOrders(value); setUserId(null)}}
+                    reloadData={() => { }}
+                    userId={userId}
+                />
+            )}
             <TableSwitcher
                 primaryKey="id"
                 tableData={customers}
@@ -119,6 +130,11 @@ const CustomerMain = () => {
                     sizeOptions: [10, 20, 30]
                 }}
                 customSearch={true}
+                onRowClick={(user) => {
+                    console.log(user)
+                    setUserId(user.id);
+                    setOpenOrders(true);
+                }}
             />
         </>
     );

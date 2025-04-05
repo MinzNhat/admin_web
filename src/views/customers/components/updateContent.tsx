@@ -1,31 +1,52 @@
 "use client";
 
+import { useCallback, useEffect, useState } from "react";
 import { RootState } from "@/store";
 import { useSelector } from "react-redux";
-import DetailContent from "./detailContent";
 import { useTranslations } from "next-intl";
+import DetailPopup from "@/components/popup";
 import RenderCase from "@/components/render";
-import TableSwitcher from "@/components/table";
-import { OrdersOperation } from "@/services/main";
-import CustomInputField from "@/components/input";
-import { getTokenFromCookie } from "@/utils/token";
+import { FaShippingFast, FaUserCircle } from "react-icons/fa";
 import CustomButton from "@/views/customTableButton";
-import { columnsData } from "../variables/columnsData";
-import { useCallback, useEffect, useState } from "react";
-import SearchPopUp, { DetailFields } from "@/views/customTableSearchPopUp";
+import { OrdersOperation, StaffOperation, TaskOperation } from "@/services/main";
+import { getTokenFromCookie } from "@/utils/token";
+import { useNotifications } from "@/hooks/NotificationsProvider";
+import { RoleValue, StaffInfo, StaffInfoUpdate } from "@/types/store/auth-config"
+import { useSubmitNotification } from "@/hooks/SubmitNotificationProvider";
+import { SearchCriteria, OrderStatus, ServiceType } from "@/services/interface";
+import { UUID } from "crypto";
 import { OrderData, OrderState } from "@/types/views/orders/orders-config";
+import SearchPopUp, { DetailFields } from "@/views/customTableSearchPopUp";
 import { MdRadioButtonChecked, MdRadioButtonUnchecked } from "react-icons/md";
-import { CreateOrderDto, OrderStatus, SearchCriteria, SearchOperator, ServiceType } from "@/services/interface";
 import { Button } from "@nextui-org/react";
 import { BiTrash } from "react-icons/bi";
-import { UUID } from "crypto";
-import { useNotifications } from "@/hooks/NotificationsProvider";
-import { useSubmitNotification } from "@/hooks/SubmitNotificationProvider";
-import AddContent from "./addContent";
+import TableSwitcher from "@/components/table";
+import { columnsData } from "../variables/columnsData3";
+import { TaskData } from "@/types/views/tasks/tasks-config";
+import CustomInputField from "@/components/input";
 
+type UpdateFields = {
+    id: keyof StaffInfoUpdate,
+    type: InputTypes,
+    important?: boolean,
+    version?: TextInputVersion | SelectInputVersion,
+    select_type?: SelectInputType,
+    options?: SelectInputOptionFormat[],
+    isClearable?: boolean,
+    state?: InputState,
+    dropdownPosition?: DropdownPosition;
+}
 
-const OrdersMain = () => {
+type Props = {
+    openOrders: boolean;
+    setOpenOrders: React.Dispatch<React.SetStateAction<boolean>>;
+    reloadData: () => void;
+    userId: string;
+}
+
+const UpdateContent = ({ openOrders, setOpenOrders, reloadData, userId }: Props) => {
     const orderOp = new OrdersOperation();
+    const taskOp = new TaskOperation();
     const intl = useTranslations("OrdersRoute");
     const [orderId, setOrderId] = useState<UUID>();
     const { addNotification } = useNotifications();
@@ -39,50 +60,13 @@ const OrdersMain = () => {
     const userInfo = useSelector((state: RootState) => state.auth.userInfo);
     const [sortBy, setSortBy] = useState<{ id: string; desc: boolean }[]>([]);
     const [currentOrderState, setCurrentOrderState] = useState<OrderState[]>(['ALL']);
-    const [openAdd, setOpenAdd] = useState(false);
 
     const orderStateOptions: OrderState[] = ['ALL', 'PROCESSING', 'NTHIRD_PARTY_DELIVERY'];
     const [searchCriteriaValue, setSearchCriteriaValue] = useState<SearchCriteria>({
         field: [],
         operator: [],
-        value: []
+        value: null
     });
-
-    const [addInfo, setAddInfo] = useState<CreateOrderDto>({
-        serviceType: "",
-        nameSender: "",
-        phoneNumberSender: "",
-        nameReceiver: "",
-        phoneNumberReceiver: "",
-        mass: 0,
-        height: 0,
-        width: 0,
-        length: 0,
-        provinceSource: userInfo?.province??"Thành phố Hồ Chí Minh",
-        districtSource: userInfo?.district??"Thành phố Thủ Đức",
-        wardSource: userInfo?.town??"Phường Linh Trung",
-        detailSource: userInfo?.detailAddress??"ktx khu A",
-        longSource: 0,
-        latSource: 0,
-        provinceDest: "",
-        districtDest: "",
-        wardDest: "",
-        detailDest: "",
-        longDestination: 0,
-        latDestination: 0,
-        fee: 0,
-        cod: 0,
-        userId: "",
-        deliverDoorToDoor: false,
-        fromMass: 0,
-        toMass: 0,
-        goodType: "OTHER",
-        isBulkyGood: false,
-        note: "",
-        paymentMethod: "BY_CASH",
-        receiverWillPay: false,
-        willExportInvoice: true,
-    } as CreateOrderDto);
 
     const changeStateOptions: SelectInputOptionFormat[] = orderStateOptions.map(type => ({
         label: intl(type),
@@ -176,19 +160,25 @@ const OrdersMain = () => {
 
         if (!token) return;
         console.log(searchCriteriaValue);
-        let criterias : SearchCriteria[] = [];
+        let criterias: SearchCriteria[] = [
+            {
+                field: "customerId",
+                operator: "=",
+                value: userId
+            }
+        ];
 
         (searchCriteriaValue.field as string[]).forEach((field, index) => {
             console.log(`Field: ${field}, Value: ${searchCriteriaValue.value[index]}`);
-            const value = Array.isArray(searchCriteriaValue.value[index])?searchCriteriaValue.value[index][0]: searchCriteriaValue.value[index];
+            const value = Array.isArray(searchCriteriaValue.value[index]) ? searchCriteriaValue.value[index][0] : searchCriteriaValue.value[index];
             criterias.push({
                 field: field,
-                operator:value === "yes" ? "=": value === "no"? "!=":
-                        (field === "id" || field === "trackingNumber" || field === "agencyId2")? "=": "~",
+                operator: value === "yes" ? "=" : value === "no" ? "!=" :
+                    (field === "id" || field === "trackingNumber" || field === "agencyId2") ? "=" : "~",
                 value: value === "yes" ? true : value === "no" ? false : value
             })
         });
-        
+
 
         // const rawValue = Array.isArray(searchCriteriaValue.value) ? searchCriteriaValue.value[0] : searchCriteriaValue.value;
         // const criteria: SearchCriteria | null = rawValue ? {
@@ -227,18 +217,18 @@ const OrdersMain = () => {
     }, [currentPage, currentSize, sortBy, currentOrderState[0], searchCriteriaValue]);
 
     const handleDelete = async () => {
-        const token = getTokenFromCookie();
-        if (!token) return;
-        if (!orderId) return;
+        // const token = getTokenFromCookie();
+        // if (!token) return;
+        // if (!orderId) return;
 
-        const response = await orderOp.deleteOrder(orderId, token);
-        if (response.success) {
-            addNotification({ message: response.message ?? intl("Success2"), type: "success" });
-        } else {
-            addNotification({ message: response.message ?? intl("Fail2"), type: "error" });
-        }
+        // const response = await taskOp.deleteOrder(orderId, token);
+        // if (response.success) {
+        //     addNotification({ message: response.message ?? intl("Success2"), type: "success" });
+        // } else {
+        //     addNotification({ message: response.message ?? intl("Fail2"), type: "error" });
+        // }
 
-        setSearchCriteriaValue(prev => prev);
+        // setSearchCriteriaValue(prev => prev);
     }
 
     useEffect(() => {
@@ -246,56 +236,48 @@ const OrdersMain = () => {
     }, [fetchData]);
 
     return (
-        <>
-            <AddContent addInfo={addInfo} openAdd={openAdd} reloadData={() => {}} setAddInfo={setAddInfo} setOpenAdd={setOpenAdd}/>
-            <DetailContent openDetail={openDetail} setOpenDetail={setOpenDetail} selectedOrder={selectedOrder} updatePermission={userInfo && userInfo.agencyId ? userInfo.agencyId === selectedOrder?.agencyId : false} setSelectedOrder={setSelectedOrder} reloadData={fetchData} />
-            <TableSwitcher
-                sortBy={sortBy}
-                primaryKey="id"
-                tableData={orders}
-                isPaginated={true}
-                setSortBy={setSortBy}
-                renderCell={renderCell}
-                currentPage={currentPage}
-                currentSize={currentSize}
-                fetchPageData={fetchData}
-                fetchSearchSortData={true}
-                columnsData={columnsData()}
-                renderHeader={renderHeader}
-                selectedRows={selectedRows}
-                setCurrentPage={setCurrentPage}
-                setSelectedRows={setSelectedRows}
-                customSearch={true}
-                customButton={
-                    <CustomButton fetchData={fetchData} selectedRows={selectedRows} openAdd={() => {setOpenAdd(true);}} extraButton={
-                        <div className="flex flex-col lg:flex-row w-full">
-                            <SearchPopUp fields={searchFields} searchCriteriaValue={searchCriteriaValue} setSearchCriteriaValue={setSearchCriteriaValue} />
-                            <CustomInputField
-                                id="ChangeState"
-                                key="ChangeState"
-                                type="select"
-                                select_type="single"
-                                isClearable={false}
-                                className="w-full lg:w-52"
-                                options={changeStateOptions}
-                                value={currentOrderState}
-                                setValue={setCurrentOrderState}
-                                containerClassName="w-full lg:w-fit mb-3 lg:mb-0 lg:mr-3"
-                                inputClassName="bg-lightPrimary dark:!bg-darkContainerPrimary !rounded-lg border-none"
-                            />
-                        </div>
-                    } />
-                }
-                containerClassname="!rounded-xl p-4"
-                selectType="none"
-                setPageSize={{
-                    setCurrentSize,
-                    sizeOptions: [10, 20, 30]
-                }}
-                onRowClick={onRowClick}
-            />
-        </>
+        <RenderCase condition={openOrders}>
+            <DetailPopup
+                customWidth="w-full md:w-fit"
+                title={intl("OrdersList")}
+                onClose={() => setOpenOrders(false)}
+                icon={<FaShippingFast className="w-full h-full" />}
+                noPadding
+            >
+                <div className="relative flex flex-col gap-2 p-2">
+                    <TableSwitcher
+                        primaryKey="id"
+                        tableData={orders}
+                        isPaginated={true}
+                        renderCell={renderCell}
+                        currentPage={currentPage}
+                        currentSize={currentSize}
+                        fetchPageData={fetchData}
+                        fetchSearchSortData={true}
+                        columnsData={columnsData()}
+                        renderHeader={renderHeader}
+                        selectedRows={selectedRows}
+                        customSearch={true}
+                        setCurrentPage={setCurrentPage}
+                        setSelectedRows={setSelectedRows}
+                        customButton={
+                            <CustomButton fetchData={fetchData} selectedRows={selectedRows} extraButton={
+                                <div className="flex flex-col lg:flex-row w-full">
+                                    <SearchPopUp fields={searchFields} searchCriteriaValue={searchCriteriaValue} setSearchCriteriaValue={setSearchCriteriaValue} />
+                                </div>
+                            } />
+                        }
+                        containerClassname="!rounded-xl p-4"
+                        selectType="none"
+                        setPageSize={{
+                            setCurrentSize,
+                            sizeOptions: [10, 20, 30]
+                        }}
+                    />
+                </div>
+            </DetailPopup>
+        </RenderCase>
     );
-}
+};
 
-export default OrdersMain;
+export default UpdateContent;
