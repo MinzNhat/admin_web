@@ -213,7 +213,9 @@
     "Success2": "Xoá đơn hàng đã chọn thành công",
     "Fail2": "Xoá đơn hàng đã chọn thất bại",
     "permission2": "Không đủ quyền hạn",
-    "OrdersList": "Danh sách đơn hàng"
+    "OrdersList": "Danh sách đơn hàng",
+    "CreateSuccess": "Tạo đơn hàng mới thành công",
+    "CreateFail": "Đã có lỗi xảy ra khi tạo đơn hàng mới"
   },
   "AddStaff": {
     "Title": "Thêm nhân viên",

@@ -232,7 +232,7 @@ const AddContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData }: Pr
         
         
         // setSource(destCoor);
-        const response = await orderOperation.create(
+        const response = await orderOperation.createByAdmin(
             {
                 ...addInfo, 
                 serviceType: addInfo.serviceType[0]??"",
@@ -251,10 +251,10 @@ const AddContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData }: Pr
             }, token);
 
         if (response.success) {
-            addNotification({ message: intl("Success"), type: "success" });
+            addNotification({ message: intl("CreateSuccess"), type: "success" });
             reloadData();
         } else {
-            addDefaultNotification({ message: response.message || intl("Fail") });
+            addDefaultNotification({ message: response.message || intl("CreateFail") });
         }
 
         setLoading(false);

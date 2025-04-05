@@ -470,6 +470,33 @@ export class OrdersOperation {
         }
     }
 
+    async createByAdmin(payload: CreateOrderDto, token: string) {
+        try {
+            const formData = new FormData();
+            formData.append("data", JSON.stringify(payload));
+
+            const response = await axios.post(`${this.baseUrl}/create_by_admin`, formData, {
+                withCredentials: true,
+                headers: {
+                    Authorization: "Bearer " + token,
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        }
+        catch (error: any) {
+            console.log("Error searching orders: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+        }
+    }
+
     async search(payload: SearchPayload, token: string) {
         try {
             const response: AxiosResponse = await axios.post(`${this.baseUrl}/search`, payload, {

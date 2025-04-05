@@ -211,7 +211,9 @@
     "Success2": "Successfully deleted the selected orders",
     "Fail2": "Failed to delete the selected orders",
     "permission2": "Insufficient permissions",
-    "OrdersList":"Order list"
+    "OrdersList":"Order list",
+    "CreateSuccess": "Order created successfully",
+    "CreateFail": "Failed to create order"
   },
   "AddStaff": {
     "Title": "Add Staff",
