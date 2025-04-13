@@ -232,9 +232,9 @@ const StaffsMain = () => {
     return (
         <>
             {staffInfo && (shipperTab? 
-            <UpdateContent openOrders={openUpdate} reloadData={fetchData} setOpenOrders={setOpenUpdate} shipperData={staffInfo}/>: 
-            <AddDayOff openAdd={openDayOff} setOpenAdd={setOpenDayOff} staff={staffInfo}/>)}
-            <AddContent addInfo={addInfo} openAdd={openAdd} setAddInfo={setAddInfo} setOpenAdd={setOpenAdd} reloadData={fetchData} />
+            openUpdate && <UpdateContent openOrders={openUpdate} reloadData={fetchData} setOpenOrders={setOpenUpdate} shipperData={staffInfo}/>: 
+            openDayOff && <AddDayOff openAdd={openDayOff} setOpenAdd={setOpenDayOff} staff={staffInfo}/>)}
+            {addInfo && <AddContent addInfo={addInfo} openAdd={openAdd} setAddInfo={setAddInfo} setOpenAdd={setOpenAdd} reloadData={fetchData} />}
             <TableSwitcher
                 primaryKey="id"
                 tableData={staffs}
@@ -281,6 +281,7 @@ const StaffsMain = () => {
                         roles: value.roles.map(role => role.value)
                     };
                     setStaffInfo(value);
+                    console.log(value);
                     setOpenUpdate(shipperTab);
                     setOpenDayOff(true);
                 }}

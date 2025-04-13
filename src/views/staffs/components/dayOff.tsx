@@ -137,8 +137,8 @@ const AddDayOff = ({ openAdd, setOpenAdd, staff }: Props) => {
 
 
     const fetchData = useCallback(async () => {
-        const token = getTokenFromCookie();
         setDayOffs([]);
+        const token = getTokenFromCookie();
         setSelectedRows([]);
 
         if (!token) return;
