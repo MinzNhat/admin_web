@@ -44,13 +44,14 @@ type DetailFields = {
 type Props = {
     openDetail: boolean;
     setOpenDetail: React.Dispatch<React.SetStateAction<boolean>>;
+    setOpenAssignTask: React.Dispatch<React.SetStateAction<boolean>>;
     selectedOrder?: OrderData;
     setSelectedOrder: React.Dispatch<React.SetStateAction<OrderData | undefined>>;
     updatePermission?: boolean;
     reloadData: () => void;
 }
 
-const DetailContent = ({ openDetail, setOpenDetail, selectedOrder, updatePermission, setSelectedOrder, reloadData }: Props) => {
+const DetailContent = ({ openDetail, setOpenDetail, selectedOrder, updatePermission, setSelectedOrder, reloadData, setOpenAssignTask }: Props) => {
     const tasksOp = new TaskOperation();
     const orderOp = new OrdersOperation();
     const intl = useTranslations("OrdersRoute");
@@ -357,6 +358,15 @@ const DetailContent = ({ openDetail, setOpenDetail, selectedOrder, updatePermiss
                             active:bg-red-700 dark:text-white dark:hover:bg-red-400 dark:active:bg-red-300 flex justify-center place-items-center"
                         >
                             {updatePermission ? (loading ? <LoadingUI /> : intl("update")) : intl("permission")}
+                        </CustomButton>
+                        <CustomButton
+                            version="1"
+                            onClick={() => setOpenAssignTask(true)}
+                            color="error"
+                            className="linear !min-w-40 !w-40 !px-0 rounded-md bg-lightContainer dark:!bg-darkContainer border border-red-500 dark:!border-red-500 h-10 text-base font-medium transition duration-200 hover:border-red-600 
+                            active:border-red-700 text-red-500 dark:text-white dark:hover:border-red-400 dark:active:border-red-300 flex justify-center place-items-center"
+                        >
+                           {intl("assignTask")}
                         </CustomButton>
                     </Container>
                 </div>

@@ -22,6 +22,7 @@ import { UUID } from "crypto";
 import { useNotifications } from "@/hooks/NotificationsProvider";
 import { useSubmitNotification } from "@/hooks/SubmitNotificationProvider";
 import AddContent from "./addContent";
+import AssignOrderToShipper from "./assignTask";
 
 
 const OrdersMain = () => {
@@ -40,6 +41,7 @@ const OrdersMain = () => {
     const [sortBy, setSortBy] = useState<{ id: string; desc: boolean }[]>([]);
     const [currentOrderState, setCurrentOrderState] = useState<OrderState[]>(['ALL']);
     const [openAdd, setOpenAdd] = useState(false);
+    const [openAssignTask, setOpenAssignTask] = useState(false);
 
     const orderStateOptions: OrderState[] = ['ALL', 'PROCESSING', 'NTHIRD_PARTY_DELIVERY'];
     const [searchCriteriaValue, setSearchCriteriaValue] = useState<SearchCriteria>({
@@ -248,7 +250,8 @@ const OrdersMain = () => {
     return (
         <>
             <AddContent addInfo={addInfo} openAdd={openAdd} reloadData={() => {}} setAddInfo={setAddInfo} setOpenAdd={setOpenAdd}/>
-            <DetailContent openDetail={openDetail} setOpenDetail={setOpenDetail} selectedOrder={selectedOrder} updatePermission={userInfo && userInfo.agencyId ? userInfo.agencyId === selectedOrder?.agencyId : false} setSelectedOrder={setSelectedOrder} reloadData={fetchData} />
+            <DetailContent openDetail={openDetail} setOpenDetail={setOpenDetail} selectedOrder={selectedOrder} updatePermission={userInfo && userInfo.agencyId ? userInfo.agencyId === selectedOrder?.agencyId : false} setSelectedOrder={setSelectedOrder} reloadData={fetchData} setOpenAssignTask={setOpenAssignTask}/>
+            {openAssignTask && <AssignOrderToShipper openAssignTask={openAssignTask} setOpenAssignTask={setOpenAssignTask} selectedOrder={selectedOrder}/>}
             <TableSwitcher
                 sortBy={sortBy}
                 primaryKey="id"

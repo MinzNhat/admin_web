@@ -43,7 +43,7 @@ type Props = {
     reloadData: () => void;
 }
 
-const OrdersToShipment = ({openOrders, setOpenOrders, addOrderToShipment, reloadData} : Props) => {
+const OrdersToShipment = ({ openOrders, setOpenOrders, addOrderToShipment, reloadData }: Props) => {
     const orderOp = new OrdersOperation();
     const intl = useTranslations("OrdersRoute");
     const [orderId, setOrderId] = useState<UUID>();
@@ -129,7 +129,7 @@ const OrdersToShipment = ({openOrders, setOpenOrders, addOrderToShipment, reload
                     </RenderCase>
                 </div>
             )
-        } 
+        }
     };
 
     const onRowClick = (value: OrderData) => {
@@ -139,7 +139,7 @@ const OrdersToShipment = ({openOrders, setOpenOrders, addOrderToShipment, reload
     };
 
     const handleAdd = () => {
-        addOrderToShipment(selectedRows.map((row) => {return row.id}));
+        addOrderToShipment(selectedRows.map((row) => { return row.id }));
     }
 
     const fetchData = useCallback(async () => {
@@ -202,64 +202,64 @@ const OrdersToShipment = ({openOrders, setOpenOrders, addOrderToShipment, reload
     }, [fetchData]);
 
     return (
-                <RenderCase condition={openOrders}>
-                    <DetailPopup
-                        customWidth="w-full md:w-fit"
-                        title={intl("OrdersList")}
-                        onClose={() => setOpenOrders(false)}
-                        icon={<FaShippingFast className="w-full h-full" />}
-                        noPadding
-                    >
-                        <div className="relative flex flex-col gap-2 p-2">
-                            <TableSwitcher
-                                sortBy={sortBy}
-                                primaryKey="id"
-                                tableData={orders}
-                                isPaginated={true}
-                                setSortBy={setSortBy}
-                                renderCell={renderCell}
-                                currentPage={currentPage}
-                                currentSize={currentSize}
-                                fetchPageData={fetchData}
-                                fetchSearchSortData={true}
-                                columnsData={columnsData()}
-                                renderHeader={renderHeader}
-                                selectedRows={selectedRows}
-                                setCurrentPage={setCurrentPage}
-                                setSelectedRows={setSelectedRows}
-                                customSearch={true}
-                                customButton={
-                                    <CustomButton fetchData={fetchData} selectedRows={selectedRows} extraButton={
-                                        <div className="flex flex-col lg:flex-row w-full">
-                                            <SearchPopUp fields={searchFields} searchCriteriaValue={searchCriteriaValue} setSearchCriteriaValue={setSearchCriteriaValue} />
-                                            <CustomInputField
-                                                id="ChangeState"
-                                                key="ChangeState"
-                                                type="select"
-                                                select_type="single"
-                                                isClearable={false}
-                                                className="w-full lg:w-52"
-                                                options={changeStateOptions}
-                                                value={currentOrderState}
-                                                setValue={setCurrentOrderState}
-                                                containerClassName="w-full lg:w-fit mb-3 lg:mb-0 lg:mr-3"
-                                                inputClassName="bg-lightPrimary dark:!bg-darkContainerPrimary !rounded-lg border-none"
-                                            />
-                                        </div>
+        <RenderCase condition={openOrders}>
+            <DetailPopup
+                customWidth="w-full md:w-fit"
+                title={intl("OrdersList")}
+                onClose={() => setOpenOrders(false)}
+                icon={<FaShippingFast className="w-full h-full" />}
+                noPadding
+            >
+                <div className="relative flex flex-col gap-2 p-2">
+                    <TableSwitcher
+                        sortBy={sortBy}
+                        primaryKey="id"
+                        tableData={orders}
+                        isPaginated={true}
+                        setSortBy={setSortBy}
+                        renderCell={renderCell}
+                        currentPage={currentPage}
+                        currentSize={currentSize}
+                        fetchPageData={fetchData}
+                        fetchSearchSortData={true}
+                        columnsData={columnsData()}
+                        renderHeader={renderHeader}
+                        selectedRows={selectedRows}
+                        setCurrentPage={setCurrentPage}
+                        setSelectedRows={setSelectedRows}
+                        customSearch={true}
+                        customButton={
+                            <CustomButton fetchData={fetchData} selectedRows={selectedRows} extraButton={
+                                <div className="flex flex-col lg:flex-row w-full">
+                                    <SearchPopUp fields={searchFields} searchCriteriaValue={searchCriteriaValue} setSearchCriteriaValue={setSearchCriteriaValue} />
+                                    <CustomInputField
+                                        id="ChangeState"
+                                        key="ChangeState"
+                                        type="select"
+                                        select_type="single"
+                                        isClearable={false}
+                                        className="w-full lg:w-52"
+                                        options={changeStateOptions}
+                                        value={currentOrderState}
+                                        setValue={setCurrentOrderState}
+                                        containerClassName="w-full lg:w-fit mb-3 lg:mb-0 lg:mr-3"
+                                        inputClassName="bg-lightPrimary dark:!bg-darkContainerPrimary !rounded-lg border-none"
+                                    />
+                                </div>
 
-                                    } openAdd={handleAdd}/>
-                                }
-                                containerClassname="!rounded-xl p-4"
-                                selectType="multi"
-                                setPageSize={{
-                                    setCurrentSize,
-                                    sizeOptions: [10, 20, 30]
-                                }}
-                                onRowClick={onRowClick}
-                            />
-                        </div>
-                    </DetailPopup>
-                </RenderCase>
+                            } openAdd={handleAdd} />
+                        }
+                        containerClassname="!rounded-xl p-4"
+                        selectType="multi"
+                        setPageSize={{
+                            setCurrentSize,
+                            sizeOptions: [10, 20, 30]
+                        }}
+                        onRowClick={onRowClick}
+                    />
+                </div>
+            </DetailPopup>
+        </RenderCase>
     );
 }
 

@@ -335,8 +335,8 @@ export interface CreateShippingBillDto {
 
 export interface AssignTaskToShipperDto {
     orderId: UUID;
-    staffId: UUID;
-    mission: MissionType;
+    staffId: string;
+    mission: string;
 }
 
 export interface UpdateTaskDto {
