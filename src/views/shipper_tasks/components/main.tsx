@@ -208,7 +208,7 @@ const TasksMain = () => {
         <>
             {staffInfo && <UpdateContent openUpdate={openUpdateStaff} reloadData={fetchData} setOpenUpdate={setOpenUpdateStaff} setStaffInfo={setStaffInfo} staffInfo={staffInfo} />}
             <MapPopup openMap={openMap} setOpenMap={setOpenMap} journey={journeyData} />
-            <DetailContent openDetail={openOrderDetail} setOpenDetail={setOpenOrderDetail} selectedOrder={selectedOrder} setSelectedOrder={setSelectedOrder} updatePermission={userInfo && userInfo.agencyId ? userInfo.agencyId === selectedOrder?.agencyId : false} reloadData={fetchData} />
+            <DetailContent openDetail={openOrderDetail} setOpenDetail={setOpenOrderDetail} selectedOrder={selectedOrder} setSelectedOrder={setSelectedOrder} updatePermission={userInfo && userInfo.agencyId ? userInfo.agencyId === selectedOrder?.agencyId : false} reloadData={fetchData} setOpenAssignTask={() => {}}/>
             <TableSwitcher
                 primaryKey="id"
                 tableData={tasks}
