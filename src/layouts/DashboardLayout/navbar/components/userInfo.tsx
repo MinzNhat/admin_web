@@ -25,7 +25,7 @@ const InfoContent = () => {
         agencyId:"",
         paidDebt: 0,
         unpaidDebt: 0,
-        
+        status: ""
     });
 
     const handleChange = (id: keyof StaffInfo, value: string) => {
