@@ -107,7 +107,15 @@
     "Submit": "Submit",
     "firstName": "First Name",
     "lastName": "Last Name",
-    "IsShipper": "Search by shipper"
+    "IsShipper": "Search by shipper",
+    "Title": "Staffs' information",
+    "WORKING": "Working",
+    "status": "Status",
+    "NoInfor": "No information",
+    "confirmAssign": "Confirm assigning the selected staff to the task?",
+    "paidDebt": "Paid debt",
+    "unpaidDebt": "Unpaid debt",
+    "shipperDeposit": "Shipper deposit"
   },
   "TableCustomButton": {
     "Add": "Add",
@@ -213,7 +221,8 @@
     "permission2": "Insufficient permissions",
     "OrdersList":"Order list",
     "CreateSuccess": "Order created successfully",
-    "CreateFail": "Failed to create order"
+    "CreateFail": "Failed to create order",
+    "assignTask": "Assign task"
   },
   "AddStaff": {
     "Title": "Add Staff",
@@ -416,7 +425,10 @@
     "Update": "Update",
     "Submit": "Submit",
     "Title": "Update config",
-    "NoPermit": "No permission!"
+    "NoPermit": "No permission!",
+    "SN": "Super fast",
+    "SR": "Super cheap",
+    "thirdParty": "Third party delivery"
   },
   "DayOff": {
     "Title": "Staff Information",

@@ -53,6 +53,7 @@ declare type StaffInfo = {
     shipperStatus: boolean;
     paidDebt: number;
     unpaidDebt: number;
+    status: string;
 };
 
 declare type DayOffInfo = {

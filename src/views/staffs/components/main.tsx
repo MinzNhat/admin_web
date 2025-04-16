@@ -105,19 +105,19 @@ const StaffsMain = () => {
         } else if (cellHeader === intl("shipperType")) {
             return (
                 <div className="w-full h-full whitespace-nowrap">
-                    {intl(cellValue??"NoInfor")}
+                    {intl(cellValue?cellValue.type:"NoInfor")}
                 </div>
             );
-        } else if (cellHeader === intl("shipperStatus")) {
+        } else if (cellHeader === intl("status")) {
             return (
                 <div className="w-full h-full whitespace-nowrap">
-                    {intl(cellValue?"active":"inactive")}
+                    {intl(cellValue !== ''? cellValue : "NoInfor")}
                 </div>
             );
         } else if (cellHeader === intl("shipperDeposit")) {
             return (
                 <div className="w-full h-full whitespace-nowrap">
-                    {(cellValue && cellValue.deposit > 0)?(cellValue.deposit as number): cellValue as number}
+                    {cellValue?.deposit ?? ''}
                     {/* {cellValue.deposit as string} */}
                 </div>
             );

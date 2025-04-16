@@ -108,7 +108,15 @@
     "firstName": "Tên",
     "lastName": "Họ",
     "IsShipper": "Tìm theo shipper",
-    "NoPermit": "Bạn không có quyền truy cập tài nguyên này!"
+    "NoPermit": "Bạn không có quyền truy cập tài nguyên này!",
+    "Title": "Thông tin các nhân viên",
+    "WORKING": "Đang làm việc",
+    "NoInfor": "Không có thông tin",
+    "status": "Trạng thái",
+    "confirmAssign": "Xác nhận giao việc cho nhân viên này?",
+    "paidDebt": "Nợ đã thanh toán",
+    "unpaidDebt": "Nợ chưa thanh toán",
+    "shipperDeposit": "Tiền đặt cọc của shipper"
   },
   "TableCustomButton": {
     "Add": "Thêm",
@@ -215,7 +223,8 @@
     "permission2": "Không đủ quyền hạn",
     "OrdersList": "Danh sách đơn hàng",
     "CreateSuccess": "Tạo đơn hàng mới thành công",
-    "CreateFail": "Đã có lỗi xảy ra khi tạo đơn hàng mới"
+    "CreateFail": "Đã có lỗi xảy ra khi tạo đơn hàng mới",
+    "assignTask": "Giao việc"
   },
   "AddStaff": {
     "Title": "Thêm nhân viên",
@@ -421,7 +430,10 @@
     "Update": "Cập nhật",
     "Title": "Cập nhật cấu hình",
     "Submit": "Xác nhận",
-    "NoPermit": "Bạn không có quyền cập nhật!"
+    "NoPermit": "Bạn không có quyền cập nhật!",
+    "SN": "Siêu nhanh",
+    "SR": "Siêu rẻ",
+    "thirdParty": "Giao cho bên thứ ba"
   },
   "DayOff": {
     "Title": "Thông tin nhân viên",

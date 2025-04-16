@@ -54,17 +54,17 @@ export const columnsData2 = (): Column<StaffInfo>[] => {
             Header: intl("salary"),
             accessor: "salary",
         },
-        // {
-        //     Header: intl("shipperDeposit"),
-        //     accessor: "shipperDeposit",
-        // },
+        {
+            Header: intl("shipperDeposit"),
+            accessor: "shipperDeposit",
+        },
         {
             Header: intl("shipperType"),
             accessor: "shipperType",
         },
         {
-            Header: intl("shipperStatus"),
-            accessor: "shipperStatus",
+            Header: intl("status"),
+            accessor: "status",
         },
         {
             Header: intl("paidDebt"),
