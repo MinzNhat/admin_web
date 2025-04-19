@@ -18,15 +18,19 @@ import RenderCase from "@/components/render";
 import { Button } from "@nextui-org/react";
 import { MdAutorenew } from "react-icons/md";
 import AddDayOff from "./dayOff";
+import { useSubmitNotification } from "@/hooks/SubmitNotificationProvider";
+import { useNotifications } from "@/hooks/NotificationsProvider";
 
 const StaffsMain = () => {
     const staffOp = new StaffOperation();
     const intl = useTranslations("StaffInfo");
+        const { addNotification } = useNotifications();
     const TableMessage = useTranslations('Table');
     const [staffs, setStaffs] = useState<StaffInfo[]>();
     const [openAdd, setOpenAdd] = useState<boolean>(false);
     const [openDayOff, setOpenDayOff] = useState(false);
     const [currentPage, setCurrentPage] = useState<number>(1);
+    const { addSubmitNotification } = useSubmitNotification();
     const [currentSize, setCurrentSize] = useState<number>(10);
     const [openUpdate, setOpenUpdate] = useState<boolean>(false);
     const [staffInfo, setStaffInfo] = useState<StaffInfo>();
@@ -74,6 +78,23 @@ const StaffsMain = () => {
         managedWards: [],
         shipperType: [ShipperType["LT"]]
     });
+
+    const handleDelete = async () => {
+        const token = getTokenFromCookie();
+        if (!token) return;
+        for(const row of selectedRows) {
+            const response = await staffOp.delete(row.id, token);
+            if(!response.success) {
+                addNotification({message: response.message, type: "error"});
+                return;
+            }
+        }
+        addNotification({
+            message: intl("Success"),
+            type: "success"
+        });
+        fetchData();
+    }
 
     const renderCell = (cellHeader: string, cellValue: string | number | boolean | any) => {
         if (cellHeader === intl("roles")) {
@@ -248,7 +269,10 @@ const StaffsMain = () => {
                 selectedRows={selectedRows}
                 setCurrentPage={setCurrentPage}
                 setSelectedRows={setSelectedRows}
-                customButton={<CustomButton fetchData={fetchData} selectedRows={selectedRows} openAdd={() => { setOpenAdd(true) }}
+                customButton={
+                <CustomButton fetchData={fetchData} 
+                handleDelete={() => {addSubmitNotification({ message: intl("delete"), submitClick:  handleDelete})}}
+                selectedRows={selectedRows} openAdd={() => { setOpenAdd(true) } }
                     extraButton={
                         <>
                             <SearchPopUp fields={searchFields} searchCriteriaValue={searchCriteriaValue} setSearchCriteriaValue={setSearchCriteriaValue} />

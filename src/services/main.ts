@@ -149,28 +149,21 @@ export class AgencyOperation {
         try {
             const response: AxiosResponse = await axios.get(`${this.baseUrl}/contract/download/${fileId}`, {
                 withCredentials: true,
-                validateStatus: status => status >= 200 && status <= 500,
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    Authorization: "Bearer " + token
                 },
-                responseType: 'stream',
+                responseType: "blob"
             });
 
-            return {
-                success: response.data.success,
-                message: response.data.message,
-                data: response.data.data,
-                status: response.status,
-                stream: response.data, // Dữ liệu stream của file
-            };
-        } catch (error: any) {
-            console.log("Error downloading contract file: ", error?.response?.data);
-            console.error("Request that caused the error: ", error?.request);
-            return {
-                success: error?.response?.data,
-                request: error?.request,
-                status: error.response ? error.response.status : null,
-            };
+            if (response.data instanceof Blob) {
+                return response.data;
+            } else {
+                console.error("Response is not a Blob:", response.data);
+                return null;
+            }
+        } catch (error) {
+            console.error("Error getting contracts:", error);
+            return null;
         }
     }
 
@@ -178,28 +171,21 @@ export class AgencyOperation {
         try {
             const response: AxiosResponse = await axios.get(`${this.baseUrl}/company/license/download/${fileId}`, {
                 withCredentials: true,
-                validateStatus: status => status >= 200 && status <= 500,
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    Authorization: "Bearer " + token
                 },
-                responseType: 'stream',
+                responseType: "blob"
             });
 
-            return {
-                success: response.data.success,
-                message: response.data.message,
-                data: response.data.data,
-                status: response.status,
-                stream: response.data, // Dữ liệu stream của file
-            };
-        } catch (error: any) {
-            console.log("Error downloading company license file: ", error?.response?.data);
-            console.error("Request that caused the error: ", error?.request);
-            return {
-                success: error?.response?.data,
-                request: error?.request,
-                status: error.response ? error.response.status : null,
-            };
+            if (response.data instanceof Blob) {
+                return response.data;
+            } else {
+                console.error("Response is not a Blob:", response.data);
+                return null;
+            }
+        } catch (error) {
+            console.error("Error getting licenses:", error);
+            return null;
         }
     }
 }
@@ -2087,6 +2073,30 @@ export class StaffOperation {
         }
         catch (error: any) {
             console.log("Error fetching shipper extended info: ", error?.response?.data);
+            console.error("Request that caused the error: ", error?.request);
+            return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+        }
+    }
+
+    async delete(id: string, token: string) {
+        try {
+            const response: AxiosResponse = await axios.delete(`${this.baseUrl}/delete/${id}`, {
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            });
+
+            return {
+                success: response.data.success,
+                message: response.data.message,
+                data: response.data.data,
+                status: response.status
+            };
+        }
+        catch (error: any) {
+            console.log("Error deleting staff: ", error?.response?.data);
             console.error("Request that caused the error: ", error?.request);
             return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
         }

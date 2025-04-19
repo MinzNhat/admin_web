@@ -42,20 +42,32 @@ export const columnsData = (): Column<AgencyInfo>[] => {
             accessor: "postalCode",
         },
         {
+            Header: intl("bin"),
+            accessor: "bin",
+        },
+        {
+            Header: intl("bank"),
+            accessor: "bank",
+        },
+        {
+            Header: intl("commissionRate"),
+            accessor: "commissionRate",
+        },
+        {
+            Header: intl("revenue"),
+            accessor: "revenue",
+        },
+        {
+            Header: intl("isIndividual"),
+            accessor: "isIndividual",
+        },
+        {
             Header: intl("phoneNumber"),
             accessor: "phoneNumber",
         },
         {
             Header: intl("email"),
             accessor: "email",
-        },
-        {
-            Header: intl("company"),
-            accessor: "company",
-        },
-        {
-            Header: intl("contracts"),
-            accessor: "contracts",
         },
     ];
 };
@@ -110,6 +122,7 @@ export const columnsData = (): Column<AgencyInfo>[] => {
 //         "name": "Công ty Cổ phần Bất động sản Tiến Dũng",
 //         "licenses": [
 //             {
+    //             "id": "",
 //                 "name": "Giấy phép kinh do",
 //                 "path": "src/modules/storage/uploads/orders_signatures/1729507980377_order_2.jpg"
 //             }
@@ -117,6 +130,7 @@ export const columnsData = (): Column<AgencyInfo>[] => {
 //     },
 //     "contracts": [
 //         {
+    //             "id": "",
 //             "name": "contract2",
 //             "path": "src/modules/storage/uploads/orders_signatures/1729507980377_order_2.jpg"
 //         }

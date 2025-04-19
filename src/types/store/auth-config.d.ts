@@ -31,7 +31,7 @@ declare type StaffInfo = {
     bin?: string;
     birthDate?: string;
     cccd?: string;
-    createdAt: string;
+    createdAt?: string;
     shipperDeposit?: number | {deposit: number};
     deposit?: number;
     detailAddress?: string;
@@ -46,14 +46,14 @@ declare type StaffInfo = {
     salary?: number;
     staffId?: string;
     town?: string;
-    updatedAt: string;
+    updatedAt?: string;
     username: string;
     managedWards?: ManagedWard[];
     shipperType?: ShipperType | ShipperType[];
-    shipperStatus: boolean;
-    paidDebt: number;
-    unpaidDebt: number;
-    status: string;
+    shipperStatus?: boolean;
+    paidDebt?: number;
+    unpaidDebt?: number;
+    status?: string;
 };
 
 declare type DayOffInfo = {

@@ -315,7 +315,14 @@
     "Submit": "Submit",
     "companytaxcode": "Company's tax code",
     "IsPostOffice": "Post office",
-    "IsAgency": "Agency"
+    "IsAgency": "Agency",
+    "menu": "File menu",
+    "company": "Company",
+    "nameCompany": "Company name",
+    "contract": "Contract",
+    "license": "License",
+    "taxCode":"Tax Code",
+    "download": "Download"
   },
   "TasksRoute": {
     "id": "Task ID",

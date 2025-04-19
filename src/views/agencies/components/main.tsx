@@ -11,12 +11,15 @@ import { columnsData } from "../variables/columnsData";
 import { useCallback, useEffect, useState } from "react";
 import { useNotifications } from "@/hooks/NotificationsProvider";
 import SearchPopUp, { DetailFields } from "@/views/customTableSearchPopUp";
-import { AgencyType, CreateAgencyDto, CreateAgencyManager, CreateCompanyDto, SearchCriteria } from "@/services/interface";
+import { AgencyType, CreateAgencyDto, CreateAgencyManager, CreateCompanyDto, SearchCriteria, StaffRole } from "@/services/interface";
 import { useSubmitNotification } from "@/hooks/SubmitNotificationProvider";
 import { HiOutlineMagnifyingGlassCircle } from "react-icons/hi2";
 import { Button } from "@nextui-org/react";
 import FileOpen from "./fileOpen";
-import { IoRepeat } from "react-icons/io5";
+import { IoPersonCircleOutline, IoRepeat } from "react-icons/io5";
+import { StaffInfo, StaffInfoUpdate } from "@/types/store/auth-config";
+import UpdateContent from "@/views/shipper_tasks/components/addContent";
+import UpdateContentAgency from "./updateContent";
 
 const AgenciesMain = () => {
     const agencyOp = new AgencyOperation();
@@ -25,8 +28,12 @@ const AgenciesMain = () => {
     const [openAdd, setOpenAdd] = useState<boolean>(false);
     const [agencies, setAgencies] = useState<AgencyInfo[]>();
     const { addSubmitNotification } = useSubmitNotification();
+    const [staffInfo, setStaffInfo] = useState<StaffInfoUpdate>();
     const [currentPage, setCurrentPage] = useState<number>(1);
+    const [openDetail, setOpenDetail] = useState(false);
+    const [selectedAgency, setSelectedAgency] = useState<AgencyInfo | null>(null);
     const [openAgencyDetail, setOpenAgencyDetail] = useState(false);
+    const [openUpdateStaff, setOpenUpdateStaff] = useState<boolean>(false);
     const [currentSize, setCurrentSize] = useState<number>(10);
     const [selectedRows, setSelectedRows] = useState<AgencyInfo[]>([]);
     const [addInfo, setAddInfo] = useState<CreateAgencyManager>({
@@ -55,6 +62,14 @@ const AgenciesMain = () => {
         { label: intl("phoneNumber"), label_value: "phoneNumber", type: "text" },
     ];
 
+    const openStaff = (value: StaffInfo) => {
+        const updatedStaffInfo: StaffInfoUpdate = {
+            ...value,
+            roles: value.roles?.map(role => role.value)
+        };
+        setStaffInfo(updatedStaffInfo);
+        setOpenUpdateStaff(true);
+    };
 
     const renderCell = (cellHeader: string, _cellValue: string | boolean | number | any, rowValue: AgencyInfo) => {
         if (cellHeader === intl("detailAddress")) {
@@ -65,10 +80,42 @@ const AgenciesMain = () => {
             );
         } else if (cellHeader === intl("manager")) {
             return (
-                <div className="w-full h-full whitespace-nowrap">
+                <div className="flex justify-start place-items-center gap-2 whitespace-nowrap">
+                    <Button className="min-h-5 min-w-5 w-5 h-5 p-0 rounded-full bg-lightContainer dark:!bg-darkContainer" onPress={() => openStaff({
+                            username: rowValue.manager.username,
+                            agencyId: rowValue.manager.agencyId,
+                            avatar: rowValue.manager.avatar,
+                            bank: rowValue.manager.bank,
+                            bin: rowValue.manager.bin,
+                            birthDate: rowValue.manager.birthDate,
+                            cccd: rowValue.manager.cccd,
+                            deposit: rowValue.manager.deposit,
+                            detailAddress: rowValue.manager.detailAddress,
+                            district: rowValue.manager.district,
+                            email: rowValue.manager.email ?? "",
+                            fullname: rowValue.manager.fullname,
+                            id: rowValue.manager.id,
+                            paidSalary: rowValue.manager.paidSalary,
+                            phoneNumber: rowValue.manager.phoneNumber ?? "",
+                            province: rowValue.manager.province,
+                            roles: [
+                                {value: StaffRole.AGENCY_MANAGER}
+                            ],
+                            salary: rowValue.manager.salary,
+                            staffId: rowValue.manager.staffId,
+                            town: rowValue.manager.town,
+                        })}>
+                        <IoPersonCircleOutline className="min-h-5 min-w-5" />
+                    </Button>
                     {rowValue.manager.fullname}
                 </div>
-            );
+            )
+            // } else if (cellHeader === intl("manager")) {
+            //     return (
+            //         <div className="w-full h-full whitespace-nowrap">
+            //             {rowValue.manager.fullname}
+            //         </div>
+            //     );
         } else if (cellHeader === intl('company')) {
             return (
                 <div className="w-full h-full whitespace-nowrap">
@@ -100,7 +147,7 @@ const AgenciesMain = () => {
         const typeCriteria = {
             field: "type",
             operator: "=",
-            value: isAgency?"BC":"DL"
+            value: isAgency ? "BC" : "DL"
         } as SearchCriteria;
 
         const response = await agencyOp.search({
@@ -179,6 +226,8 @@ const AgenciesMain = () => {
     return (
         <>
             <AddAgencyContent addInfo={addInfo} openAdd={openAdd} setAddInfo={setAddInfo} addInfo2={addInfo2} setAddInfo2={setAddInfo2} setOpenAdd={setOpenAdd} reloadData={reloadData} addInfo3={addInfo3} setAddInfo3={setAddInfo3} />
+            {staffInfo && <UpdateContent openUpdate={openUpdateStaff} reloadData={fetchData} setOpenUpdate={setOpenUpdateStaff} setStaffInfo={setStaffInfo} staffInfo={staffInfo} />}
+            {openAgencyDetail && <UpdateContentAgency openAdd={openAgencyDetail} setOpenAdd={setOpenAgencyDetail} selectedAgency={selectedAgency!} setSelectedAgency={setSelectedAgency}/>}
             {/* <FileOpen /> */}
             <TableSwitcher
                 primaryKey="id"
@@ -199,7 +248,7 @@ const AgenciesMain = () => {
                         <>
                             <SearchPopUp fields={searchFields} searchCriteriaValue={searchCriteriaValue} setSearchCriteriaValue={setSearchCriteriaValue} />
                             <div className="mr-4">
-                                
+
                                 <Button
                                     className={`
             w-full lg:w-fit flex items-center text-md hover:cursor-pointer 
@@ -209,7 +258,7 @@ const AgenciesMain = () => {
                                     onPress={toggleType}
                                 >
                                     <IoRepeat size={24} className="text-gray-500" />
-                                    {intl(isAgency?"IsAgency":"IsPostOffice")}
+                                    {intl(isAgency ? "IsAgency" : "IsPostOffice")}
                                 </Button>
                             </div>
                         </>
@@ -219,6 +268,11 @@ const AgenciesMain = () => {
                 setPageSize={{
                     setCurrentSize,
                     sizeOptions: [10, 20, 30]
+                }}
+                onRowClick={(agency) => {
+                    // console.log("agency", agency);
+                    setSelectedAgency(agency);
+                    setOpenAgencyDetail(true);
                 }}
             />
         </>

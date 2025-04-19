@@ -15,7 +15,7 @@ import CustomInputField from "@/components/input";
 import { IoReloadOutline } from "react-icons/io5";
 import { getTokenFromCookie } from "@/utils/token";
 import { useNotifications } from "@/hooks/NotificationsProvider";
-import { RoleValue, StaffInfoUpdate } from "@/types/store/auth-config"
+import { ManagedWard, RoleValue, StaffInfoUpdate } from "@/types/store/auth-config"
 import { useSubmitNotification } from "@/hooks/SubmitNotificationProvider";
 import { useDefaultNotification } from "@/hooks/DefaultNotificationProvider";
 import { UpdateStaffDto, ShipperType, StaffRole } from "@/services/interface";
@@ -72,7 +72,7 @@ const UpdateContent = ({ openUpdate, setOpenUpdate, staffInfo, setStaffInfo, rel
         { id: "email", type: "text", important: true },
         { id: "phoneNumber", type: "text", important: true },
         { id: "cccd", type: "number", important: true },
-        { id: "birthDate", type: "date", dropdownPosition: "bottom", important: true },
+        { id: "birthDate", type: "date", dropdownPosition: "bottom" },
         { id: "roles", type: "select", options: roleOptions, isClearable: false, select_type: "multi", important: true, dropdownPosition: "bottom" },
         ...(staffInfo.roles?.includes(StaffRole["SHIPPER"]) ? [
             { id: "shipperType" as keyof StaffInfoUpdate, type: "select" as InputTypes, select_type: "single" as SelectInputType, options: shipperTypeOptions, isClearable: false, important: true, dropdownPosition: "bottom" as DropdownPosition }
@@ -143,39 +143,40 @@ const UpdateContent = ({ openUpdate, setOpenUpdate, staffInfo, setStaffInfo, rel
     }
 
     const handleCreate = async () => {
-        // setLoading(true);
-        // const token = getTokenFromCookie();
-        // if (!token) {
-        //     return;
-        // }
+        setLoading(true);
+        const token = getTokenFromCookie();
+        if (!token) {
+            return;
+        }
 
-        // const updateStaffData: UpdateStaffDto = {
-        //     ...staffInfo,
-        //     cccd: staffInfo.cccd ? staffInfo.cccd : "",
-        //     agencyId: hasAdminRole ? staffInfo.agencyId ?? "" : userInfo?.agencyId ?? "",
-        //     birthDate: staffInfo.birthDate ? new Date(staffInfo.birthDate).toISOString().slice(0, 10) : undefined,
-        //     province: staffInfo.province || undefined,
-        //     district: staffInfo.district || undefined,
-        //     town: staffInfo.town || undefined,
-        //     detailAddress: staffInfo.detailAddress || undefined,
-        //     bank: staffInfo.bank || undefined,
-        //     bin: staffInfo.bin || undefined,
-        //     deposit: staffInfo.roles.includes(StaffRole["SHIPPER"]) ? (typeof staffInfo.deposit === 'string' ? parseFloat(staffInfo.deposit) : staffInfo.deposit) : undefined,
-        //     salary: typeof staffInfo.salary === 'string' ? parseFloat(staffInfo.salary) : staffInfo.salary || undefined,
-        //     shipperType: staffInfo.roles.includes(StaffRole["SHIPPER"]) ? (Array.isArray(staffInfo.shipperType) ? staffInfo.shipperType[0] : staffInfo.shipperType) : undefined
-        // };
-        // console.log(updateStaffData)
-        // const response = await staffOperation.update(staffInfo.id as UUID, updateStaffData, token);
-        // console.log(response)
-        // if (response.success) {
-        //     setInitValue(staffInfo);
-        //     addNotification({ message: intl("Success2"), type: "success" });
-        //     reloadData();
-        // } else {
-        //     addDefaultNotification({ message: response.message || intl("Fail2") });
-        // }
+        const updateStaffData: UpdateStaffDto = {
+            ...staffInfo,
+            cccd: staffInfo.cccd ? staffInfo.cccd : "",
+            agencyId: hasAdminRole ? staffInfo.agencyId ?? "" : userInfo?.agencyId ?? "",
+            birthDate: staffInfo.birthDate ? new Date(staffInfo.birthDate).toISOString().slice(0, 10) : undefined,
+            province: staffInfo.province || undefined,
+            district: staffInfo.district || undefined,
+            town: staffInfo.town || undefined,
+            detailAddress: staffInfo.detailAddress || undefined,
+            bank: staffInfo.bank || undefined,
+            bin: staffInfo.bin || undefined,
+            deposit: staffInfo.roles.includes(StaffRole["SHIPPER"]) ? (typeof staffInfo.deposit === 'string' ? parseFloat(staffInfo.deposit) : staffInfo.deposit) : undefined,
+            salary: typeof staffInfo.salary === 'string' ? parseFloat(staffInfo.salary) : staffInfo.salary || undefined,
+            shipperType: staffInfo.roles.includes(StaffRole["SHIPPER"]) ? (Array.isArray(staffInfo.shipperType) ? staffInfo.shipperType[0] : staffInfo.shipperType) : undefined,
+            managedWards: (staffInfo.managedWards as ManagedWard[])?.map((ward: any) => {return ward.ward})
+        };
+        console.log(updateStaffData)
+        const response = await staffOperation.update(staffInfo.id as UUID, updateStaffData, token);
+        console.log(response)
+        if (response.success) {
+            setInitValue(staffInfo);
+            addNotification({ message: intl("Success2"), type: "success" });
+            reloadData();
+        } else {
+            addDefaultNotification({ message: response.message || intl("Fail2") });
+        }
 
-        // setLoading(false);
+        setLoading(false);
     };
 
     useEffect(() => {

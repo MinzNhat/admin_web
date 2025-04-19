@@ -320,7 +320,14 @@
     "Submit": "Xác nhận",
     "companytaxcode": "Mã số thuế doanh nghiệp",
     "IsPostOffice": "Đại lý",
-    "IsAgency": "Bưu cục"
+    "IsAgency": "Bưu cục",
+    "menu": "Menu bưu cục - đại lý",
+    "company": "Công ty",
+    "nameCompany": "Tên công ty",
+    "contract": "Hợp đồng",
+    "license": "Giấy phép",
+    "taxCode":"Mã số thuế",
+    "download": "Tải xuống"
   },
   "TasksRoute": {
     "id": "ID công việc",
