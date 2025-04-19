@@ -149,6 +149,8 @@ const OrdersMain = () => {
                     </RenderCase>
                 </div>
             )
+        } else if (cellHeader === intl("isThirdPartyDelivery")) {
+            return <div className="w-full h-full pl-2">{intl(rowValue.isThirdPartyDelivery?"true":"false")}</div>
         } else if (cellHeader === intl("delete")) {
             return (
                 <div className="flex justify-center whitespace-nowrap">

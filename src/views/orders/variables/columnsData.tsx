@@ -51,6 +51,7 @@ export const columnsData = (): Column<OrderData>[] => {
         { Header: intl("wardDest"), accessor: "wardDest" },
         { Header: intl("wardSource"), accessor: "wardSource" },
         { Header: intl("width"), accessor: "width" },
+        { Header: intl("isThirdPartyDelivery"), accessor: "isThirdPartyDelivery" },
     ];
 };
 

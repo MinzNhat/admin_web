@@ -74,6 +74,7 @@ declare type OrderData = {
     wardDest: string;
     wardSource: string;
     width: number;
+    isThirdPartyDelivery: boolean;
 };
 
 declare type OrderImage = {

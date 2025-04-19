@@ -224,7 +224,8 @@
     "OrdersList": "Danh sách đơn hàng",
     "CreateSuccess": "Tạo đơn hàng mới thành công",
     "CreateFail": "Đã có lỗi xảy ra khi tạo đơn hàng mới",
-    "assignTask": "Giao việc"
+    "assignTask": "Giao việc",
+    "isThirdPartyDelivery": "Giao cho bên thứ ba"
   },
   "AddStaff": {
     "Title": "Thêm nhân viên",

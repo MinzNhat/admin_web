@@ -222,7 +222,8 @@
     "OrdersList":"Order list",
     "CreateSuccess": "Order created successfully",
     "CreateFail": "Failed to create order",
-    "assignTask": "Assign task"
+    "assignTask": "Assign task",
+    "isThirdPartyDelivery": "Managed by third party"
   },
   "AddStaff": {
     "Title": "Add Staff",
