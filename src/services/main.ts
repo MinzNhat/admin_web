@@ -1,5 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 
+import FormData from 'form-data';
+import fs from 'fs';
 import { AddJourneyNodeDto, AddOrderToShipmentDto, AdministrativePayload, AssignTaskToShipperDto, CalculateFeePayload, ConfigDepositDto, ConfigServicesDto, CreateAgencyDto, CreateCargoInsuranceDto, CreateDayOffDto, CreateFavoriteOrderLocationDto, CreateGiftOrderTopicDto, CreateOrderDto, CreateShipmentDto, CreateShippingBillDto, CreateStaffDto, CreateVoucherDto, CustomerLoginDto, FileID, MultiFileUpload, OrderImageType, OrderStatus, SearchCriteria, SearchPayload, StaffLoginDto, UpdateAgencyDto, UpdateCargoInsuranceDto, UpdateConfigDto, UpdateCustomerDto, UpdateFavoriteOrderLocationDto, UpdateOrderDto, UpdateOrderLocationDto, UpdateShipperStatusDto, UpdateStaffDto, UpdateTaskDto, VerifyOtpDto } from "./interface";
 import { UUID } from "crypto";
 
@@ -9,7 +11,7 @@ export class AgencyOperation {
     constructor() {
         this.baseUrl = 'https://api.tdlogistics.net.vn/v3/agency';
     }
-    
+
     async getManageWardsById(id: string, token: string) {
         try {
             const response: AxiosResponse = await axios.get(`${this.baseUrl}/managed_wards/${id}`, {
@@ -37,12 +39,27 @@ export class AgencyOperation {
         }
     }
 
-    async create(payload: CreateAgencyDto, token: string) {
+    async create(payload: CreateAgencyDto, token: string, contractPath?: string, licensePath?: string) {
         try {
-            const response: AxiosResponse = await axios.post(`${this.baseUrl}/create`, payload, {
+            const formData = new FormData();
+
+            // Thêm chuỗi JSON vào field 'data'
+            formData.append('data', JSON.stringify(payload));
+
+            // Nếu có file thì thêm vào formData
+            if (contractPath) {
+                formData.append('contract', fs.createReadStream(contractPath));
+            }
+
+            if (licensePath) {
+                formData.append('license', fs.createReadStream(licensePath));
+            }
+
+            const response: AxiosResponse = await axios.post(`${this.baseUrl}/create`, formData, {
                 withCredentials: true,
                 validateStatus: status => status >= 200 && status <= 500,
                 headers: {
+                    ...formData.getHeaders(),
                     Authorization: `Bearer ${token}`,
                 },
             });

@@ -132,6 +132,10 @@ const UpdateContentAgency = ({ openAdd, setOpenAdd, selectedAgency, setSelectedA
     const [openCompany, setOpenCompany] = useState(false);
     const agencyOp = new AgencyOperation();
     const [licenseUrls, setLicenseUrls] = useState<FileInfo[]>([]);
+    const [provinces, setProvinces] = useState<string[]>([]);
+    const administrativeOperation = new AdministrativeOperation();
+    const [districts, setDistricts] = useState<string[]>([]);
+    const [wards, setWards] = useState<string[]>([]);
     const [contractUrls, setContractUrls] = useState<FileInfo[]>([]);
     const individualOptions = [
         'Có', 'Không',
@@ -146,9 +150,55 @@ const UpdateContentAgency = ({ openAdd, setOpenAdd, selectedAgency, setSelectedA
     ];
 
     const companyAddFields: Array<AddFields> = [
-        { id: "nameCompany", type: "text", isClearable: false },
+        { id: "name", type: "text", isClearable: false },
         { id: "taxCode", type: "text", isClearable: false },
     ];
+
+    const provinceOptions: SelectInputOptionFormat[] = Object.values(provinces).map(province => ({
+        label: province,
+        value: province
+    }));
+
+    const districtOptions: SelectInputOptionFormat[] = Object.values(districts).map(district => ({
+        label: district,
+        value: district
+    }));
+
+    const wardOptions: SelectInputOptionFormat[] = Object.values(wards).map(ward => ({
+        label: ward,
+        value: ward
+    }));
+
+    const fetchProvinces = async () => {
+        const response = await administrativeOperation.get({});
+        setProvinces(response.data);
+    };
+
+    const fetchDistricts = async (provinces: string[]) => {
+        let newDistricts: string[] = [];
+
+        for (const province of provinces) {
+            const response = await administrativeOperation.get({ province: province });
+            newDistricts = [...newDistricts, ...response.data];
+        }
+
+        setDistricts((prevDistricts) => [...prevDistricts, ...newDistricts]);
+    };
+
+    const fetchWards = async (provinces: string[], districts: string[]) => {
+        let newWards: string[] = [];
+        console.log("fetchWards");
+        for (const province of provinces) {
+            // console.log(province);
+            for (const district of districts) {
+                // console.log(district);
+                const response = await administrativeOperation.get({ province: province, district: district });
+                newWards = [...newWards, ...response.data];
+            }
+        }
+        console.log(newWards);
+        setWards((prevWards) => [...prevWards, ...newWards]);
+    };
 
     const addFields: Array<AddFields> = [
         { id: "name", type: "text", isClearable: false },
@@ -156,7 +206,6 @@ const UpdateContentAgency = ({ openAdd, setOpenAdd, selectedAgency, setSelectedA
         { id: "bin", type: "text", isClearable: false },
         { id: "commissionRate", type: "number", isClearable: false },
         { id: "detailAddress", type: "text", isClearable: false },
-        { id: "district", type: "text", isClearable: false },
         { id: "email", type: "text", isClearable: false },
         { id: "isIndividual", type: "select", options: individualOptions, isClearable: false },
         { id: "latitude", type: "number", isClearable: false },
@@ -164,9 +213,10 @@ const UpdateContentAgency = ({ openAdd, setOpenAdd, selectedAgency, setSelectedA
         { id: "managerId", type: "text", isClearable: false },
         { id: "phoneNumber", type: "text", isClearable: false },
         { id: "postalCode", type: "text", isClearable: false },
-        { id: "province", type: "text", isClearable: false },
         { id: "revenue", type: "number", isClearable: false },
-        { id: "town", type: "text", isClearable: false },
+        { id: "province", type: "select", options: provinceOptions, isClearable: false, select_type: "multi", important: true, dropdownPosition: "bottom" },
+        { id: "district", type: "select", options: districtOptions, isClearable: false, select_type: "multi", important: true, dropdownPosition: "bottom" },
+        { id: "town", type: "select", options: wardOptions, isClearable: false, select_type: "multi", important: true, dropdownPosition: "bottom" },
         { id: "type", type: "text", isClearable: false },
         { id: "level", type: "text", isClearable: false },
     ];
@@ -312,6 +362,7 @@ const UpdateContentAgency = ({ openAdd, setOpenAdd, selectedAgency, setSelectedA
         if (openAdd) {
             fetchInitialData();
         }
+        fetchProvinces();
     }, []);
 
     return (

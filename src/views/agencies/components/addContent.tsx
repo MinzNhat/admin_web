@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RootState } from "@/store";
 import { useSelector } from "react-redux";
 import { useTranslations } from "next-intl";
@@ -12,7 +12,7 @@ import Container from "@/components/container";
 import CustomButton from "@/components/button";
 import CustomInputField from "@/components/input";
 import { IoReloadOutline } from "react-icons/io5";
-import { AgencyOperation } from "@/services/main";
+import { AdministrativeOperation, AgencyOperation } from "@/services/main";
 import { getTokenFromCookie } from "@/utils/token";
 import { RoleValue } from "@/types/store/auth-config";
 import { useScreenView } from "@/hooks/ScreenViewProvider";
@@ -49,6 +49,10 @@ type Props = {
 const AddAgencyContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData, addInfo2, setAddInfo2, addInfo3, setAddInfo3 }: Props) => {
     const { isXL } = useScreenView();
     const agencyOp = new AgencyOperation();
+    const [provinces, setProvinces] = useState<string[]>([]);
+    const administrativeOperation = new AdministrativeOperation();
+    const [districts, setDistricts] = useState<string[]>([]);
+    const [wards, setWards] = useState<string[]>([]);
     const intl = useTranslations("AgenciesRoute");
     const { addNotification } = useNotifications();
     const [error, setError] = useState<boolean>(false);
@@ -78,6 +82,30 @@ const AddAgencyContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData
         setAddInfo2(prevData => ({ ...prevData, [id]: numberValue }));
     };
 
+    const provinceOptions: SelectInputOptionFormat[] = Object.values(provinces).map(province => ({
+        label: province,
+        value: province
+    }));
+
+    const districtOptions: SelectInputOptionFormat[] = Object.values(districts).map(district => ({
+        label: district,
+        value: district
+    }));
+
+    const wardOptions: SelectInputOptionFormat[] = Object.values(wards).map(ward => ({
+        label: ward,
+        value: ward
+    }));
+
+
+    const updateValuePlace = (id: string, value: string | string[]) => {
+        if (id === "province") {
+            fetchDistricts(Array.isArray(value) ? value : [value]);
+        } else if (id === "district") {
+            fetchWards(provinces, Array.isArray(value) ? value : [value]);
+        }
+    };
+
     const addFields: Array<AddFields> = [
         { id: "type", type: "select", options: agencyTypeOptions, isClearable: false, select_type: "single", important: true, dropdownPosition: !isXL && Array.isArray(addInfo2.isIndividual) && !addInfo2.isIndividual[0] === false ? "right" : "bottom" },
         { id: "isIndividual", type: "select", options: isIndividualOptions, isClearable: false, select_type: "single", important: true, dropdownPosition: !isXL ? "right" : "bottom" },
@@ -90,9 +118,9 @@ const AddAgencyContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData
         { id: "bin", type: "text", important: true },
         { id: "commissionRate", type: "number", important: true, },
         { id: "detailAddress", type: "text", important: true },
-        { id: "province", type: "text", important: true },
-        { id: "district", type: "text", important: true },
-        { id: "town", type: "text", important: true },
+        { id: "province", type: "select", options: provinceOptions, isClearable: false, select_type: "single", important: true, dropdownPosition: "bottom" },
+        { id: "district", type: "select", options: districtOptions, isClearable: false, select_type: "single", important: true, dropdownPosition: "bottom" },
+        { id: "town", type: "select", options: wardOptions, isClearable: false, select_type: "single", important: true, dropdownPosition: "bottom" },
         { id: "revenue", type: "number", important: true },
         { id: "managedWards", type: "select", options: [], select_type: "multi", dropdownPosition: "top" }
     ];
@@ -100,6 +128,26 @@ const AddAgencyContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData
     if (hasAdminRole) {
         addFields.unshift({ id: "agencyId", type: "text", important: true });
     }
+
+    const fetchProvinces = async () => {
+        const response = await administrativeOperation.get({});
+        setProvinces(response.data);
+    };
+
+    const fetchDistricts = async (provinces: string[]) => {
+        let newDistricts: string[] = [];
+
+        const response = await administrativeOperation.get({ province: provinces[0] });
+
+        setDistricts(response.data);
+    };
+
+    const fetchWards = async (provinces: string[], districts: string[]) => {
+        let newWards: string[] = [];
+        const response = await administrativeOperation.get({ province: provinces[0], district: districts[0] });
+        
+        setWards(response.data);
+    };
 
     const managerFields: Array<AddFields> = [
         { id: "fullname", type: "text", important: true },
@@ -111,9 +159,9 @@ const AddAgencyContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData
         { id: "bin", type: "text" },
         { id: "salary", type: "number" },
         { id: "detailAddress", type: "text" },
-        { id: "province", type: "text" },
-        { id: "district", type: "text" },
-        { id: "town", type: "text" },
+        { id: "province", type: "select", options: provinceOptions, isClearable: false, select_type: "single", important: true, dropdownPosition: "bottom" },
+        { id: "district", type: "select", options: districtOptions, isClearable: false, select_type: "single", important: true, dropdownPosition: "bottom" },
+        { id: "town", type: "select", options: wardOptions, isClearable: false, select_type: "single", important: true, dropdownPosition: "bottom" },
     ];
 
     const companyFields: Array<AddFields> = [
@@ -262,6 +310,10 @@ const AddAgencyContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData
         setLoading(false);
     };
 
+    useEffect(() => {
+        fetchProvinces();
+    },[]);
+
     return (
         <RenderCase condition={openAdd}>
             <DetailPopup
@@ -281,7 +333,10 @@ const AddAgencyContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData
                                     key={id}
                                     type={type}
                                     value={addInfo[id as keyof CreateAgencyManager]}
-                                    setValue={(value: string | string[]) => updateValue(id as keyof CreateAgencyManager, value)}
+                                    setValue={(value: string | string[]) => {
+                                        updateValue(id as keyof CreateAgencyManager, value);
+                                        updateValuePlace(id as keyof CreateAgencyManager, value);
+                                    }}
                                     state={error && important && !addInfo[id as keyof CreateAgencyManager] ? "error" : state}
                                     version={version}
                                     options={options}
@@ -306,7 +361,10 @@ const AddAgencyContent = ({ openAdd, setOpenAdd, addInfo, setAddInfo, reloadData
                                     key={id}
                                     type={type}
                                     value={addInfo2[id as keyof CreateAgencyDto]}
-                                    setValue={(value: string | string[]) => { onChange ? onChange(id as keyof CreateAgencyDto, value as string) : updateValue2(id as keyof CreateAgencyDto, value) }}
+                                    setValue={(value: string | string[]) => { 
+                                        onChange ? onChange(id as keyof CreateAgencyDto, value as string) : updateValue2(id as keyof CreateAgencyDto, value) ;
+                                        updateValuePlace(id as keyof CreateAgencyDto, value);
+                                    }}
                                     state={error && important && !addInfo2[id as keyof CreateAgencyDto] ? "error" : state}
                                     version={version}
                                     options={options}
