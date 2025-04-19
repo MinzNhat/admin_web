@@ -2,15 +2,6 @@ import { Column } from "react-table";
 
 import { useTranslations } from "next-intl";
 
-interface ConfigData {
-    id: string;
-    province: string;
-    district: string;
-    ward: string;
-    deposit: number;
-    services: string[];
-}
-
 export const columnsData = (): Column<ConfigData>[] => {
     const intl = useTranslations("Config");
 
@@ -35,5 +26,9 @@ export const columnsData = (): Column<ConfigData>[] => {
             Header: intl("services"),
             accessor: "services",
         },
+        {
+            Header: intl("managedByThirdParty"),
+            accessor: "managedByThirdParty",
+        }
     ];
 };

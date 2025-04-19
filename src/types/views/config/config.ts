@@ -5,4 +5,5 @@ declare type ConfigData = {
     ward: string;
     deposit: number;
     services: string[];
+    managedByThirdParty: boolean;
 }

@@ -428,7 +428,12 @@
     "NoPermit": "No permission!",
     "SN": "Super fast",
     "SR": "Super cheap",
-    "thirdParty": "Third party delivery"
+    "hht": "HHT: Express Delivery",
+    "ttk": "TTK: Economy Delivery",
+    "cpn": "CPN: Courier Delivery",
+    "managedByThirdParty": "Third party delivery",
+    "yes": "Yes",
+    "no": "No"
   },
   "DayOff": {
     "Title": "Staff Information",

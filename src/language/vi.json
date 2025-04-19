@@ -433,7 +433,12 @@
     "NoPermit": "Bạn không có quyền cập nhật!",
     "SN": "Siêu nhanh",
     "SR": "Siêu rẻ",
-    "thirdParty": "Giao cho bên thứ ba"
+    "hht": "HHT: Giao hàng hoả tốc",
+    "ttk": "TTK: Giao hàng tiết kiệm",
+    "cpn": "CPN: Chuyển phát nhanh",
+    "managedByThirdParty": "Giao cho bên thứ ba",
+    "yes": "Có",
+    "no": "Không"
   },
   "DayOff": {
     "Title": "Thông tin nhân viên",

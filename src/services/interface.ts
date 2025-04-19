@@ -178,6 +178,7 @@ export interface UpdateConfigDto {
     district: string;
     ward: string;
     serviceNames: string[];
+    managedByThirdParty: boolean;
 }
 
 export interface ConfigServicesDto {

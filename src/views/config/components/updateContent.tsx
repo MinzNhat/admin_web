@@ -72,6 +72,7 @@ const UpdateContent = ({ openAdd, setOpenAdd, locations }: Props) => {
     const [selectedDistricts, setSelectedDistricts] = useState<string[]>([]);
     const [selectedWards, setSelectedWards] = useState<string[]>([]);
     const [depositAmount, setDepositAmount] = useState(0);
+    const [managedByThirdParty, setManagedByThirdParty] = useState(false);
     const [services, setServices] = useState<string[]>([]);
     const [addInfo, setAddInfo] = useState<Location>({ id: "", district: "", province: "", ward: "", services: [], deposit: 0 });
     const [error, setError] = useState<boolean>(false);
@@ -82,7 +83,14 @@ const UpdateContent = ({ openAdd, setOpenAdd, locations }: Props) => {
     const { addNotification } = useNotifications();
 
     const serviceOptions = [
-        'Siêu nhanh', 'Siêu rẻ',
+        intl('SN'), intl('SR'), intl('cpn'), intl('ttk'), intl('hht'), 
+    ].map(service => ({
+        label: service,
+        value: service
+    }));
+
+    const managedByThirdPartyOptions = [
+        intl('yes'), intl('no'),
     ].map(service => ({
         label: service,
         value: service
@@ -97,12 +105,15 @@ const UpdateContent = ({ openAdd, setOpenAdd, locations }: Props) => {
             setDepositAmount(parseInt(value as string, 10));
         } else if (id === "services") {
             setServices(Array.isArray(value) ? value : [value]);
+        }  else if (id === "managedByThirdParty") {
+            setManagedByThirdParty(value === intl('yes'));
         }
     };
 
     const addFields: Array<AddFields> = [
         { id: "services", type: "select", options: serviceOptions, isClearable: false, select_type: "multi", important: false, dropdownPosition: "bottom" },
         { id: "deposit", type: "number", isClearable: false },
+        { id: "managedByThirdParty", type: "select", options: managedByThirdPartyOptions, isClearable: false },
     ];
 
     const handleSubmit = async () => {
@@ -115,8 +126,14 @@ const UpdateContent = ({ openAdd, setOpenAdd, locations }: Props) => {
                 deposit: depositAmount,
                 district: location.district,
                 province: location.province,
-                serviceNames: services.map((service)=>{return service === 'Siêu nhanh'? "SN": service == 'Siêu rẻ'? "SR": ""}),
-                ward: location.ward
+                serviceNames: services.map((service)=>{
+                    return  service === intl('SN')? "SN": 
+                            service === intl('SR')? "SR":
+                            service === intl('hht')? "HHT":
+                            service === intl('ttk')? "TTK": "CPN"
+                }),
+                ward: location.ward,
+                managedByThirdParty: managedByThirdParty,
             }, token);
             if(response.message === "Người dùng không được phép truy cập tài nguyên này") {
                 addNotification({message: intl("NoPermit"), type: "error"});

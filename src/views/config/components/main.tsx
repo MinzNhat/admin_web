@@ -44,22 +44,25 @@ const ConfigMain = () => {
         { label: intl("ward"), label_value: "ward", type: "text" },
         { label: intl("district"), label_value: "district", type: "text" },
         { label: intl("deposit"), label_value: "deposit", type: "text" },
-        { label: intl("services"), label_value: "services", type: "text" },
+        { label: intl("managedByThirdParty"), label_value: "managedByThirdParty", type: "text" },
     ];
 
     const renderCell = (cellHeader: string, cellValue: string | number | boolean | any) => {
         if (cellHeader === intl("province")) {
             return <div className="w-full h-full whitespace-nowrap">{cellValue}</div>
-        } 
+        }
         else if (cellHeader === intl("ward")) {
             return <div className="w-full h-full text-center">{cellValue}</div>
-        } 
+        }
         else if (cellHeader === intl("district")) {
             return <div className="w-full h-full line-clamp-4">{`${cellValue}`}</div>
-        } 
+        }
         else if (cellHeader === intl("deposit")) {
             return <div className="w-full h-full line-clamp-4">{`${cellValue}`}</div>
-        } 
+        }
+        else if (cellHeader === intl("managedByThirdParty")) {
+            return <div className="w-full h-full line-clamp-4">{`${intl(cellValue?'yes':'no')}`}</div>
+        }
         else if (cellHeader === intl("services")) {
             console.log(cellValue)
             return (
@@ -139,9 +142,12 @@ const ConfigMain = () => {
 
         if (response.success) {
             const configs = response.data.map((config: any) => {
-                if(config) {
-                    return {...config, services: config.services.map((service: any) => {
-                        console.log(service); return service.serviceName})}
+                if (config) {
+                    return {
+                        ...config, services: config.services.map((service: any) => {
+                            console.log(service); return service.serviceName
+                        })
+                    }
                 }
             }) as ConfigData[];
             setConfigs(configs);
@@ -181,7 +187,7 @@ const ConfigMain = () => {
                 setSelectedRows={setSelectedRows}
                 // openAdd={() => setAddConfig(true)}
                 customButton={
-                    <CustomButton fetchData={fetchData}  selectedRows={selectedRows}
+                    <CustomButton fetchData={fetchData} selectedRows={selectedRows}
                         extraButton={
                             <>
                                 <SearchPopUp fields={searchFields} searchCriteriaValue={searchCriteriaValue} setSearchCriteriaValue={setSearchCriteriaValue} />
