@@ -135,8 +135,10 @@ const UpdateContent = ({ openAdd, setOpenAdd, locations }: Props) => {
                 ward: location.ward,
                 managedByThirdParty: managedByThirdParty,
             }, token);
-            if(response.message === "Người dùng không được phép truy cập tài nguyên này") {
-                addNotification({message: intl("NoPermit"), type: "error"});
+            if(!response.success) {
+                addNotification({message: response.message, type: "error"});
+            } else {
+                addNotification({message: response.message, type: "success"});
             }
         }
     }
